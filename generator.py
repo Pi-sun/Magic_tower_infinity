@@ -497,14 +497,13 @@ def map_generate(size,starting_position,*special_requirement):
         version_c.assign(i,5)
     return version_c
 
-<<<<<<< HEAD:generator.py
 if __name__ == "__main__":
 	a=map_generate(10,[3,1],'shop')
 	a.present()
-=======
+
 a=map_generate(10,[3,1])
 a.present()
->>>>>>> squared-wall-and-more-delicated-area-divided:magic tower version 0.02T.py
+
             
         
     
