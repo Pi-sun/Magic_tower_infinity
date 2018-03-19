@@ -35,6 +35,7 @@ class Board:
         self.main_route=[]
         self.side_route=[]
         self.door=[]
+        self.wall=[]
         self.side_start=None
         self.side_end=None
         self.award_area=[]
@@ -316,17 +317,21 @@ def main_route_generate(size,start_posi,new_one):
         for wall_posi in return_boundary_s(route):
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
+                new_one.wall.append(wall_posi)
         for wall_posi in return_boundary_s(route):
             if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
-                new_one.assign(wall_posi,2)  
+                new_one.assign(wall_posi,2)
+                new_one.wall.append(wall_posi)
     else:
         all_route=route+side_route
         for wall_posi in return_boundary_s(all_route):
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
+                new_one.wall.append(wall_posi)
         for wall_posi in return_boundary_s(all_route):
             if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
                 new_one.assign(wall_posi,2)
+                new_one.wall.append(wall_posi)
                 
 
     return new_one
@@ -371,7 +376,7 @@ def create_subarea(area,starting_position,size):
             if this_size>=len(pre_area)-1:
                 break
         wall_area=[]
-        for item in return_boundary(area1):
+        for item in return_boundary_s(area1):
             if item in area:
                 wall_area.append(item)
         trial_board=Board(100)
@@ -432,6 +437,7 @@ def award_area_generate(new_board):
             final_area.append(temp_area)
             new_board.area_assign(2,final_area)
             for i in temp_wall:
+                new_board.wall.append(i)
                 new_board.assign(i,2)
     return new_board
 
@@ -458,6 +464,7 @@ def door_generate(new_board):
         if len(area_detect(blank_board1))<len(area_detect(blank_board)):
             doors.append(i)
             walls.remove(i)
+            new_board.wall.remove(i)
             blank_board.assign(i,0)
             new_board.assign(i,0)
         if len(area_detect(blank_board))==1:
@@ -489,6 +496,21 @@ def pre_generate(size,starting_position,size_area):
         version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
         version_a=main_route_generate(size,starting_position,version_0)
         return version_a
+
+def square_test(area,tile):
+    if (([tile[0],tile[1]+1] in area) and ([tile[0]+1,tile[1]+1] in area) and ([tile[0]+1,tile[1]] in area)) or ([tile[0],tile[1]+1] in area and [tile[0]-1,tile[1]+1] in area and [tile[0]-1,tile[1]] in area) or ([tile[0],tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area) or ([tile[0]-1,tile[1]] in area and [tile[0]-1,tile[1]-1] in area and [tile[0],tile[1]-1] in area):
+        return True
+    else:
+        return False
+    
+
+def wall_optimize(new_one):
+    for i in new_one.wall:
+        if square_test(new_one.wall,i):
+            new_one.wall.remove(i)
+            new_one.assign(i,0)
+    return new_one
+    
     
 def map_generate(size,starting_position,*special_requirement):
     'generate a random map with starting_position and size, special requirement include shop, dragon, no_return,guarded_area'
@@ -510,9 +532,11 @@ def map_generate(size,starting_position,*special_requirement):
             version_c.assign(version_c.special_door,0) 
     for i in version_c.special:
         version_c.assign(i,5)
-    return version_c
+    version_c.present()
+    version_d=wall_optimize(version_c)
+    return version_d
 
 if __name__ == "__main__":
-	for i in range(10):
+	for i in range(2):
 		a=map_generate(10,[9,9])
 		a.present()
