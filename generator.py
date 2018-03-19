@@ -2,6 +2,19 @@
 
 import random
 
+def return_boundary_s(positions):
+    boundary=return_boundary(positions)
+    for position in positions:
+        if [position[0]+1,position[1]+1] not in positions and [position[0]+1,position[1]+1] not in boundary:
+            boundary.append([position[0]+1,position[1]+1])
+        if [position[0]+1,position[1]-1] not in positions and [position[0]+1,position[1]-1] not in boundary:
+            boundary.append([position[0]+1,position[1]-1])
+        if [position[0]-1,position[1]+1] not in positions and [position[0]-1,position[1]+1] not in boundary:
+            boundary.append([position[0]-1,position[1]+1])
+        if [position[0]-1,position[1]-1] not in positions and [position[0]-1,position[1]-1] not in boundary:
+            boundary.append([position[0]-1,position[1]-1])
+    return boundary
+    
 def return_boundary(positions):
     'return the boundary of the area indicated by given positions'
     boundary =[]
@@ -461,7 +474,7 @@ def pre_generate(size,starting_position,size_area):
         version_0=Board(size)
         while True:
             dragon_x=random.randint(0,size-dragon_width-1)
-            dragon_y=random.randint(0,size-dragon_length)
+            dragon_y=random.randint(0,size-dragon_length-1)
             if (starting_position[0]<dragon_x or starting_position[0]>=dragon_x+dragon_length) and (starting_position[1]<dragon_y or starting_position[1]>=dragon_y+dragon_width):
                 print('smile')
             else:
@@ -471,7 +484,7 @@ def pre_generate(size,starting_position,size_area):
             for y_cood in range(dragon_y,dragon_y+dragon_length):
                 dragon.append([x_cood,y_cood])
         for i in dragon:
-            version_0.assign(i,1)
+            version_0.assign(i,2)
         version_0.special=dragon
         version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
         version_a=main_route_generate(size,starting_position,version_0)
@@ -500,5 +513,17 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
+<<<<<<< HEAD
 	a=map_generate(10,[3,1])
 	a.present()  
+=======
+	a=map_generate(10,[0,0],'shop')
+	a.present()
+
+#a=map_generate(10,[0,0])
+#a.present()
+
+            
+        
+    
+>>>>>>> squared-wall-and-more-delicated-area-divided
