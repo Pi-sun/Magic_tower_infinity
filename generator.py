@@ -1,3 +1,5 @@
+# Magic Tower map generator - v0.02T
+
 import random
 
 def return_boundary(positions):
@@ -493,8 +495,9 @@ def map_generate(size,starting_position,*special_requirement):
         version_c.assign(i,5)
     return version_c
 
-a=map_generate(10,[3,1],'shop')
-a.present()
+if __name__ == "__main__":
+	a=map_generate(10,[3,1],'shop')
+	a.present()
             
         
     
