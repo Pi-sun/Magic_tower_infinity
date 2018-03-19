@@ -513,17 +513,5 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
-<<<<<<< HEAD
 	a=map_generate(10,[3,1])
 	a.present()  
-=======
-	a=map_generate(10,[0,0],'shop')
-	a.present()
-
-#a=map_generate(10,[0,0])
-#a.present()
-
-            
-        
-    
->>>>>>> squared-wall-and-more-delicated-area-divided
