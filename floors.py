@@ -29,10 +29,10 @@ class FloorPreparer:
 			startLocs[index] = genLoc()
 		
 		def afterWork(floor):
-				floor.present()
-				print(floor.start_position, floor.end_position)
-		
 				global floors, startLocs
+				starts = []
+				ends = []
+				
 				floors[index] = []
 				for ri in range(dim):
 					row = []
@@ -40,9 +40,11 @@ class FloorPreparer:
 						item = floor.content[ri][ci]
 						if item == -1:
 							row.append(Empty()) # TODO: Staircase down
+							starts.append((ri, ci))
 						elif item == -2:
 							row.append(Empty()) # TODO: Staircase up
 							startLocs[index + 1] = (ri, ci)
+							ends.append((ri, ci))
 						elif item == 0 or item == 1:
 							row.append(Empty())
 						elif item == 2:
@@ -53,13 +55,23 @@ class FloorPreparer:
 							row.append(Wall()) # TODO: Special entities
 					floors[index].append(row)
 			
-				self.currentIndex += 1
-				self.handler(self.currentIndex)
-				if self.currentIndex < SECTION_SIZE:
+				if len(starts) == 1 and len(ends) == 1 and starts[0] == startLocs[index]:
+					self.currentIndex += 1
+					self.handler(self.currentIndex)
+					if self.currentIndex < SECTION_SIZE:
+						self.prepare()
+				else:
+					print("Error at map:")
+					floor.present()
+					print("Start:", floor.start_position, "; End:", floor.end_position)
+					if "side_route" in floor.__dict__:
+						print("Side:", floor.side_route)
+					print("\n\n")
+				
 					self.prepare()
 		
 		def work():
-			wx.CallAfter(afterWork, map_generate(dim, startLocs[index], 'shop'))
+			wx.CallAfter(afterWork, map_generate(dim, startLocs[index]))
 			
 		threading.Thread(target = work).start()
 

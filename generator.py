@@ -498,12 +498,5 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
-	a=map_generate(10,(3,1),'shop')
-	a.present()
-
-a=map_generate(10,[3,1])
-a.present()
-
-            
-        
-    
+	a=map_generate(10,[3,1])
+	a.present()  
