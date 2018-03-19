@@ -513,6 +513,7 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
+<<<<<<< HEAD
 	a=map_generate(10,[0,0],'shop')
 	a.present()
 
@@ -522,3 +523,7 @@ if __name__ == "__main__":
             
         
     
+=======
+	a=map_generate(10,[3,1])
+	a.present()  
+>>>>>>> 54d78a76c2643e3e3fabe44a48c03ed7948c5fc6

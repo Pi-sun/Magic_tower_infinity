@@ -64,8 +64,7 @@ class FloorPreparer:
 					print("Error at map:")
 					floor.present()
 					print("Start:", floor.start_position, "; End:", floor.end_position)
-					if "side_route" in floor.__dict__:
-						print("Side:", floor.side_route)
+					print("Side:", floor.side_route)
 					print("\n\n")
 				
 					self.prepare()
