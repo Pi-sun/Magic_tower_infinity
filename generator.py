@@ -477,7 +477,8 @@ def pre_generate(size,starting_position,size_area):
     
 def map_generate(size,starting_position,*special_requirement):
     'generate a random map with starting_position and size, special requirement include shop, dragon, no_return,guarded_area'
-    version_a=main_route_generate(size,starting_position,Board(size))
+    version_0=Board(size)
+    version_a=main_route_generate(size,starting_position,version_0)
     if 'dragon' in special_requirement:
         version_a=pre_generate(size,starting_position,[4,3])
     if 'guarded_area' in special_requirement:
