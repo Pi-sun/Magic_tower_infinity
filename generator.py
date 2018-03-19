@@ -313,18 +313,18 @@ def main_route_generate(size,start_posi,new_one):
     'wall generation starts the next line'
 
     if not if_side:
-        for wall_posi in return_boundary(route):
+        for wall_posi in return_boundary_s(route):
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
-        for wall_posi in return_boundary(route):
+        for wall_posi in return_boundary_s(route):
             if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
                 new_one.assign(wall_posi,2)  
     else:
         all_route=route+side_route
-        for wall_posi in return_boundary(all_route):
+        for wall_posi in return_boundary_s(all_route):
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
-        for wall_posi in return_boundary(all_route):
+        for wall_posi in return_boundary_s(all_route):
             if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
                 new_one.assign(wall_posi,2)
                 
