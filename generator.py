@@ -212,7 +212,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0]+step+1,node[1]]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,3)==0:
+                        elif new_one.nearby_check(new_point,1)==3:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -224,7 +224,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0],node[1]+step+1]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,3)==0:
+                        elif new_one.nearby_check(new_point,1)==3:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -236,7 +236,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0]-step-1,node[1]]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,3)==0:
+                        elif new_one.nearby_check(new_point,1)==3:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -248,7 +248,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0],node[1]-step-1]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,3)==0:
+                        elif new_one.nearby_check(new_point,1)==3:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -513,10 +513,6 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-	a=map_generate(10,[3,1])
-	a.present()  
-=======
 	a=map_generate(10,[0,0],'shop')
 	a.present()
 
@@ -526,4 +522,3 @@ if __name__ == "__main__":
             
         
     
->>>>>>> squared-wall-and-more-delicated-area-divided
