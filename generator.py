@@ -19,6 +19,8 @@ def return_boundary(positions):
 class Board:
     'a class which describes a board in the game'
     def __init__(self,size):
+        self.main_route=[]
+        self.side_route=[]
         self.door=[]
         self.side_start=None
         self.side_end=None
@@ -451,8 +453,8 @@ def door_generate(new_board):
         new_board.special_assign(4,i)
         new_board.assign(i,3)
     return new_board
-    
 def pre_generate(size,starting_position,size_area):
+    
     dragon_width=size_area[0]
     dragon_length=size_area[1]
     if True:
