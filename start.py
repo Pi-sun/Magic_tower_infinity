@@ -36,7 +36,7 @@ class GameFrame(wx.Frame):
 		loadingLabel = wx.StaticText(self.loading, -1)
 		loadingLabel.SetFont(wx.Font(CELL_SIZE / 2, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
 		loadingLabel.SetForegroundColour(WHITE)
-		loadingLabel.SetLabelText("Loading...")
+		loadingLabel.SetLabelText("Preparing levels...")
 		size = loadingLabel.GetSize()
 		loadingLabel.SetPosition((CELL_SIZE * GRID_DIM / 2 - size[0] / 2, CELL_SIZE * (GRID_DIM / 2 - 0.1) - size[1]))
 		
@@ -70,7 +70,7 @@ class GameFrame(wx.Frame):
 		
 		self.cancelUpdate = callRepeatedly(0.3, self.update)
 		
-		self.grid.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
+		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
 		
 	def Destroy(self):
 		self.cancelUpdate()

@@ -29,6 +29,9 @@ class FloorPreparer:
 			startLocs[index] = genLoc()
 		
 		def afterWork(floor):
+				floor.present()
+				print(floor.start_position, floor.end_position)
+		
 				global floors, startLocs
 				floors[index] = []
 				for ri in range(dim):

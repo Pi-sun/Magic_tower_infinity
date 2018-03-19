@@ -451,8 +451,8 @@ def door_generate(new_board):
         new_board.special_assign(4,i)
         new_board.assign(i,3)
     return new_board
-def pre_generate(size,starting_position,size_area):
     
+def pre_generate(size,starting_position,size_area):
     dragon_width=size_area[0]
     dragon_length=size_area[1]
     if True:
@@ -496,7 +496,7 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
-	a=map_generate(10,[3,1],'shop')
+	a=map_generate(10,(3,1),'shop')
 	a.present()
             
         
