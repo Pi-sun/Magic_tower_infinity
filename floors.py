@@ -70,7 +70,7 @@ class FloorPreparer:
 					self.prepare()
 		
 		def work():
-			wx.CallAfter(afterWork, map_generate(dim, startLocs[index]))
+			wx.CallAfter(afterWork, map_generate(dim, list(startLocs[index])))
 			
 		threading.Thread(target = work).start()
 

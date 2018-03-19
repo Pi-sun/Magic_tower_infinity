@@ -136,7 +136,7 @@ def main_route_generate(size,start_posi,new_one):
             if direction==1:
                 for step in range(distance):
                     new_point=[node[0]+step+1,node[1]]
-                    if new_one.nearby_check(new_point,1)==0:
+                    if new_one.nearby_check(new_point,0)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -144,7 +144,7 @@ def main_route_generate(size,start_posi,new_one):
             if direction==2:
                 for step in range(distance):
                     new_point=[node[0],node[1]+step+1]
-                    if new_one.nearby_check(new_point,1)==0:
+                    if new_one.nearby_check(new_point,0)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -152,7 +152,7 @@ def main_route_generate(size,start_posi,new_one):
             if direction==3:
                 for step in range(distance):
                     new_point=[node[0]-step-1,node[1]]
-                    if new_one.nearby_check(new_point,1)==0:
+                    if new_one.nearby_check(new_point,0)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -160,7 +160,7 @@ def main_route_generate(size,start_posi,new_one):
             if direction==4:
                 for step in range(distance):
                     new_point=[node[0],node[1]-step-1]
-                    if new_one.nearby_check(new_point,1)==0:
+                    if new_one.nearby_check(new_point,0)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -306,7 +306,6 @@ def main_route_generate(size,start_posi,new_one):
         new_one.special_assign(2,side_route[0])
         new_one.special_assign(3,side_route[-1])
     new_one.assign(start_posi,-1)
-    new_one.assign(new_one.end_position,-2)
 
 
 
@@ -476,7 +475,7 @@ def pre_generate(size,starting_position,size_area):
         while True:
             dragon_x=random.randint(0,size-dragon_width-1)
             dragon_y=random.randint(0,size-dragon_length-1)
-            if (starting_position[0]<dragon_x or starting_position[0]>=dragon_x+dragon_width) and (starting_position[1]<dragon_y or starting_position[1]>=dragon_y+dragon_length):
+            if (starting_position[0]<dragon_x or starting_position[0]>=dragon_x+dragon_length) and (starting_position[1]<dragon_y or starting_position[1]>=dragon_y+dragon_width):
                 print('smile')
             else:
                 break
@@ -514,12 +513,6 @@ def map_generate(size,starting_position,*special_requirement):
     return version_c
 
 if __name__ == "__main__":
-	a=map_generate(10,[0,0],'shop')
-	a.present()
-
-#a=map_generate(10,[0,0])
-#a.present()
-
-            
-        
-    
+	for i in range(10):
+		a=map_generate(10,[9,9])
+		a.present()
