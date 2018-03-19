@@ -23,10 +23,13 @@ class FloorPreparer:
 	def prepare(self):
 		index = self.sectionStart + self.currentIndex
 		
+		# Temporary generator bug workaround
+		global startLocs
+		if index not in startLocs:
+			startLocs[index] = genLoc()
+		
 		def afterWork(floor):
 				global floors, startLocs
-				floor.present()
-
 				floors[index] = []
 				for ri in range(dim):
 					row = []
@@ -42,7 +45,7 @@ class FloorPreparer:
 						elif item == 2:
 							row.append(Wall())
 						elif item == 3:
-							row.append(Wall()) # TODO: Door
+							row.append(KeyedDoor(KEY_YELLOW))
 						elif item == 5:
 							row.append(Wall()) # TODO: Special entities
 					floors[index].append(row)

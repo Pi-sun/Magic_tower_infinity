@@ -1,6 +1,22 @@
 import math, threading, wx
 from textures import *
 
+KEY_YELLOW = "yellow"
+KEY_BLUE = "blue"
+KEY_RED = "red"
+
+KEY_TEXTURES = {
+	KEY_YELLOW: (10, 0),
+	KEY_BLUE: (10, 1),
+	KEY_RED: (10, 2)
+}
+
+DOOR_TEXTURE_ROWS = {
+	KEY_YELLOW: 4,
+	KEY_BLUE: 5,
+	KEY_RED: 6
+}
+
 def silent(lam):
 	try:
 		lam()
@@ -38,6 +54,14 @@ class Impassable(Cell):
 class Wall(Impassable):
 	def __init__(self):
 		super().__init__(SingleTextureDisplay(8, 0))
+		
+class KeyedDoor(Cell):
+	def __init__(self, key):
+		super().__init__(SingleTextureDisplay(DOOR_TEXTURE_ROWS[key], 0))
+		self.key = key
+		
+	def interact(self, app):
+		pass
 		
 class Monster(Cell):
 	def __init__(self, health, attack, defence, texture):
@@ -86,6 +110,7 @@ class GreenSlime(Monster):
 class SlimeKing(Monster):
 	def __init__(self):
 		super().__init__(20, 100, 0, FourTextureDisplay(3, 4))
+	
 		
 class PropertyImprover(Cell):
 	def __init__(self, texture):

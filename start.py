@@ -38,19 +38,19 @@ class GameFrame(wx.Frame):
 		loadingLabel.SetForegroundColour(WHITE)
 		loadingLabel.SetLabelText("Loading...")
 		size = loadingLabel.GetSize()
-		loadingLabel.SetPosition((CELL_SIZE * GRID_DIM / 2 - size[0] / 2, CELL_SIZE * (GRID_DIM / 2 - 0.2) - size[1]))
+		loadingLabel.SetPosition((CELL_SIZE * GRID_DIM / 2 - size[0] / 2, CELL_SIZE * (GRID_DIM / 2 - 0.1) - size[1]))
 		
 		borderWidth = round(CELL_SIZE * 0.06)
 		loadingBorders = [
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.2)), size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2)),
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 + LOADING_MAX_LENGTH / 2), CELL_SIZE * (GRID_DIM / 2 + 0.2)), size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2)),
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.2)), size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth)),
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.7) + borderWidth), size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth))
+			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.12)), size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2)),
+			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 + LOADING_MAX_LENGTH / 2), CELL_SIZE * (GRID_DIM / 2 + 0.12)), size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2)),
+			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.12)), size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth)),
+			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.62) + borderWidth), size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth))
 		]
 		for border in loadingBorders:
 			border.SetBackgroundColour(WHITE)
 		
-		self.loadingBar = wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2), CELL_SIZE * (GRID_DIM / 2 + 0.2) + borderWidth), size = (0, CELL_SIZE * 0.5))
+		self.loadingBar = wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2), CELL_SIZE * (GRID_DIM / 2 + 0.12) + borderWidth), size = (0, CELL_SIZE * 0.5))
 		self.loadingBar.SetBackgroundColour(WHITE)
 		
 		self.loading.Hide()
