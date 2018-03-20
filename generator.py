@@ -537,11 +537,14 @@ def map_generate(size,starting_position,*special_requirement):
     for i in version_c.special:
         version_c.assign(i,5)
     version_c.present()
-    print(area_detect(version_c))
     version_d=wall_optimize(version_c)
     return version_d
 
 if __name__ == "__main__":
-	for i in range(2):
+	for i in range(1):
 		a=map_generate(10,[9,9])
 		a.present()
+
+b=a
+b.assign([0,0],10)
+a.present()
