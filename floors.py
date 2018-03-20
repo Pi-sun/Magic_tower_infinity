@@ -23,11 +23,6 @@ class FloorPreparer:
 	def prepare(self):
 		index = self.sectionStart + self.currentIndex
 		
-		# Temporary generator bug workaround
-		global startLocs
-		if index not in startLocs:
-			startLocs[index] = genLoc()
-		
 		def afterWork(floor):
 				global floors, startLocs
 				starts = []
