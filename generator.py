@@ -435,7 +435,6 @@ def award_area_generate(new_board):
             temp_wall=(divide_area(area))[1]
             temp_area=(divide_area(area))[0]
             final_area.append(temp_area)
-            new_board.area_assign(2,final_area)
             for i in temp_wall:
                 new_board.wall.append(i)
                 new_board.assign(i,2)
@@ -505,10 +504,15 @@ def square_test(area,tile):
     
 
 def wall_optimize(new_one):
+    ori_no_area=len(area_detect(new_one))
     for i in new_one.wall:
-        if square_test(new_one.wall,i) and (new_one.nearby_check(i,0)+new_one.nearby_check(i,1)+new_one.nearby_check(i,3))==2:
-            new_one.wall.remove(i)
+        if square_test(new_one.wall,i):
             new_one.assign(i,0)
+            if len(area_detect(new_one))!=ori_no_area:
+                   new_one.assign(i,2)
+            else:
+                   new_one.wall.remove(i)
+    new_one.award_area.extend(area_detect(new_one))
     return new_one
     
     
@@ -533,6 +537,7 @@ def map_generate(size,starting_position,*special_requirement):
     for i in version_c.special:
         version_c.assign(i,5)
     version_c.present()
+    print(area_detect(version_c))
     version_d=wall_optimize(version_c)
     return version_d
 
