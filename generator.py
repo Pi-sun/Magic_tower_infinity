@@ -498,7 +498,7 @@ def pre_generate(size,starting_position,size_area):
         return version_a
 
 def square_test(area,tile):
-    if (([tile[0],tile[1]+1] in area) and ([tile[0]+1,tile[1]+1] in area) and ([tile[0]+1,tile[1]] in area)) or ([tile[0],tile[1]+1] in area and [tile[0]-1,tile[1]+1] in area and [tile[0]-1,tile[1]] in area) or ([tile[0],tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area) or ([tile[0]-1,tile[1]] in area and [tile[0]-1,tile[1]-1] in area and [tile[0],tile[1]-1] in area):
+    if (([tile[0],tile[1]+1] in area) and ([tile[0]+1,tile[1]+1] in area) and ([tile[0]+1,tile[1]] in area)) or ([tile[0],tile[1]+1] in area and [tile[0]-1,tile[1]+1] in area and [tile[0]-1,tile[1]] in area) or ([tile[0],tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area and [tile[0]+1,tile[1]] in area) or ([tile[0]-1,tile[1]] in area and [tile[0]-1,tile[1]-1] in area and [tile[0],tile[1]-1] in area):
         return True
     else:
         return False
@@ -506,7 +506,7 @@ def square_test(area,tile):
 
 def wall_optimize(new_one):
     for i in new_one.wall:
-        if square_test(new_one.wall,i):
+        if square_test(new_one.wall,i) and (new_one.nearby_check(i,0)+new_one.nearby_check(i,1)+new_one.nearby_check(i,3))==2:
             new_one.wall.remove(i)
             new_one.assign(i,0)
     return new_one
