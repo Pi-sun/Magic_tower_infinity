@@ -545,6 +545,3 @@ if __name__ == "__main__":
 		a=map_generate(10,[9,9])
 		a.present()
 
-b=a
-b.assign([0,0],10)
-a.present()
