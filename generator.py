@@ -8,8 +8,20 @@ def boss_floor_generate(start_position,size):
     new_one.main_route=[start_position]
     if start_position[0]+1>0.5*size:
         wall_y=int(0.5*size)-1
+        boss=1
     else:
         wall_y=int(0.5*size)
+        boss=0
+    if boss==1:
+        for x in range(0,int(0.5*size)-1):
+            for y in range(size):
+                new_one.special.append([x,y])
+                new_one.assign([x,y],5)
+    else:
+        for x in range(int(0.5*size)+1,size):
+            for y in range(size):
+                new_one.special.append([x,y])
+                new_one.assign([x,y],5)        
     for i in range(size):
         new_one.assign([wall_y,i],2)
         new_one.wall.append([wall_y,i])
@@ -41,7 +53,17 @@ def boss_floor_generate(start_position,size):
         if new_one.check_item(i)!=3:
             new_one.assign(i,2)
             new_one.wall.append(i)
-    return new_one
+    
+    new_one_v2=door_generate(award_area_generate(new_one))
+    new_one_v3=wall_optimize(new_one_v2)
+    for i in new_one_v3.special:
+        new_one_v3.assign(i,0)
+    if boss==1:
+        new_one_v3.end_position=[random.randint(0,int(0.5*size)-2),int(0.5*size)]
+    if boss==0:
+        new_one_v3.end_position=[random.randint(int(0.5*size)+1,size-1),int(0.5*size)]
+    new_one_v3.assign(new_one_v3.end_position,-2)
+    return new_one_v3
         
 def return_boundary_s(positions):
     boundary=return_boundary(positions)
@@ -580,5 +602,5 @@ def map_generate(size,starting_position,*special_requirement):
     version_c.present()
     version_d=wall_optimize(version_c)
     return version_d
-
-boss_floor_generate([3,3],11).present()
+if __name__=='__main__':
+    boss_floor_generate([7,7],11).present()
