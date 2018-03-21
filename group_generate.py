@@ -1,1 +1,0 @@
-def group_floor_generate
