@@ -53,15 +53,16 @@ def boss_floor_generate(start_position,size):
         if new_one.check_item(i)!=3 and new_one.valid_position(i):
             new_one.assign(i,2)
             new_one.wall.append(i)
-    
+    if boss==1:
+        new_one.end_position=[random.randint(0,int(0.5*size)-2),int(0.5*size)]
+    if boss==0:
+        new_one.end_position=[random.randint(int(0.5*size)+1,size-1),int(0.5*size)]
     new_one_v2=door_generate(award_area_generate(new_one))
     new_one_v3=wall_optimize(new_one_v2)
+    
     for i in new_one_v3.special:
         new_one_v3.assign(i,0)
-    if boss==1:
-        new_one_v3.end_position=[random.randint(0,int(0.5*size)-2),int(0.5*size)]
-    if boss==0:
-        new_one_v3.end_position=[random.randint(int(0.5*size)+1,size-1),int(0.5*size)]
+
     new_one_v3.assign(new_one_v3.end_position,-2)
     new_one_v3.assign(new_one_v3.start_position,-1)
     return new_one_v3
@@ -253,7 +254,7 @@ def main_route_generate(size,start_posi,new_one):
     new_one.assign(start_posi,-1)
     new_one.special_assign(0,start_posi)
     new_one.assign(node,-2)
-    new_one.special_assign(1,node)
+    new_one.end_position=node
     new_one.area_assign(0,route)
     'main route generated'
 
@@ -569,6 +570,10 @@ def square_test(area,tile):
 
 def wall_optimize(new_one):
     ori_no_area=len(area_detect(new_one))
+    new_one.assign(new_one.start_position,0)
+    new_one.assign(new_one.end_position,0)
+    for i in new_one.main_route:
+        new_one.assign(i,0)
     for i in new_one.wall:
         if square_test(new_one.wall,i):
             new_one.assign(i,0)
@@ -576,6 +581,10 @@ def wall_optimize(new_one):
                    new_one.assign(i,2)
             else:
                    new_one.wall.remove(i)
+    new_one.assign(new_one.start_position,-1)
+    new_one.assign(new_one.end_position,-2)
+    for i in new_one.main_route:
+        new_one.assign(i,1)
     new_one.award_area.extend(area_detect(new_one))
     return new_one
     

@@ -30,7 +30,7 @@ class GameFrame(wx.Frame):
 		
 		bgBitmap = wx.Image("res/fullbg.png", wx.BITMAP_TYPE_ANY).Rescale(*size).ConvertToBitmap()
 		bg = wx.StaticBitmap(base, -1, bgBitmap, pos = (0, 0))
-		
+
 		self.loading = wx.Panel(base, -1, pos = (CELL_SIZE * 4.5 + 1, CELL_SIZE * 0.5 + 1), size = (CELL_SIZE * GRID_DIM, CELL_SIZE * GRID_DIM))
 		
 		loadingLabel = wx.StaticText(self.loading, -1)
@@ -91,6 +91,7 @@ class GameFrame(wx.Frame):
 			self.loadingBar.SetSize((amount / self.floorsLoading * CELL_SIZE * LOADING_MAX_LENGTH, CELL_SIZE * 0.5))
 		
 		if amount == self.floorsLoading:
+			print("Loaded")
 			self.grid.Show()
 			self.loading.Hide()
 			
