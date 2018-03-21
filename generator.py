@@ -1,7 +1,48 @@
 # Magic Tower map generator - v0.02T
 
 import random
-
+def boss_floor_generate(start_position,size):
+    new_one=Board(size)
+    new_one.start_position=start_position
+    new_one.assign(start_position,-1)
+    new_one.main_route=[start_position]
+    if start_position[0]+1>0.5*size:
+        wall_y=int(0.5*size)-1
+    else:
+        wall_y=int(0.5*size)
+    for i in range(size):
+        new_one.assign([wall_y,i],2)
+        new_one.wall.append([wall_y,i])
+    if start_position[1]<int(0.5*size):
+        for i in range(start_position[1]+1,int(0.5*size)+1):
+            position=[start_position[0],i]
+            new_one.assign(position,1)
+            new_one.main_route.append(position)
+    else:
+        for i in range(int(0.5*size)+1,start_position[1]+1):
+            position=[start_position[0],i]
+            new_one.assign(position,1)
+            new_one.main_route.append(position)
+    if start_position[0]<int(0.5*size):
+        for i in range(start_position[0],int(0.5*size)):
+            position=[i,int(0.5*size)]
+            new_one.assign(position,1)
+            new_one.main_route.append(position)
+        new_one.assign([int(0.5*size),int(0.5*size)],3)
+        new_one.door.append([int(0.5*size),int(0.5*size)])
+    else:
+        for i in range(int(0.5*size),start_position[0]+1):
+            position=[i,int(0.5*size)]
+            new_one.assign(position,1)
+            new_one.main_route.append(position)
+        new_one.assign([int(0.5*size)-1,int(0.5*size)],3)
+        new_one.door.append([int(0.5*size)-1,int(0.5*size)])
+    for i in return_boundary_s(new_one.main_route):
+        if new_one.check_item(i)!=3:
+            new_one.assign(i,2)
+            new_one.wall.append(i)
+    return new_one
+        
 def return_boundary_s(positions):
     boundary=return_boundary(positions)
     for position in positions:
@@ -540,8 +581,4 @@ def map_generate(size,starting_position,*special_requirement):
     version_d=wall_optimize(version_c)
     return version_d
 
-if __name__ == "__main__":
-	for i in range(1):
-		a=map_generate(10,[9,9])
-		a.present()
-
+boss_floor_generate([3,3],11).present()

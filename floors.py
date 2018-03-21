@@ -12,7 +12,7 @@ start = (1,) + genLoc()
 floors = {}
 startLocs = {1: start[1:]}
 
-SECTION_SIZE = 10
+SECTION_SIZE = 1
 
 class FloorPreparer:
 	def __init__(self, sectionStart, handler):
