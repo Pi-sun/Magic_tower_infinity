@@ -50,7 +50,7 @@ def boss_floor_generate(start_position,size):
         new_one.assign([int(0.5*size)-1,int(0.5*size)],3)
         new_one.door.append([int(0.5*size)-1,int(0.5*size)])
     for i in return_boundary_s(new_one.main_route):
-        if new_one.check_item(i)!=3:
+        if new_one.check_item(i)!=3 and new_one.valid_position(i):
             new_one.assign(i,2)
             new_one.wall.append(i)
     
@@ -599,8 +599,7 @@ def map_generate(size,starting_position,*special_requirement):
             version_c.assign(version_c.special_door,0) 
     for i in version_c.special:
         version_c.assign(i,5)
-    version_c.present()
     version_d=wall_optimize(version_c)
     return version_d
 if __name__=='__main__':
-    boss_floor_generate([7,7],11).present()
+    boss_floor_generate([1,7],10).present()
