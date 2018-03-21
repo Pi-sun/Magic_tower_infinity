@@ -1,9 +1,9 @@
 import random, threading, wx
 
 from cells import *
-from generator import map_generate
+from generator import boss_floor_generate, map_generate
 
-dim = 10
+dim = 11
 def genLoc():
 	return (random.randint(0, dim - 1), random.randint(0, dim - 1))
 
@@ -12,7 +12,7 @@ start = (1,) + genLoc()
 floors = {}
 startLocs = {1: start[1:]}
 
-SECTION_SIZE = 1
+SECTION_SIZE = 5
 
 class FloorPreparer:
 	def __init__(self, sectionStart, handler):
@@ -65,7 +65,10 @@ class FloorPreparer:
 					self.prepare()
 		
 		def work():
-			wx.CallAfter(afterWork, map_generate(dim, list(startLocs[index])))
+			if self.currentIndex == SECTION_SIZE - 1:
+				wx.CallAfter(afterWork, boss_floor_generate(list(startLocs[index]), dim))
+			else:
+				wx.CallAfter(afterWork, map_generate(dim, list(startLocs[index])))
 			
 		threading.Thread(target = work).start()
 
@@ -76,4 +79,3 @@ def prepareFloor(target, handler):
 		sectionStart = (target - 1) // SECTION_SIZE * SECTION_SIZE + 1		
 		FloorPreparer(sectionStart, handler).prepare()
 		return SECTION_SIZE
-			
