@@ -581,10 +581,11 @@ def wall_optimize(new_one):
                    new_one.assign(i,2)
             else:
                    new_one.wall.remove(i)
-    new_one.assign(new_one.start_position,-1)
-    new_one.assign(new_one.end_position,-2)
     for i in new_one.main_route:
         new_one.assign(i,1)
+    new_one.assign(new_one.start_position,-1)
+    new_one.assign(new_one.end_position,-2)
+
     new_one.award_area.extend(area_detect(new_one))
     return new_one
     
