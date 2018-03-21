@@ -569,9 +569,9 @@ def square_test(area,tile):
     
 
 def wall_optimize(new_one):
-    ori_no_area=len(area_detect(new_one))
     new_one.assign(new_one.start_position,0)
     new_one.assign(new_one.end_position,0)
+    ori_no_area=len(area_detect(new_one))
     for i in new_one.main_route:
         new_one.assign(i,0)
     for i in new_one.wall:
