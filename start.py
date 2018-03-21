@@ -87,7 +87,8 @@ class GameFrame(wx.Frame):
 			self.handleFloorPrepared(0)
 		
 	def handleFloorPrepared(self, amount):
-		self.loadingBar.SetSize((amount / self.floorsLoading * CELL_SIZE * LOADING_MAX_LENGTH, CELL_SIZE * 0.5))
+		if self.floorsLoading:
+			self.loadingBar.SetSize((amount / self.floorsLoading * CELL_SIZE * LOADING_MAX_LENGTH, CELL_SIZE * 0.5))
 		
 		if amount == self.floorsLoading:
 			self.grid.Show()
@@ -108,6 +109,7 @@ class GameFrame(wx.Frame):
 	def onKeyPress(self, event):
 		if not self.floorsLoading and not self.blockedActions:
 			keycode = event.GetKeyCode()
+			print("Keyed", keycode)
 			if keycode == wx.WXK_DOWN:
 				self.interactBy((1, 0))
 			elif keycode == wx.WXK_UP:
@@ -116,6 +118,10 @@ class GameFrame(wx.Frame):
 				self.interactBy((0, 1))
 			elif keycode == wx.WXK_LEFT:
 				self.interactBy((0, -1))
+			elif keycode == ord("A"):
+				self.moveByFloors(1)
+			elif keycode == ord("Z"):
+				self.moveByFloors(-1)
 			else:
 				event.Skip()
 			
@@ -124,6 +130,11 @@ class GameFrame(wx.Frame):
 			
 	def unblockActions(self):
 		self.blockedActions -= 1
+			
+	def moveByFloors(self, change):
+		print(change)
+		if self.currentFloor + change > 0:
+			self.showFloor(self.currentFloor + change)
 			
 	def setCell(self, cell, location):
 		location = wx.Point(location)
