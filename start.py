@@ -109,7 +109,6 @@ class GameFrame(wx.Frame):
 	def onKeyPress(self, event):
 		if not self.floorsLoading and not self.blockedActions:
 			keycode = event.GetKeyCode()
-			print("Keyed", keycode)
 			if keycode == wx.WXK_DOWN:
 				self.interactBy((1, 0))
 			elif keycode == wx.WXK_UP:
@@ -132,7 +131,6 @@ class GameFrame(wx.Frame):
 		self.blockedActions -= 1
 			
 	def moveByFloors(self, change):
-		print(change)
 		if self.currentFloor + change > 0:
 			self.showFloor(self.currentFloor + change)
 			
