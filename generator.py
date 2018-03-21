@@ -184,6 +184,24 @@ class Board:
         print('\n')
         return None
 
+    def award_area_optimize(self):
+        self.award=list()
+        self.award_listing=[]
+        index=0
+        for i in range(self.size):
+            self.award.append([-9]*self.size)
+        for i in self.main_route:
+            self.award[j[0]][j[1]]=-1
+        for i in self.side_route:
+            self.award[j[0]][j[1]]=-1
+        for i in self.award_area:
+            for j in i:
+                self.award[j[0]][j[1]]=index
+            index+=1
+        return None
+            
+                
+
 def main_route_generate(size,start_posi,new_one):
 
     'generate the mainroute in game, -1 for starting position, -2 to ending position, 1 for main route, 2 for walls'
