@@ -63,6 +63,7 @@ def boss_floor_generate(start_position,size):
     if boss==0:
         new_one_v3.end_position=[random.randint(int(0.5*size)+1,size-1),int(0.5*size)]
     new_one_v3.assign(new_one_v3.end_position,-2)
+    new_one_v3.assign(new_one_v3.start_position,-1)
     return new_one_v3
         
 def return_boundary_s(positions):
@@ -602,4 +603,5 @@ def map_generate(size,starting_position,*special_requirement):
     version_d=wall_optimize(version_c)
     return version_d
 if __name__=='__main__':
-    boss_floor_generate([1,7],10).present()
+    a=boss_floor_generate([1,7],10)
+    a.present()
