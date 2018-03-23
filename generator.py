@@ -201,17 +201,17 @@ class Board:
         return None
             
     def prettyPrint(self, message = "Board", file = sys.stdout):
-    	print(message + ":", file = file)
-    	d = self.__dict__
-    	keys = sorted(d.keys())
-    	for key in keys:
-    		if key == "content" or key == "award_area":
-    			print(" " * 4 + key + ":", file = file)
-    			for line in d[key]:
-    				print(" " * 6 + str(line), file = file)
-    		else:
-    			print(" " * 4 + key + ":", d[key], file = file)
-    	print(file = file)
+        print(message + ":", file = file)
+        d = self.__dict__
+        keys = sorted(d.keys())
+        for key in keys:
+            if key == "content" or key == "award_area":
+                print(" " * 4 + key + ":", file = file)
+                for line in d[key]:
+                    print(" " * 6 + str(line), file = file)
+            else:
+                print(" " * 4 + key + ":", d[key], file = file)
+        print(file = file)
 
 def main_route_generate(size,start_posi,new_one):
 
