@@ -563,6 +563,8 @@ def door_generate(new_board):
                     new_board.wall.remove(i)
                     blank_board.assign(i,0)
                     new_board.assign(i,0)
+                if len(area_detect(blank_board))==1:
+                    break
 
             
     for i in doors:
