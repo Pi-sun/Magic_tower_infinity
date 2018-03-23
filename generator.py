@@ -550,19 +550,19 @@ def door_generate(new_board):
             break
         else:
             
-        for i in walls:
-            blank_board1=Board(blank_board.size)
-            for row_index in range(blank_board.length()):
-                for column_index in range(new_board.length()):
-                    if blank_board.check_item([row_index,column_index])==2:
-                        blank_board1.assign([row_index,column_index],2)
-            blank_board1.assign(i,0)
-            if len(area_detect(blank_board1))<len(area_detect(blank_board)):
-                doors.append(i)
-                walls.remove(i)
-                new_board.wall.remove(i)
-                blank_board.assign(i,0)
-                new_board.assign(i,0)
+            for i in walls:
+                blank_board1=Board(blank_board.size)
+                for row_index in range(blank_board.length()):
+                    for column_index in range(new_board.length()):
+                        if blank_board.check_item([row_index,column_index])==2:
+                            blank_board1.assign([row_index,column_index],2)
+                blank_board1.assign(i,0)
+                if len(area_detect(blank_board1))<len(area_detect(blank_board)):
+                    doors.append(i)
+                    walls.remove(i)
+                    new_board.wall.remove(i)
+                    blank_board.assign(i,0)
+                    new_board.assign(i,0)
 
             
     for i in doors:
