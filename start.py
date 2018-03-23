@@ -1,85 +1,71 @@
-import logging, threading, wx
-
 import floors
-from hero import Hero
 from textures import *
 
 GRID_DIM = floors.dim
 START_FLOOR, START_ROW, START_COL = floors.start
 
-LOADING_MAX_LENGTH = 5
+# Import this as early as possible,
+# otherwise Kivy may not register these settings
+from kivy.config import Config
+Config.set("graphics", "resizable", 0)
+Config.set("graphics", "width", CELL_SIZE * (GRID_DIM + 9))
+Config.set("graphics", "height", CELL_SIZE * (GRID_DIM + 1))
 
-WHITE = (204, 204, 204)
+from kivy.app import App
+from kivy.clock import Clock
+from kivy.core.window import Window
+from kivy.uix.image import Image
+from kivy.uix.widget import Widget
 
-def callRepeatedly(interval, func):
-	stopped = threading.Event()
-	def loop():
-		while not stopped.wait(interval): # the first call is in `interval` secs
-			wx.CallAfter(func)
-	threading.Thread(target = loop).start()    
-	return stopped.set
+from cells import Point
+from hero import Hero
 
-class GameFrame(wx.Frame):
-	def __init__(self):
-		super().__init__(None, title = "Magic Tower", style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX))
+class MagicTowerApp(App):
+	def build(self):
+		self.root = Widget()
 		
-		self.floors = floors.floors
+		self.root.add_widget(Image(
+			source = "res/fullbg.png",
+			allow_stretch = True,
+			size = Window.size))
 		
-		size = (CELL_SIZE * (GRID_DIM + 9), CELL_SIZE * (GRID_DIM + 1))
-		base = wx.Panel(self, -1, pos = (0, 0), size = size)
+		self.grid = Widget(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
+		self.root.add_widget(self.grid)
 		
-		bgBitmap = wx.Image("res/fullbg.png", wx.BITMAP_TYPE_ANY).Rescale(*size).ConvertToBitmap()
-		bg = wx.StaticBitmap(base, -1, bgBitmap, pos = (0, 0))
-
-		self.loading = wx.Panel(base, -1, pos = (CELL_SIZE * 4.5 + 1, CELL_SIZE * 0.5 + 1), size = (CELL_SIZE * GRID_DIM, CELL_SIZE * GRID_DIM))
-		
-		loadingLabel = wx.StaticText(self.loading, -1)
-		loadingLabel.SetFont(wx.Font(CELL_SIZE / 2, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
-		loadingLabel.SetForegroundColour(WHITE)
-		loadingLabel.SetLabelText("Preparing levels...")
-		size = loadingLabel.GetSize()
-		loadingLabel.SetPosition((CELL_SIZE * GRID_DIM / 2 - size[0] / 2, CELL_SIZE * (GRID_DIM / 2 - 0.1) - size[1]))
-		
-		borderWidth = round(CELL_SIZE * 0.06)
-		loadingBorders = [
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.12)), size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2)),
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 + LOADING_MAX_LENGTH / 2), CELL_SIZE * (GRID_DIM / 2 + 0.12)), size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2)),
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.12)), size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth)),
-			wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, CELL_SIZE * (GRID_DIM / 2 + 0.62) + borderWidth), size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth))
-		]
-		for border in loadingBorders:
-			border.SetBackgroundColour(WHITE)
-		
-		self.loadingBar = wx.Panel(self.loading, -1, pos = (CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2), CELL_SIZE * (GRID_DIM / 2 + 0.12) + borderWidth), size = (0, CELL_SIZE * 0.5))
-		self.loadingBar.SetBackgroundColour(WHITE)
-		
-		self.loading.Hide()
-		
-		self.image = wx.Image("res/mttexture.png", wx.BITMAP_TYPE_ANY)
-		
-		self.grid = wx.Panel(base, -1, pos = (CELL_SIZE * 4.5 + 1, CELL_SIZE * 0.5 + 1), size = (CELL_SIZE * GRID_DIM, CELL_SIZE * GRID_DIM))
-		self.cellDisplays = [[wx.StaticBitmap(self.grid, -1, Texture.none, (col * CELL_SIZE, row * CELL_SIZE)) for col in range(GRID_DIM)] for row in range(GRID_DIM)]
-		
+		# Cells are enlarged on each side to avoid gaps showing between the tiles
+		self.cellDisplays = [[TextureDisplay(
+			pos = (self.grid.pos[0] + CELL_SIZE * col - 0.3, self.grid.pos[1] + CELL_SIZE * (GRID_DIM - row - 1) - 0.2),
+			size = (CELL_SIZE + 0.6, CELL_SIZE + 0.4)) for col in range(GRID_DIM)] for row in range(GRID_DIM)]
+		for row in self.cellDisplays:
+			for cell in row:
+				self.grid.add_widget(cell)
+				
 		self.hero = Hero(self.grid, START_ROW, START_COL)
+		self.grid.add_widget(self.hero)
 		
-		self.Fit()
+		self.spark = Image(
+			source = "res/spark.png",
+			allow_stretch = True,
+			size = (CELL_SIZE, CELL_SIZE))
 		
+		return self.root
+		
+	def on_start(self):
+		self.floors = floors.floors
 		self.showFloor(START_FLOOR)
 		
 		self.blockedActions = 0
+				
+		self.keyboard = Window.request_keyboard(lambda: None, self)
+		self.keyboard.bind(on_key_down = self.onKeyDown)
 		
-		self.cancelUpdate = callRepeatedly(0.3, self.update)
-		
-		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
-		
-	def Destroy(self):
-		self.cancelUpdate()
-		return super().Destroy()
+		self.updateEvent = Clock.schedule_interval(self.update, 0.3)
+
+	def on_stop(self):
+		self.updateEvent.cancel()
 		
 	def showFloor(self, floor):
-		self.grid.Hide()
-		self.loading.Show()
-		self.loadingBar.SetSize((0, CELL_SIZE * 0.5))
+		self.root.remove_widget(self.grid)
 		
 		self.floorsLoading = floors.prepareFloor(floor, self.handleFloorPrepared)
 		self.targetFloorLoading = floor
@@ -88,70 +74,72 @@ class GameFrame(wx.Frame):
 		
 	def handleFloorPrepared(self, amount):
 		if self.floorsLoading:
-			self.loadingBar.SetSize((amount / self.floorsLoading * CELL_SIZE * LOADING_MAX_LENGTH, CELL_SIZE * 0.5))
-		
+			print("Loaded", amount, "/", self.floorsLoading)
+			
 		if amount == self.floorsLoading:
-			print("Loaded")
-			self.grid.Show()
-			self.loading.Hide()
+			self.root.add_widget(self.grid)
 			
 			self.floorsLoading = 0
 			self.currentFloor = self.targetFloorLoading
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
-					self.floors[self.currentFloor][row][col].initialize(wx.Point(row, col), self.cellDisplays[row][col])					
+					self.floors[self.currentFloor][row][col].initialize(Point(row, col), self.cellDisplays[row][col])					
 		
-	def update(self):
+	def update(self, dt):
 		if not self.floorsLoading:
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
 					self.floors[self.currentFloor][row][col].update()
-		
-	def onKeyPress(self, event):
+	
+	def onKeyDown(self, keyboard, keycode, text, modifiers):
+		print('The key', keycode[1], 'have been pressed')
+		print(' - modifiers are %r' % modifiers)
+	
 		if not self.floorsLoading and not self.blockedActions:
-			keycode = event.GetKeyCode()
-			if keycode == wx.WXK_DOWN:
-				self.interactBy((1, 0))
-			elif keycode == wx.WXK_UP:
-				self.interactBy((-1, 0))
-			elif keycode == wx.WXK_RIGHT:
-				self.interactBy((0, 1))
-			elif keycode == wx.WXK_LEFT:
-				self.interactBy((0, -1))
-			elif keycode == ord("A"):
+			if keycode[1] == "down":
+				self.interactBy(Point(1, 0))
+			elif keycode[1] == "up":
+				self.interactBy(Point(-1, 0))
+			elif keycode[1] == "right":
+				self.interactBy(Point(0, 1))
+			elif keycode[1] == "left":
+				self.interactBy(Point(0, -1))
+			elif keycode[1] == "a":
 				self.moveByFloors(1)
-			elif keycode == ord("Z"):
+			elif keycode[1] == "z":
 				self.moveByFloors(-1)
-			else:
-				event.Skip()
-			
+	
 	def blockActions(self):
 		self.blockedActions += 1
 			
 	def unblockActions(self):
 		self.blockedActions -= 1
-			
+		
+	def showSpark(self):
+		self.spark.pos = self.hero.pos
+		self.grid.add_widget(self.spark)
+		
+	def hideSpark(self):
+		self.grid.remove_widget(self.spark)
+				
 	def moveByFloors(self, change):
 		if self.currentFloor + change > 0:
 			self.showFloor(self.currentFloor + change)
 			
 	def setCell(self, cell, location):
-		location = wx.Point(location)
-		
-		cell.initialize(location, self.cellDisplays[location.x][location.y])
-		self.floors[self.currentFloor][location.x][location.y] = cell
-			
+		cell.initialize(location, self.cellDisplays[location.row][location.col])
+		self.floors[self.currentFloor][location.row][location.col] = cell
+
 	def interactBy(self, offset):
 		self.hero.turnTo(offset)
 	
 		target = self.hero.location + offset
-		if 0 <= target.x < GRID_DIM and 0 <= target.y < GRID_DIM:
-			self.floors[self.currentFloor][target.x][target.y].interact(self)
-			
-if __name__ == "__main__":
-	app = wx.App()
-	Texture.init()
-	
-	frame = GameFrame()
-	frame.Show()
-	app.MainLoop()
+		if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
+			self.floors[self.currentFloor][target.row][target.col].interact(self)
+
+if __name__ == '__main__':
+	init_textures()
+	try:
+		MagicTowerApp().run()
+	except KeyboardInterrupt:
+		exit()

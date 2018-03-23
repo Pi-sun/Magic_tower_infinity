@@ -1,25 +1,35 @@
-import wx
+from kivy.core.image import Image as TextureImage
+from kivy.graphics import Rectangle
+from kivy.uix.widget import Widget
 
 TEXTURE_SIZE = 32
 CELL_SIZE = 50
 
-class Texture:
-	@classmethod
-	def init(self):
-		self.textureMap = wx.Image("res/mttexture.png", wx.BITMAP_TYPE_ANY)
-		self.none = wx.Bitmap.FromRGBA(CELL_SIZE, CELL_SIZE, alpha = 0)
-		
-		self.spark = wx.Image("res/spark.png", wx.BITMAP_TYPE_ANY).Rescale(CELL_SIZE, CELL_SIZE).ConvertToBitmap()
-	
-	@classmethod
-	def texture(self, row, col):
-		return self.textureMap.GetSubImage((col * TEXTURE_SIZE, row * TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE)).Rescale(CELL_SIZE, CELL_SIZE).ConvertToBitmap()
+def init_textures():
+	global atlas
+	atlas = TextureImage("res/mttexture.png").texture
 
-class TextureDisplay:
+def texture(row, col):
+	return atlas.get_region(TEXTURE_SIZE * col, atlas.size[1] - TEXTURE_SIZE * (row + 1), TEXTURE_SIZE, TEXTURE_SIZE)
+
+class TextureDisplay(Widget):
+	def draw(self, texture):
+		self.canvas.clear()
+		if texture:
+			with self.canvas:
+				Rectangle(
+					texture = texture,
+					pos = self.pos,
+					size = self.size)
+
+class Texture:
 	def initialize(self, display):
 		self.display = display
+		
+	def update(self):
+		pass
 
-class SingleTextureDisplay(TextureDisplay):
+class SingleTexture(Texture):
 	def __init__(self, textureRow, textureCol):
 		self.textureRow = textureRow
 		self.textureCol = textureCol
@@ -28,14 +38,11 @@ class SingleTextureDisplay(TextureDisplay):
 		super().initialize(display)
 		
 		if self.textureRow == -1 and self.textureCol == -1:
-			display.SetBitmap(Texture.none)
+			display.draw(None)
 		else:
-			display.SetBitmap(Texture.texture(self.textureRow, self.textureCol))
-
-	def update(self):
-		pass
+			display.draw(texture(self.textureRow, self.textureCol))
 		
-class FourTextureDisplay(TextureDisplay):
+class FourTexture(Texture):
 	def __init__(self, textureRow, textureCol):
 		self.textureRow = textureRow
 		self.textureCol = textureCol
@@ -44,9 +51,10 @@ class FourTextureDisplay(TextureDisplay):
 	def initialize(self, display):
 		super().initialize(display)
 		
-		self.display.SetBitmap(Texture.texture(self.textureRow + self.currentTexture, self.textureCol))
+		self.display.draw(texture(self.textureRow + self.currentTexture, self.textureCol))
 
 	def update(self):
+		super().update()
 		self.currentTexture += 1
 		self.currentTexture %= 4
-		self.display.SetBitmap(Texture.texture(self.textureRow, self.textureCol + self.currentTexture))
+		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture))

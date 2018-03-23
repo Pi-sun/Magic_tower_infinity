@@ -1,5 +1,20 @@
-import math, threading, wx
+from kivy.clock import Clock
+
 from textures import *
+
+class Point:
+	def __init__(self, row, col):
+		self.row = row
+		self.col = col
+		
+	def __eq__(self, other):
+		return self.row == other.row and self.col == other.col
+		
+	def __add__(self, other):
+		return Point(self.row + other.row, self.col + other.col)
+		
+	def __sub__(self, other):
+		return Point(self.row - other.row, self.col - other.col)
 
 KEY_YELLOW = "yellow"
 KEY_BLUE = "blue"
@@ -17,12 +32,6 @@ DOOR_TEXTURE_ROWS = {
 	KEY_RED: 6
 }
 
-def silent(lam):
-	try:
-		lam()
-	except RuntimeError:
-		pass
-
 class Cell:
 	def __init__(self, texture):
 		self.texture = texture
@@ -39,7 +48,7 @@ class Cell:
 		
 class Empty(Cell):
 	def __init__(self):
-		super().__init__(SingleTextureDisplay(-1, -1))
+		super().__init__(SingleTexture(-1, -1))
 	
 	def interact(self, app):
 		app.hero.moveBy(self.location - app.hero.location)
@@ -53,11 +62,11 @@ class Impassable(Cell):
 		
 class Wall(Impassable):
 	def __init__(self):
-		super().__init__(SingleTextureDisplay(8, 0))
+		super().__init__(SingleTexture(8, 0))
 		
 class KeyedDoor(Cell):
 	def __init__(self, key):
-		super().__init__(SingleTextureDisplay(DOOR_TEXTURE_ROWS[key], 0))
+		super().__init__(SingleTexture(DOOR_TEXTURE_ROWS[key], 0))
 		self.key = key
 		
 	def interact(self, app):
@@ -82,36 +91,30 @@ class Monster(Cell):
 			app.hero.moveBy(self.location - app.hero.location)
 			
 			app.blockActions()
-			bitmap = wx.StaticBitmap(app.hero, -1, Texture.spark)
-			bitmap.Hide()
-			
-			print("Hit", heroStrikes)
 			
 			for i in range(heroStrikes):
 				def strike(i):
-					silent(lambda: bitmap.Show())
-					threading.Timer(0.15, lambda: silent(lambda: bitmap.Hide())).start()
+					app.showSpark()
+					Clock.schedule_once(lambda dt: app.hideSpark(), 0.15)
 					if i != heroStrikes - 1:
 						app.hero.updateHealth(-monsterDamage)
 				def createStrike(i):
-					return lambda: strike(i)
-				threading.Timer(0.3 * i + 0.15, lambda: wx.CallAfter(createStrike(i))).start()
+					return lambda dt: strike(i)
+				Clock.schedule_once(createStrike(i), 0.3 * i + 0.15)
 				
-			def clearBlock():
-				bitmap.Destroy()
+			def clearBlock(dt):
 				app.setCell(Empty(), self.location)
 				app.unblockActions()
-			threading.Timer(0.3 * heroStrikes, lambda: wx.CallAfter(clearBlock)).start()
+			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
 		
 class GreenSlime(Monster):
 	def __init__(self):
-		super().__init__(20, 15, 5, FourTextureDisplay(0, 4))
+		super().__init__(20, 15, 5, FourTexture(0, 4))
 		
 class SlimeKing(Monster):
 	def __init__(self):
-		super().__init__(20, 100, 0, FourTextureDisplay(3, 4))
-	
-		
+		super().__init__(20, 100, 0, FourTexture(3, 4))
+
 class PropertyImprover(Cell):
 	def __init__(self, texture):
 		super().__init__(texture)
@@ -122,7 +125,7 @@ class PropertyImprover(Cell):
 		
 class AttackCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTextureDisplay(11, 2))
+		super().__init__(SingleTexture(11, 2))
 		self.quantity = quantity
 		
 	def interact(self, app):
@@ -131,7 +134,7 @@ class AttackCrystal(PropertyImprover):
 		
 class DefenceCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTextureDisplay(11, 3))
+		super().__init__(SingleTexture(11, 3))
 		self.quantity = quantity
 		
 	def interact(self, app):
@@ -140,7 +143,7 @@ class DefenceCrystal(PropertyImprover):
 		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTextureDisplay(11, 0))
+		super().__init__(SingleTexture(11, 0))
 		self.quantity = quantity
 		
 	def interact(self, app):

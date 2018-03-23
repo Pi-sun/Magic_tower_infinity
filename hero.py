@@ -1,29 +1,33 @@
-import threading, wx
+from kivy.clock import Clock
 
+from cells import Point
+from floors import dim
 from textures import *
 
-def heroTextureRow(offset):
-	offset = wx.Point(offset)
-	if offset == (1, 0):
+def heroTextureRow(offset = Point(1, 0)):
+	if offset == Point(1, 0):
 		return 0
-	elif offset == (-1, 0):
+	elif offset == Point(-1, 0):
 		return 3
-	elif offset == (0, 1):
+	elif offset == Point(0, 1):
 		return 2
-	elif offset == (0, -1):
+	elif offset == Point(0, -1):
 		return 1
 
-class Hero(wx.StaticBitmap):
-	def __init__(self, grid, row, col):
-		super().__init__(grid, -1, Texture.texture(0, 0), pos = (col * CELL_SIZE, row * CELL_SIZE))
+class Hero(TextureDisplay):
+	def __init__(self, parent, row, col):
+		super().__init__(pos = (parent.pos[0] + CELL_SIZE * col, parent.pos[1] + CELL_SIZE * (dim - row - 1)), size = (CELL_SIZE, CELL_SIZE))
+		self.base_pos = parent.pos
 		
 		self.step = 0
-		self.stepTimer = threading.Timer(1, lambda: None)
-		self.location = wx.Point(row, col)
+		self.stepTimer = None
+		self.location = Point(row, col)
 		
 		self.health = 100
 		self.attack = 10
 		self.defence = 10
+		
+		self.draw(texture(heroTextureRow(), self.step))
 		
 	def updateHealth(self, change):
 		self.health += change
@@ -35,22 +39,23 @@ class Hero(wx.StaticBitmap):
 		self.defence += change
 		
 	def moveBy(self, offset):
-		self.stepTimer.cancel()
+		if self.stepTimer:
+			self.stepTimer.cancel()
+			self.stepTimer = None
 
 		textureRow = heroTextureRow(offset)
 
 		self.location += offset
-		self.SetPosition((self.location.y * CELL_SIZE, self.location.x * CELL_SIZE))
+		self.pos = (self.base_pos[0] + CELL_SIZE * self.location.col, self.base_pos[1] + CELL_SIZE * (dim - self.location.row - 1))
 		self.nextStep(textureRow)
 	
 		if self.step % 2 != 0:
-			self.stepTimer = threading.Timer(0.15, lambda: wx.CallAfter(self.nextStep, textureRow))
-			self.stepTimer.start()
+			self.stepTimer = Clock.schedule_once(lambda dt: self.nextStep(textureRow), 0.15)
 			
 	def nextStep(self, textureRow):
 		self.step += 1
 		self.step %= 4
-		self.SetBitmap(Texture.texture(textureRow, self.step))
+		self.draw(texture(textureRow, self.step))
 		
 	def turnTo(self, offset):
-		self.SetBitmap(Texture.texture(heroTextureRow(offset), self.step))
+		self.draw(texture(heroTextureRow(offset), self.step))
