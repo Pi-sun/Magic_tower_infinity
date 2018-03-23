@@ -184,21 +184,7 @@ class Board:
         print('\n')
         return None
 
-    def award_area_optimize(self):
-        self.award=list()
-        self.award_listing=[]
-        index=0
-        for i in range(self.size):
-            self.award.append([-9]*self.size)
-        for i in self.main_route:
-            self.award[j[0]][j[1]]=-1
-        for i in self.side_route:
-            self.award[j[0]][j[1]]=-1
-        for i in self.award_area:
-            for j in i:
-                self.award[j[0]][j[1]]=index
-            index+=1
-        return None
+
             
     def prettyPrint(self, message = "Board", file = sys.stdout):
         print(message + ":", file = file)
@@ -562,10 +548,28 @@ def door_generate(new_board):
             new_board.assign(i,0)
         if len(area_detect(blank_board))==1:
             break
+        else:
+            
+        for i in walls:
+            blank_board1=Board(blank_board.size)
+            for row_index in range(blank_board.length()):
+                for column_index in range(new_board.length()):
+                    if blank_board.check_item([row_index,column_index])==2:
+                        blank_board1.assign([row_index,column_index],2)
+            blank_board1.assign(i,0)
+            if len(area_detect(blank_board1))<len(area_detect(blank_board)):
+                doors.append(i)
+                walls.remove(i)
+                new_board.wall.remove(i)
+                blank_board.assign(i,0)
+                new_board.assign(i,0)
+
+            
     for i in doors:
         new_board.special_assign(4,i)
         new_board.assign(i,3)
     return new_board
+
 def pre_generate(size,starting_position,size_area):
     
     dragon_width=size_area[0]
@@ -642,6 +646,7 @@ def map_generate(size,starting_position,*special_requirement):
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
     return version_d
+
 if __name__=='__main__':
     a=boss_floor_generate([1,7],10)
     a.present()
