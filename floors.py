@@ -1,4 +1,4 @@
-import random, threading
+import datetime, json, os, random, threading
 
 from kivy.clock import Clock
 
@@ -15,12 +15,31 @@ floors = {}
 startLocs = {1: start[1:]}
 
 SECTION_SIZE = 5
+DEBUG_LOG = True
+
+def prettyPrint(board, message, file):
+	print(message + ":", file = file)
+	d = board.__dict__
+	keys = sorted(d.keys())
+	for key in keys:
+		if key == "content":
+			print(" " * 4 + key + ":", file = file)
+			for line in d[key]:
+				print(" " * 4 + str(line), file = file)
+		else:
+			print(" " * 4 + key + ":", d[key], file = file)
+	print(file = file)
 
 class FloorPreparer:
 	def __init__(self, sectionStart, handler):
 		self.sectionStart = sectionStart
 		self.handler = handler
 		self.currentIndex = 0
+		
+		if DEBUG_LOG:
+			if not os.path.exists("logs"):
+				os.makedirs("logs")
+			self.file = open("logs/generator_%d_to_%d_" % (sectionStart, sectionStart + SECTION_SIZE - 1) + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S") + ".log", "w")
 		
 	def prepare(self):
 		index = self.sectionStart + self.currentIndex
@@ -53,16 +72,18 @@ class FloorPreparer:
 				floors[index].append(row)
 		
 			if len(starts) == 1 and len(ends) == 1 and starts[0] == startLocs[index]:
+				if DEBUG_LOG:
+					prettyPrint(floor, "Successful generation for #%d" % index, self.file)
+				
 				self.currentIndex += 1
 				self.handler(self.currentIndex)
 				if self.currentIndex < SECTION_SIZE:
 					self.prepare()
+				elif DEBUG_LOG:
+					self.file.close()
 			else:
-				print("Error at map:")
-				floor.present()
-				print("Start:", floor.start_position, "; End:", floor.end_position)
-				print("Side:", floor.side_route)
-				print("\n\n")
+				if DEBUG_LOG:
+					prettyPrint(floor, "Failed generation for #%d" % index, self.file)
 			
 				self.prepare()
 		workOn = lambda floor: Clock.schedule_once(lambda dt: afterWork(floor), 0)
