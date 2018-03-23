@@ -17,19 +17,6 @@ startLocs = {1: start[1:]}
 SECTION_SIZE = 5
 DEBUG_LOG = True
 
-def prettyPrint(board, message, file):
-	print(message + ":", file = file)
-	d = board.__dict__
-	keys = sorted(d.keys())
-	for key in keys:
-		if key == "content":
-			print(" " * 4 + key + ":", file = file)
-			for line in d[key]:
-				print(" " * 4 + str(line), file = file)
-		else:
-			print(" " * 4 + key + ":", d[key], file = file)
-	print(file = file)
-
 class FloorPreparer:
 	def __init__(self, sectionStart, handler):
 		self.sectionStart = sectionStart
@@ -73,7 +60,7 @@ class FloorPreparer:
 		
 			if len(starts) == 1 and len(ends) == 1 and starts[0] == startLocs[index]:
 				if DEBUG_LOG:
-					prettyPrint(floor, "Successful generation for #%d" % index, self.file)
+					floor.prettyPrint("Successful generation for #%d" % index, self.file)
 				
 				self.currentIndex += 1
 				self.handler(self.currentIndex)
@@ -83,7 +70,7 @@ class FloorPreparer:
 					self.file.close()
 			else:
 				if DEBUG_LOG:
-					prettyPrint(floor, "Failed generation for #%d" % index, self.file)
+					floor.prettyPrint("Failed generation for #%d" % index, self.file)
 			
 				self.prepare()
 		workOn = lambda floor: Clock.schedule_once(lambda dt: afterWork(floor), 0)

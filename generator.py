@@ -1,6 +1,6 @@
 # Magic Tower map generator - v0.02T
+import random, sys
 
-import random
 def boss_floor_generate(start_position,size):
     new_one=Board(size)
     new_one.start_position=start_position
@@ -200,7 +200,18 @@ class Board:
             index+=1
         return None
             
-                
+    def prettyPrint(self, message = "Board", file = sys.stdout):
+    	print(message + ":", file = file)
+    	d = self.__dict__
+    	keys = sorted(d.keys())
+    	for key in keys:
+    		if key == "content" or key == "award_area":
+    			print(" " * 4 + key + ":", file = file)
+    			for line in d[key]:
+    				print(" " * 6 + str(line), file = file)
+    		else:
+    			print(" " * 4 + key + ":", d[key], file = file)
+    	print(file = file)
 
 def main_route_generate(size,start_posi,new_one):
 

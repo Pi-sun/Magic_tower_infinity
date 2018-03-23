@@ -11,6 +11,8 @@ Config.set("graphics", "resizable", 0)
 Config.set("graphics", "width", CELL_SIZE * (GRID_DIM + 9))
 Config.set("graphics", "height", CELL_SIZE * (GRID_DIM + 1))
 
+import os, sys
+
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -21,6 +23,10 @@ from kivy.uix.widget import Widget
 
 from cells import Point
 from hero import Hero
+
+dir = os.path.dirname(sys.argv[0])
+if dir:
+	os.chdir(dir)
 
 LOADING_MAX_LENGTH = 5
 
