@@ -14,11 +14,31 @@ Config.set("graphics", "height", CELL_SIZE * (GRID_DIM + 1))
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.graphics import Color, Rectangle
 from kivy.uix.image import Image
+from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
 from cells import Point
 from hero import Hero
+
+LOADING_MAX_LENGTH = 5
+
+WHITE = (204 / 255, 204 / 255, 204 / 255)
+
+class ColorWidget(Widget):
+	def __init__(self, color, **kwargs):
+		super().__init__(**kwargs)
+		self.color = color
+		
+	def resize(self, width, height):
+		self.size = (width, height)
+		self.canvas.clear()
+		with self.canvas:
+			Color(*self.color)
+			Rectangle(
+				pos = self.pos,
+				size = self.size)
 
 class MagicTowerApp(App):
 	def build(self):
@@ -48,6 +68,32 @@ class MagicTowerApp(App):
 			allow_stretch = True,
 			size = (CELL_SIZE, CELL_SIZE))
 		
+		self.loading = Widget(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
+		borderWidth = round(CELL_SIZE * 0.06)
+		with self.loading.canvas:
+			Color(*WHITE)
+			Rectangle(
+				pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65) - borderWidth),
+				size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2))
+			Rectangle(
+				pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 + LOADING_MAX_LENGTH / 2), self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65) - borderWidth),
+				size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2))
+			Rectangle(
+				pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65) - borderWidth),
+				size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth))
+			Rectangle(
+				pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.15)),
+				size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth))
+		
+		self.loading.add_widget(Label(
+			text = "Preparing levels...",
+			font_size = CELL_SIZE / 2,
+			color = WHITE + (1,),
+			center = (self.loading.pos[0] + CELL_SIZE * GRID_DIM / 2, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 + 0.4))))
+		
+		self.loadingBar = ColorWidget(WHITE, pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2), self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65)))
+		self.loading.add_widget(self.loadingBar)
+		
 		return self.root
 		
 	def on_start(self):
@@ -66,18 +112,19 @@ class MagicTowerApp(App):
 		
 	def showFloor(self, floor):
 		self.root.remove_widget(self.grid)
+		self.root.add_widget(self.loading)
 		
 		self.floorsLoading = floors.prepareFloor(floor, self.handleFloorPrepared)
 		self.targetFloorLoading = floor
-		if not self.floorsLoading:
-			self.handleFloorPrepared(0)
+		self.handleFloorPrepared(0)
 		
 	def handleFloorPrepared(self, amount):
 		if self.floorsLoading:
-			print("Loaded", amount, "/", self.floorsLoading)
+			self.loadingBar.resize(amount / self.floorsLoading * CELL_SIZE * LOADING_MAX_LENGTH, CELL_SIZE * 0.5)
 			
 		if amount == self.floorsLoading:
 			self.root.add_widget(self.grid)
+			self.root.remove_widget(self.loading)
 			
 			self.floorsLoading = 0
 			self.currentFloor = self.targetFloorLoading
@@ -92,8 +139,7 @@ class MagicTowerApp(App):
 					self.floors[self.currentFloor][row][col].update()
 	
 	def onKeyDown(self, keyboard, keycode, text, modifiers):
-		print('The key', keycode[1], 'have been pressed')
-		print(' - modifiers are %r' % modifiers)
+		print("Pressed", keycode[1], ("with " + ", ".join(modifiers)) if modifiers else "")
 	
 		if not self.floorsLoading and not self.blockedActions:
 			if keycode[1] == "down":
