@@ -26,7 +26,7 @@ class FloorPreparer:
 		if DEBUG_LOG:
 			if not os.path.exists("logs"):
 				os.makedirs("logs")
-			self.file = open("logs/generator_%d_to_%d_" % (sectionStart, sectionStart + SECTION_SIZE - 1) + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S") + ".log", "w")
+			self.file = open("logs/generator_%d_to_%d_" % (sectionStart, sectionStart + SECTION_SIZE - 1) + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log", "w")
 		
 	def prepare(self):
 		index = self.sectionStart + self.currentIndex
