@@ -164,6 +164,15 @@ class PropertyImprover(Cell):
 		app.hero.moveBy(self.location - app.hero.location)
 		app.setCell(Empty(), self.location)
 		
+class Key(PropertyImprover):
+	def __init__(self, key):
+		super().__init__(SingleTexture(*KEY_TEXTURES[key]))
+		self.key = key
+		
+	def interact(self, app):
+		app.hero.updateKey(self.key, 1)
+		super().interact(app)
+		
 class AttackCrystal(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(11, 2))
