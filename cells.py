@@ -2,6 +2,16 @@ from kivy.clock import Clock
 
 from textures import *
 
+def animate(texture, keyframes, completion = None):
+	for i in range(len(keyframes)):
+		def work(i):
+			texture.reload(*keyframes[i])
+			if i == len(keyframes) - 1 and completion:
+				completion()
+		def createWork(i):
+			return lambda dt: work(i)
+		Clock.schedule_once(createWork(i), 0.1 * i)
+
 class Point:
 	def __init__(self, row, col):
 		self.row = row
@@ -70,7 +80,15 @@ class KeyedDoor(Cell):
 		self.key = key
 		
 	def interact(self, app):
-		pass
+		if app.hero.keys[self.key] > 0:
+			app.hero.updateKey(self.key, -1)
+			
+			app.blockActions()
+		
+			def clearBlock():
+				app.setCell(Empty(), self.location)
+				app.unblockActions()
+			animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [(-1, -1)], clearBlock)
 		
 class Monster(Cell):
 	def __init__(self, health, attack, defence, texture):
