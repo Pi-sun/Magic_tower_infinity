@@ -42,10 +42,13 @@ class FloorPreparer:
 				for ci in range(dim):
 					item = floor.content[ri][ci]
 					if item == -1:
-						row.append(Empty()) # TODO: Staircase down
+						if index == 1:
+							row.append(Empty())
+						else:
+							row.append(Downstair())
 						starts.append((ri, ci))
 					elif item == -2:
-						row.append(Empty()) # TODO: Staircase up
+						row.append(Upstair())
 						startLocs[index + 1] = (ri, ci)
 						ends.append((ri, ci))
 					elif item == 0 or item == 1:

@@ -90,6 +90,29 @@ class KeyedDoor(Cell):
 				app.unblockActions()
 			animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [(-1, -1)], clearBlock)
 		
+class Stair(Cell):
+	def __init__(self, texture, direction):
+		super().__init__(texture)
+		self.direction = direction
+		
+	def interact(self, app):
+		app.hero.moveBy(self.location - app.hero.location)
+		
+		app.blockActions()
+		
+		def clearBlock(dt):
+			app.moveByFloors(self.direction)
+			app.unblockActions()
+		Clock.schedule_once(clearBlock, 0.2)
+		
+class Upstair(Stair):
+	def __init__(self):
+		super().__init__(SingleTexture(17, 2), 1)
+		
+class Downstair(Stair):
+	def __init__(self):
+		super().__init__(SingleTexture(17, 3), -1)
+		
 class Monster(Cell):
 	def __init__(self, health, attack, defence, texture):
 		super().__init__(texture)
