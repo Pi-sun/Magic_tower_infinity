@@ -26,7 +26,7 @@ class FloorPreparer:
 		if DEBUG_LOG:
 			if not os.path.exists("logs"):
 				os.makedirs("logs")
-			self.file = open("logs/generator_%d_to_%d_" % (sectionStart, sectionStart + SECTION_SIZE - 1) + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log", "w")
+			self.file = open("logs/generator_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_%d-to-%d.log" % (sectionStart, sectionStart + SECTION_SIZE - 1), "w")
 		
 	def prepare(self):
 		index = self.sectionStart + self.currentIndex
@@ -42,10 +42,13 @@ class FloorPreparer:
 				for ci in range(dim):
 					item = floor.content[ri][ci]
 					if item == -1:
-						row.append(Empty()) # TODO: Staircase down
+						if index == 1:
+							row.append(Empty())
+						else:
+							row.append(Downstair())
 						starts.append((ri, ci))
 					elif item == -2:
-						row.append(Empty()) # TODO: Staircase up
+						row.append(Upstair())
 						startLocs[index + 1] = (ri, ci)
 						ends.append((ri, ci))
 					elif item == 0 or item == 1:

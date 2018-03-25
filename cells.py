@@ -2,6 +2,16 @@ from kivy.clock import Clock
 
 from textures import *
 
+def animate(texture, keyframes, completion = None):
+	for i in range(len(keyframes)):
+		def work(i):
+			texture.reload(*keyframes[i])
+			if i == len(keyframes) - 1 and completion:
+				completion()
+		def createWork(i):
+			return lambda dt: work(i)
+		Clock.schedule_once(createWork(i), 0.1 * i)
+
 class Point:
 	def __init__(self, row, col):
 		self.row = row
@@ -70,7 +80,38 @@ class KeyedDoor(Cell):
 		self.key = key
 		
 	def interact(self, app):
-		pass
+		if app.hero.keys[self.key] > 0:
+			app.hero.updateKey(self.key, -1)
+			
+			app.blockActions()
+		
+			def clearBlock():
+				app.setCell(Empty(), self.location)
+				app.unblockActions()
+			animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [(-1, -1)], clearBlock)
+		
+class Stair(Cell):
+	def __init__(self, texture, direction):
+		super().__init__(texture)
+		self.direction = direction
+		
+	def interact(self, app):
+		app.hero.moveBy(self.location - app.hero.location)
+		
+		app.blockActions()
+		
+		def clearBlock(dt):
+			app.moveByFloors(self.direction)
+			app.unblockActions()
+		Clock.schedule_once(clearBlock, 0.2)
+		
+class Upstair(Stair):
+	def __init__(self):
+		super().__init__(SingleTexture(17, 2), 1)
+		
+class Downstair(Stair):
+	def __init__(self):
+		super().__init__(SingleTexture(17, 3), -1)
 		
 class Monster(Cell):
 	def __init__(self, health, attack, defence, texture):
@@ -122,6 +163,15 @@ class PropertyImprover(Cell):
 	def interact(self, app):
 		app.hero.moveBy(self.location - app.hero.location)
 		app.setCell(Empty(), self.location)
+		
+class Key(PropertyImprover):
+	def __init__(self, key):
+		super().__init__(SingleTexture(*KEY_TEXTURES[key]))
+		self.key = key
+		
+	def interact(self, app):
+		app.hero.updateKey(self.key, 1)
+		super().interact(app)
 		
 class AttackCrystal(PropertyImprover):
 	def __init__(self, quantity):

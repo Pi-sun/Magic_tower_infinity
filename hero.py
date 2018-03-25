@@ -1,3 +1,5 @@
+import collections
+
 from kivy.clock import Clock
 
 from cells import Point
@@ -27,6 +29,9 @@ class Hero(TextureDisplay):
 		self.attack = 10
 		self.defence = 10
 		
+		self.keys = collections.defaultdict(lambda: 0)
+		self.keys["yellow"] = 100000 # for testing
+		
 		self.draw(texture(heroTextureRow(), self.step))
 		
 	def updateHealth(self, change):
@@ -37,6 +42,9 @@ class Hero(TextureDisplay):
 		
 	def updateDefence(self, change):
 		self.defence += change
+		
+	def updateKey(self, key, change):
+		self.keys[key] += change
 		
 	def moveBy(self, offset):
 		if self.stepTimer:

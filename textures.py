@@ -23,6 +23,9 @@ class TextureDisplay(Widget):
 					size = self.size)
 
 class Texture:
+	def __init__(self):
+		self.display = None
+
 	def initialize(self, display):
 		self.display = display
 		
@@ -31,19 +34,31 @@ class Texture:
 
 class SingleTexture(Texture):
 	def __init__(self, textureRow, textureCol):
+		super().__init__()
+		
 		self.textureRow = textureRow
 		self.textureCol = textureCol
 		
 	def initialize(self, display):
 		super().initialize(display)
+		self.draw()
 		
-		if self.textureRow == -1 and self.textureCol == -1:
-			display.draw(None)
-		else:
-			display.draw(texture(self.textureRow, self.textureCol))
+	def reload(self, textureRow, textureCol):
+		self.textureRow = textureRow
+		self.textureCol = textureCol
+		self.draw()
+		
+	def draw(self):
+		if self.display:
+			if self.textureRow == -1 and self.textureCol == -1:
+				self.display.draw(None)
+			else:
+				self.display.draw(texture(self.textureRow, self.textureCol))
 		
 class FourTexture(Texture):
 	def __init__(self, textureRow, textureCol):
+		super().__init__()
+		
 		self.textureRow = textureRow
 		self.textureCol = textureCol
 		self.currentTexture = 0
