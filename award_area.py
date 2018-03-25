@@ -2,10 +2,17 @@ import generator
 
 def award_area_optimize(new_board):
     new_board.award=list()
-    new_board.award_listing=[None,None]*len(new_board.award_area)
+    new_board.award_index=list()
+    new_board.award_listing=[None]*len(new_board.award_area)
     new_board.key_main=[]
     new_board.key_side=[]
     index=0
+    for i in range(new_board.size):
+        new_board.award_index.append([None]*new_board.size)
+    for i in new_board.main_route:
+        new_board.award_index[i[0]][i[1]]=-1
+    for i in new_board.side_route:
+        new_board.award_index[i[0]][i[1]]=-1
     for i in range(new_board.size):
         new_board.award.append([-9]*new_board.size)
     for i in new_board.main_route:
@@ -29,6 +36,26 @@ def award_area_optimize(new_board):
             new_board.key_side.append(i)
         new_board.assign(i,0)
     rem_door=new_board.door
+
+    while True:
+        index=0
+        temp_set=[]
+        success=False
+        for i in remain_door:
+            for j in generator.return_boundary(i):
+                if new_board.award_index[j[0]][j[1]]==index-1:
+                    success=True
+                    root=new_board.award[j[0]][j[1]]
+                elif success=True:
+                    temp_set.append(new_board.award[j[0]][j[1]])
+            success=False
+            for j in temp_set:
+                new_board.award_listing[j[0]][j[1]]=root
+                for k in new_board.award_area[j]:
+                    new_board.award_index[k[0]][k[1]]=index
+            index+=1
+                
+            
     
     return None
 
