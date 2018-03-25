@@ -9,12 +9,12 @@ def award_area_optimize(new_board):
     for i in range(new_board.size):
         new_board.award.append([-9]*new_board.size)
     for i in new_board.main_route:
-        new_board.award[j[0]][j[1]]=-1
+        new_board.award[i[0]][i[1]]=-1
     for i in new_board.side_route:
-        new_board.award[j[0]][j[1]]=-1
+        new_board.award[i[0]][i[1]]=-1
     for i in new_board.award_area:
         for j in i:
-            new_board.award[j[0]][j[1]]=index
+            new_board.award[i[0]][i[1]]=index
         index+=1
     'all walkable square on the board indexed -1 for main nad side route, 0,1,2,3,4 for award areas'
     clean_board(new_board)
@@ -28,9 +28,17 @@ def award_area_optimize(new_board):
         if area_detect(new_board)>1:
             new_board.key_side.append(i)
         new_board.assign(i,0)
-    for i in new_board.door:
-        check_award_index(new_board,i)
+    rem_door=new_board.door
+    
     return None
+
+def check_connect(board,posi1,posi2):
+    result=False
+    area=generator.area_detect(board)
+    for i in area:
+        if posi1 in area and posi2 in area:
+            result=True
+    return result
 
 def check_award_index(board,position):
     'return the ajacent tile with unique award index'
@@ -70,5 +78,5 @@ def restore_board(board):
     board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
-a=generator.Board(10)
+a=generator.map_generate(7,[1,1])
 award_area_optimize(a)

@@ -99,6 +99,8 @@ class Board:
     def __init__(self,size):
         self.main_route=[]
         self.side_route=[]
+        self.start_position=[]
+        self.end_position=[]
         self.door=[]
         self.wall=[]
         self.side_start=None
