@@ -276,7 +276,8 @@ def main_route_generate(size,start_posi,new_one):
     'main route generated'
 
     'side route generated began'
-    if len(route)>6:
+    new_one.side_trial=''
+    if len(route)>4:
         side_start=random.randint(0,int(0.6*len(route)))
         starting=route[side_start]
         side_route=[starting]
@@ -295,7 +296,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0]+step+1,node[1]]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,1)==3:
+                        elif new_one.nearby_check(new_point,1)==1:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -307,7 +308,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0],node[1]+step+1]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,1)==3:
+                        elif new_one.nearby_check(new_point,1)==1:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -319,7 +320,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0]-step-1,node[1]]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,1)==3:
+                        elif new_one.nearby_check(new_point,1)==1:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -331,7 +332,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_point=[node[0],node[1]-step-1]
                         if new_one.nearby_check(new_point,0)==4:
                             temp_route1.append(new_point)
-                        elif new_one.nearby_check(new_point,1)==3:
+                        elif new_one.nearby_check(new_point,1)==1:
                             temp_route1.append(new_point)
                             success='t'
                             break
@@ -340,6 +341,7 @@ def main_route_generate(size,start_posi,new_one):
                             break
 
                 if success=='y':
+                    new_one.side_trial+='y'
                     trial=0
                     side_route.extend(temp_route1)
                     new_one.assign(node,3)
@@ -348,6 +350,7 @@ def main_route_generate(size,start_posi,new_one):
                     node=side_route[-1]
                     new_one.assign(node,0)
                 elif success=='t' and (len(side_route)+len(temp_route1))>2:
+                    new_one.side_trial+='t'
                     side_route.extend(temp_route1)
                     new_one.assign(node,3)
                     for i in side_route:
@@ -355,11 +358,12 @@ def main_route_generate(size,start_posi,new_one):
                     if_side=True
                     break
                 elif success=='t':
+                    new_one.side_trial+='t'
                     for i in side_route:
                         new_one.assign(i,0)
                     if_side=False
                     new_one.assign(starting,1)
-                    if_end=random.randint(0,1)
+                    if_end=random.randint(0,5)
                     if if_end==1:
                         break
                     else:
@@ -368,6 +372,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_one.assign(starting,0)
                         trial=0
                 else:
+                    new_one.side_trial+='n'
                     trial+=1
 
                 if trial>20:
@@ -375,7 +380,7 @@ def main_route_generate(size,start_posi,new_one):
                         new_one.assign(i,0)
                     new_one.assign(starting,1)
                     if_side=False
-                    if_end=random.randint(0,1)
+                    if_end=random.randint(0,5)
                     if if_end==1:
                         break
                     else:
@@ -550,8 +555,11 @@ def door_generate(new_board):
             new_board.assign(i,0)
         if len(area_detect(blank_board))==1:
             break
-        else:
-            
+    new_board.error=['step1']
+
+    if True:
+        if len(area_detect(blank_board))!=1:
+            new_board.error=['step2']
             for i in walls:
                 blank_board1=Board(blank_board.size)
                 for row_index in range(blank_board.length()):
@@ -568,7 +576,7 @@ def door_generate(new_board):
                 if len(area_detect(blank_board))==1:
                     break
 
-            
+    new_board.error.append(area_detect(blank_board))
     for i in doors:
         new_board.special_assign(4,i)
         new_board.assign(i,3)
@@ -654,3 +662,4 @@ def map_generate(size,starting_position,*special_requirement):
 if __name__=='__main__':
     a=boss_floor_generate([1,7],10)
     a.present()
+    print(a.side_trial)
