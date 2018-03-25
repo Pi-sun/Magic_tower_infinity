@@ -1,4 +1,3 @@
-# Magic Tower map generator - v0.02T
 import random, sys
 
 def boss_floor_generate(start_position,size):

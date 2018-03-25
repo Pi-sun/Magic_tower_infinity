@@ -24,10 +24,6 @@ from kivy.uix.widget import Widget
 from cells import Point
 from hero import Hero
 
-dir = os.path.dirname(sys.argv[0])
-if dir:
-	os.chdir(dir)
-
 LOADING_MAX_LENGTH = 5
 
 WHITE = (204 / 255, 204 / 255, 204 / 255)
@@ -190,8 +186,13 @@ class MagicTowerApp(App):
 			self.floors[self.currentFloor][target.row][target.col].interact(self)
 
 if __name__ == '__main__':
+	dir = os.path.dirname(sys.argv[0])
+	if dir:
+		os.chdir(dir)
+	
 	init_textures()
 	try:
 		MagicTowerApp().run()
 	except KeyboardInterrupt:
-		exit()
+		pass
+	floors.stopPreparation()
