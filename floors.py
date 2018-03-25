@@ -24,6 +24,18 @@ class EndGeneration(Exception):
     pass
 
 def generateSection(callback, file = sys.stdout):
+    # Meanings of variables, with examples:
+    # (when generating levels 11 - 15, where SECTION_SIZE = 5)
+    # `i` takes values 0 - 4
+    # `index` takes values 11 - 15
+    # `nextFloor` is kept as 11 (the first floor's index)
+    # `nextStart` is kept as the start position of level 11
+    # `start_pos` is constantly updated to be the start position of the next floor
+    # `board` is the current floor, represented as a Board object (from generator.py)
+    # `floor` is the current floor, represented as an array of Cells (from cells.py)
+    # `callback` parameter of this function must be called after every round of
+    #    generation to update graphics
+
     global nextFloor, nextStart
     
     start_pos = nextStart
