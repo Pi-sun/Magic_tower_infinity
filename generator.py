@@ -21,10 +21,12 @@ def boss_floor_generate(start_position,size):
         for x in range(int(0.5*size)+1,size):
             for y in range(size):
                 new_one.special.append([x,y])
-                new_one.assign([x,y],5)        
+                new_one.assign([x,y],5)
+    new_one.special_wall=[]
     for i in range(size):
         new_one.assign([wall_y,i],2)
         new_one.wall.append([wall_y,i])
+        new_one.special_wall.append([wall_y,i])
     if start_position[1]<int(0.5*size):
         for i in range(start_position[1]+1,int(0.5*size)+1):
             position=[start_position[0],i]
@@ -97,6 +99,7 @@ def return_boundary(positions):
 class Board:
     'a class which describes a board in the game'
     def __init__(self,size):
+        self.special_wall=[]
         self.main_route=[]
         self.side_route=[]
         self.start_position=[]
@@ -541,20 +544,21 @@ def door_generate(new_board):
                 if [row_index,column_index] not in new_board.special:
                     walls.append([row_index,column_index])
     for i in walls:
-        blank_board1=Board(blank_board.size)
-        for row_index in range(blank_board.length()):
-            for column_index in range(new_board.length()):
-                if blank_board.check_item([row_index,column_index])==2:
-                    blank_board1.assign([row_index,column_index],2)
-        blank_board1.assign(i,0)
-        if len(area_detect(blank_board1))<len(area_detect(blank_board)):
-            doors.append(i)
-            walls.remove(i)
-            new_board.wall.remove(i)
-            blank_board.assign(i,0)
-            new_board.assign(i,0)
-        if len(area_detect(blank_board))==1:
-            break
+        if i not in new_board.special_wall:
+            blank_board1=Board(blank_board.size)
+            for row_index in range(blank_board.length()):
+                for column_index in range(new_board.length()):
+                    if blank_board.check_item([row_index,column_index])==2:
+                        blank_board1.assign([row_index,column_index],2)
+            blank_board1.assign(i,0)
+            if len(area_detect(blank_board1))<len(area_detect(blank_board)):
+                doors.append(i)
+                walls.remove(i)
+                new_board.wall.remove(i)
+                blank_board.assign(i,0)
+                new_board.assign(i,0)
+            if len(area_detect(blank_board))==1:
+                break
     new_board.error=['step1']
 
     if True:
