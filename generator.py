@@ -451,7 +451,7 @@ def area_detect(new_board):
 def create_subarea(area,starting_position,size):
     trial=0
     while True:
-        print('b')
+
 
         area1=[starting_position]
         pre_area=[starting_position]
@@ -469,7 +469,7 @@ def create_subarea(area,starting_position,size):
                 area1.remove(temp_area[index])
                 pre_area.remove(temp_area[index])
                 temp_area.remove(temp_area[index])
-            print('a')
+
             if len(area1)==size:
 
                 break
@@ -500,7 +500,7 @@ def divide_area(area):
     final_area=[]
     wall_area=[]
     while True:
-        print(len(remaining_area))
+
         if len(remaining_area)>9:
             for starting_point in range(len(remaining_area)):
                 size=random.randint(3,8)
@@ -509,7 +509,7 @@ def divide_area(area):
                     
                     temp_area=temp[0]
                     temp_wall=temp[1]
-                    print(temp_area,'shit',temp_wall,'shit',remaining_area)
+
                     temp_remove=temp_area+temp_wall
                     final_area.append(temp_remove)
                     wall_area.extend(temp_wall)
