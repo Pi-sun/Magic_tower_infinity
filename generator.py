@@ -279,7 +279,7 @@ def main_route_generate(size,start_posi,new_one):
 
     'side route generated began'
     new_one.side_trial=''
-    if len(route)>4:
+    if len(route)>2:
         side_start=random.randint(0,int(0.6*len(route)))
         starting=route[side_start]
         side_route=[starting]
@@ -451,18 +451,27 @@ def area_detect(new_board):
 def create_subarea(area,starting_position,size):
     trial=0
     while True:
+
+
         area1=[starting_position]
         pre_area=[starting_position]
         while True:
-            this_size=0
+ 
             temp_area=[]
             for tile in return_boundary(pre_area):
                 if tile in area:
                     area1.append(tile)
-                    this_size+=1
                     temp_area.append(tile)
-            pre_area=temp_area
-            if this_size>=len(pre_area)-1:
+            pre_area.extend(temp_area)
+            while len(area1)>size:
+                #print('len(area1)',len(area1),size)
+                index=random.randint(0,len(temp_area)-1)
+                area1.remove(temp_area[index])
+                pre_area.remove(temp_area[index])
+                temp_area.remove(temp_area[index])
+
+            if len(area1)==size:
+
                 break
         wall_area=[]
         for item in return_boundary_s(area1):
@@ -477,7 +486,8 @@ def create_subarea(area,starting_position,size):
             break
         else:
             trial+=1
-        if trial>10:
+
+        if trial>5:
             area1=area
             wall_area=[]
             break
@@ -490,12 +500,16 @@ def divide_area(area):
     final_area=[]
     wall_area=[]
     while True:
-        if len(remaining_area)>12:
+
+        if len(remaining_area)>9:
             for starting_point in range(len(remaining_area)):
-                size=random.randint(3,12)
-                if len((create_subarea(remaining_area,remaining_area[starting_point],size))[1])!=0:
-                    temp_area=(create_subarea(remaining_area,remaining_area[starting_point],size))[0]
-                    temp_wall=(create_subarea(remaining_area,remaining_area[starting_point],size))[1]
+                size=random.randint(3,8)
+                temp=(create_subarea(remaining_area,remaining_area[starting_point],size))
+                if len(temp[1])!=0:
+                    
+                    temp_area=temp[0]
+                    temp_wall=temp[1]
+
                     temp_remove=temp_area+temp_wall
                     final_area.append(temp_remove)
                     wall_area.extend(temp_wall)
@@ -551,11 +565,13 @@ def door_generate(new_board):
                         blank_board1.assign([row_index,column_index],2)
             blank_board1.assign(i,0)
             if len(area_detect(blank_board1))<len(area_detect(blank_board)):
-                doors.append(i)
-                walls.remove(i)
-                new_board.wall.remove(i)
-                blank_board.assign(i,0)
-                new_board.assign(i,0)
+                ifgen=random.randint(0,1)
+                if ifgen==1:
+                    doors.append(i)
+                    walls.remove(i)
+                    new_board.wall.remove(i)
+                    blank_board.assign(i,0)
+                    new_board.assign(i,0)
             if len(area_detect(blank_board))==1:
                 break
     new_board.error=['step1']
@@ -663,6 +679,5 @@ def map_generate(size,starting_position,*special_requirement):
     return version_d
 
 if __name__=='__main__':
-    a=boss_floor_generate([1,7],10)
+    a=map_generate(11,[1,7])
     a.present()
-    print(a.side_trial)
