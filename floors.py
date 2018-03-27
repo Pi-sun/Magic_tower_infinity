@@ -61,10 +61,8 @@ def generateSection(callback, file = sys.stdout):
                         row.append(Empty())
                     else:
                         row.append(Downstair())
-                    starts.append((ri, ci))
                 elif item == -2:
                     row.append(Upstair())
-                    ends.append((ri, ci))
                 elif item == 0 or item == 1:
                     row.append(Empty())
                 elif item == 2:
@@ -75,13 +73,13 @@ def generateSection(callback, file = sys.stdout):
                     row.append(Wall()) # TODO: Special entities
             floor.append(row)
         
-        if len(starts) == 1 and len(ends) == 1 and starts[0] == start_pos:
+        if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
             if DEBUG_LOG:
                 board.prettyPrint("Successful generation for #%d" % index, file)
             
             callback(i + 1, index, floor)
             i += 1
-            start_pos = ends[0]
+            start_pos = tuple(board.end_position)
         else:
             if DEBUG_LOG:
                 board.prettyPrint("Failed generation for #%d" % index, file)
