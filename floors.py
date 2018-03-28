@@ -23,7 +23,7 @@ nextStart = start[1:]
 class EndGeneration(Exception):
     pass
 
-def generateSection(callback, file = sys.stdout):
+def generate_section(callback, file = sys.stdout):
     # Meanings of variables, with examples:
     # (when generating levels 11 - 15, where SECTION_SIZE = 5)
     # `i` takes values 0 - 4
@@ -106,7 +106,7 @@ def generateFloors(iters, callback):
             Clock.schedule_once(createWork(i), 0)
         
         try:
-            generateSection(operate, file)
+            generate_section(operate, file)
         except EndGeneration:
             return
         finally:
