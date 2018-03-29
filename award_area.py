@@ -40,7 +40,6 @@ def award_area_optimize(new_board):
     for i in new_board.door:
         remain_door.append(i)
     index=0
-    new_board.award_present()
     while True:
         print(remain_door,index)
         temp_set=[]
@@ -69,8 +68,12 @@ def award_area_optimize(new_board):
         print(remain_door,temp_door)
         for i in temp_door:
             remain_door.remove(i)
+<<<<<<< HEAD
         index+=0.5
         new_board.award_present()
+=======
+        index+=1
+>>>>>>> a46dcec9b6a610824c03bf6c6e83009502b70b19
         if len(remain_door)==0:
             break
     restore_board(new_board)
@@ -126,8 +129,18 @@ def restore_board(board):
     board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
+<<<<<<< HEAD
 a=generator.map_generate(11,[1,1])
 a.present()
 award_area_optimize(a)
 a.present()
 a.award_present()
+=======
+
+if __name__ == "__main__":
+    a=generator.map_generate(11,[1,1])
+    a.present()
+    award_area_optimize(a)
+    a.present()
+    a.award_present()
+>>>>>>> a46dcec9b6a610824c03bf6c6e83009502b70b19
