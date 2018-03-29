@@ -10,6 +10,8 @@ def award_area_optimize(new_board):
     index=0
     for i in range(new_board.size):
         new_board.award_index.append([None]*new_board.size)
+    for i in new_board.side_area:
+        new_board.award_index[i[0]][i[1]]=-1    
     for i in new_board.main_route:
         new_board.award_index[i[0]][i[1]]=-1
     for i in new_board.side_route:
@@ -99,6 +101,8 @@ def check_award_index(board,position):
         if nearby_index.count(board.award[i[0]][i[1]])==1:
             result.append(i)
     return result
+            
+            
 
 def clean_board(board):
     for i in board.door:
@@ -123,11 +127,3 @@ def restore_board(board):
     board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
-    
-if __name__ == "__main__":
-    a=generator.map_generate(11,[1,7])
-    a.prettyPrint()
-    print()
-    award_area_optimize(a)
-    a.present()
-    a.award_present()

@@ -106,6 +106,7 @@ class Board:
         self.side_route=[]
         self.start_position=[]
         self.end_position=[]
+        self.side_area=[]
         self.door=[]
         self.wall=[]
         self.side_start=None
@@ -676,13 +677,20 @@ def wall_optimize(new_one):
                    new_one.assign(i,2)
             else:
                    new_one.wall.remove(i)
+    area_list_1=area_detect(new_one)
 
     for i in new_one.main_route:
         new_one.assign(i,1)
     new_one.assign(new_one.start_position,-1)
     new_one.assign(new_one.end_position,-2)
-
-    new_one.award_area.extend(area_detect(new_one))
+    new_one.award_area=[]
+    new_one.side_area=[]
+    area_list_2=(area_detect(new_one))
+    for i in area_list_2:
+        if i in area_list_1:
+            new_one.award_area.append(i)
+        else:
+            new_one.side_area.extend(i)
     return new_one
     
     
