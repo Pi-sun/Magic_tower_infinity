@@ -99,8 +99,6 @@ def check_award_index(board,position):
         if nearby_index.count(board.award[i[0]][i[1]])==1:
             result.append(i)
     return result
-            
-            
 
 def clean_board(board):
     for i in board.door:
