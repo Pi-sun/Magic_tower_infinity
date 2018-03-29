@@ -1,4 +1,5 @@
-import random, sys,award_area
+import random,sys
+
 
 def boss_floor_generate(start_position,size):
     new_one=Board(size)
@@ -181,7 +182,6 @@ class Board:
             'To be continued'
 
             return True
-            
     def award_present(self):
         for line in self.award_index:
             print(line)
@@ -197,13 +197,15 @@ class Board:
             print(line)
         print('\n')
         return None
+
+
             
     def prettyPrint(self, message = "Board", file = sys.stdout):
         print(message + ":", file = file)
         d = self.__dict__
         keys = sorted(d.keys())
         for key in keys:
-            if key in ["award", "award_area", "award_index", "content"]:
+            if key == "content" or key == "award_area":
                 print(" " * 4 + key + ":", file = file)
                 for line in d[key]:
                     print(" " * 6 + str(line), file = file)
@@ -685,8 +687,7 @@ def map_generate(size,starting_position,*special_requirement):
     for i in version_c.special:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
-    version_e=award_area.award_area_optimize(version_d)
-    return version_e
+    return version_d
 
 if __name__=='__main__':
     a=map_generate(11,[1,7])
