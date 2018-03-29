@@ -1,4 +1,4 @@
-import random, sys
+import random, sys,award_area
 
 def boss_floor_generate(start_position,size):
     new_one=Board(size)
@@ -655,6 +655,7 @@ def wall_optimize(new_one):
                    new_one.assign(i,2)
             else:
                    new_one.wall.remove(i)
+
     for i in new_one.main_route:
         new_one.assign(i,1)
     new_one.assign(new_one.start_position,-1)
@@ -685,7 +686,8 @@ def map_generate(size,starting_position,*special_requirement):
     for i in version_c.special:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
-    return version_d
+    version_e=award_area.award_area_optimize(version_d)
+    return version_e
 
 if __name__=='__main__':
     a=map_generate(11,[1,7])

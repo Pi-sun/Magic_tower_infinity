@@ -1,7 +1,7 @@
 import generator
 
 def award_area_optimize(new_board):
-    'award return the award area index of a give position, award index return the layer of given position, award listing return the previous area of an area'
+    'award return the award area index of a give position, award index return the layer of given position, award listing return the immediate previous area of an area and the immediate door leading to this area'
     new_board.award=list()
     new_board.award_index=list()
     new_board.award_listing=[None]*len(new_board.award_area)
@@ -51,7 +51,7 @@ def award_area_optimize(new_board):
             temp_set=[]
             for j in generator.return_boundary([i]):
                 if new_board.valid_position(j):
-                    print(j,new_board.award_index[j[0]][j[1]],index-1)
+                    print(j,new_board.award_index[j[0]][j[1]],int(index-1))
                     if new_board.award_index[j[0]][j[1]]==index-1:
                         success=True
                         root=new_board.award[j[0]][j[1]]
@@ -62,13 +62,14 @@ def award_area_optimize(new_board):
                 temp_door.append(i)
             if success:
                 for j in temp_set:
-                    new_board.award_listing[j]=root
+                    new_board.award_listing[j]=[root,i]
                     for k in new_board.award_area[j]:
-                        new_board.award_index[k[0]][k[1]]=index
+                        new_board.award_index[k[0]][k[1]]=int(index)
+            new_board.award_index[i[0]][i[1]]=int(index)
         print(remain_door,temp_door)
         for i in temp_door:
             remain_door.remove(i)
-        index+=1
+        index+=0.5
         new_board.award_present()
         if len(remain_door)==0:
             break
@@ -125,7 +126,7 @@ def restore_board(board):
     board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
-a=generator.map_generate(7,[1,1])
+a=generator.map_generate(11,[1,1])
 a.present()
 award_area_optimize(a)
 a.present()
