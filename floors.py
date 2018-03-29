@@ -3,7 +3,7 @@ import ctypes, datetime, os, random, sys, threading
 from kivy.clock import Clock
 
 from cells import *
-import generator
+import award_area, generator
 
 SECTION_SIZE = 5
 DEBUG_LOG = True
@@ -47,6 +47,7 @@ def generate_section(callback, file = sys.stdout):
             board = generator.boss_floor_generate(list(start_pos), dim)
         else:
             board = generator.map_generate(dim, list(start_pos))
+        award_area.award_area_optimize(board)
         
         starts = []
         ends = []
