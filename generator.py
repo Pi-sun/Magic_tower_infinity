@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import random,sys
 
+=======
+import random, sys, award_area
+>>>>>>> 527ddf0de8af23b72d5abdf24a8de29a3bebce35
 
 def boss_floor_generate(start_position,size):
     new_one=Board(size)
@@ -687,6 +691,10 @@ def map_generate(size,starting_position,*special_requirement):
     for i in version_c.special:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
+<<<<<<< HEAD
+=======
+    award_area.award_area_optimize(version_d)
+>>>>>>> 527ddf0de8af23b72d5abdf24a8de29a3bebce35
     return version_d
 
 if __name__=='__main__':
