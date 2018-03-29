@@ -65,7 +65,7 @@ def boss_floor_generate(start_position,size):
     new_one_v3=wall_optimize(new_one_v2)
     
     for i in new_one_v3.special:
-        new_one_v3.assign(i,0)
+        new_one_v3.assign(i,5)
 
     new_one_v3.assign(new_one_v3.end_position,-2)
     new_one_v3.assign(new_one_v3.start_position,-1)
@@ -580,7 +580,7 @@ def door_generate(new_board):
                 ifgen=random.randint(0,1)
                 if ifgen==1:
                     doors.append(i)
-                    walls.remove(i)
+
                     new_board.wall.remove(i)
                     blank_board.assign(i,0)
                     new_board.assign(i,0)
@@ -588,10 +588,10 @@ def door_generate(new_board):
                 break
     new_board.error=['step1']
 
-    if True:
-        if len(area_detect(blank_board))!=1:
-            new_board.error=['step2']
-            for i in walls:
+    if len(area_detect(blank_board))!=1:
+        new_board.error=['step2']
+        for i in walls:
+            if i not in new_board.special_wall:
                 blank_board1=Board(blank_board.size)
                 for row_index in range(blank_board.length()):
                     for column_index in range(new_board.length()):
@@ -600,7 +600,25 @@ def door_generate(new_board):
                 blank_board1.assign(i,0)
                 if len(area_detect(blank_board1))<len(area_detect(blank_board)):
                     doors.append(i)
-                    walls.remove(i)
+
+                    new_board.wall.remove(i)
+                    blank_board.assign(i,0)
+                    new_board.assign(i,0)
+                if len(area_detect(blank_board))==1:
+                    break
+    if len(area_detect(blank_board))!=1:
+        new_board.error=['step2']
+        for i in walls:
+            if i not in new_board.special_wall:
+                blank_board1=Board(blank_board.size)
+                for row_index in range(blank_board.length()):
+                    for column_index in range(new_board.length()):
+                        if blank_board.check_item([row_index,column_index])==2:
+                            blank_board1.assign([row_index,column_index],2)
+                blank_board1.assign(i,0)
+                if len(area_detect(blank_board1))<len(area_detect(blank_board)):
+                    doors.append(i)
+
                     new_board.wall.remove(i)
                     blank_board.assign(i,0)
                     new_board.assign(i,0)
@@ -693,5 +711,6 @@ def map_generate(size,starting_position,*special_requirement):
     return version_d
 
 if __name__=='__main__':
-    a=map_generate(11,[1,7])
+    a=boss_floor_generate([9,3],11)
     a.present()
+    print(a.special_wall)

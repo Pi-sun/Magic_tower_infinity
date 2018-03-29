@@ -25,6 +25,7 @@ def award_area_optimize(new_board):
             new_board.award[j[0]][j[1]]=index
         index+=1
     'all walkable square on the board indexed -1 for main nad side route, 0,1,2,3,4 for award areas'
+    new_board.present()
     clean_board(new_board)
     for i in new_board.main_route:
         new_board.assign(i,1)
@@ -57,18 +58,17 @@ def award_area_optimize(new_board):
                     elif new_board.award[j[0]][j[1]]!=-9:
                         temp_set.append(new_board.award[j[0]][j[1]])
             if success:
-                print('shit',temp_set)
                 temp_door.append(i)
             if success:
                 for j in temp_set:
                     new_board.award_listing[j]=[root,i]
                     for k in new_board.award_area[j]:
                         new_board.award_index[k[0]][k[1]]=int(index)
-            new_board.award_index[i[0]][i[1]]=int(index)
-        print(remain_door,temp_door)
+                new_board.award_index[i[0]][i[1]]=int(index)
         for i in temp_door:
             remain_door.remove(i)
         index+=0.5
+        new_board.present()
         new_board.award_present()
         if len(remain_door)==0:
             break
