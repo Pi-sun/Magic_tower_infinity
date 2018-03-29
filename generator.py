@@ -181,6 +181,15 @@ class Board:
             'To be continued'
 
             return True
+    def award_present(self):
+        for line in self.award_index:
+            print(line)
+        print('\n')
+        for line in self.award:
+            print(line)
+        print('\n')
+        print(self.award_listing,'\n')
+
 
     def present(self):
         for line in self.content:
