@@ -608,7 +608,7 @@ def door_generate(new_board):
                 if len(area_detect(blank_board))==1:
                     break
     if len(area_detect(blank_board))!=1:
-        new_board.error=['step2']
+        new_board.error=['step3']
         for i in walls:
             if i not in new_board.special_wall:
                 blank_board1=Board(blank_board.size)
@@ -704,9 +704,7 @@ def map_generate(size,starting_position,*special_requirement):
         version_a=pre_generate(size,starting_position,[6,5])
     if 'shop' in special_requirement:
         version_a=pre_generate(size,starting_position,[1,3])
-    if 'no_return' in special_requirement:
-        version_a.assign(version_a.start_position,0)
-        version_a.start_position=None
+
         
     version_c=door_generate(award_area_generate(version_a))
     if 'shop' in special_requirement or 'guard_area' in special_requirement:
@@ -715,10 +713,12 @@ def map_generate(size,starting_position,*special_requirement):
     for i in version_c.special:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
-
+    if 'no_return' in special_requirement:
+        version_d.assign(version_a.start_position,0)
+        version_d.start_position=None
     return version_d
 
 if __name__=='__main__':
-    a=boss_floor_generate([9,3],11)
+    a=map_generate(11,[9,3],'no_return')
     a.present()
     print(a.special_wall)
