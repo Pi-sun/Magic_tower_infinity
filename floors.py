@@ -71,7 +71,7 @@ def generate_section(callback, file = sys.stdout):
                 elif item == 3:
                     row.append(KeyedDoor(KEY_YELLOW))
                 elif item == 5:
-                    row.append(Wall()) # TODO: Special entities
+                    row.append(Empty()) # TODO: Special entities
             floor.append(row)
         
         if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
