@@ -208,7 +208,7 @@ class Board:
         d = self.__dict__
         keys = sorted(d.keys())
         for key in keys:
-            if key in ["award", "award_area", "award_index", "content"]:
+            if key == "content" or key == "award_area":
                 print(" " * 4 + key + ":", file = file)
                 for line in d[key]:
                     print(" " * 6 + str(line), file = file)
@@ -668,6 +668,8 @@ def wall_optimize(new_one):
     new_one.assign(new_one.end_position,0)
     for i in new_one.main_route:
         new_one.assign(i,0)
+    for i in new_one.side_route:
+        new_one.assign(i,0)
     ori_no_area=len(area_detect(new_one))
 
     for i in new_one.wall:
@@ -680,6 +682,8 @@ def wall_optimize(new_one):
     area_list_1=area_detect(new_one)
 
     for i in new_one.main_route:
+        new_one.assign(i,1)
+    for i in new_one.side_route:
         new_one.assign(i,1)
     new_one.assign(new_one.start_position,-1)
     new_one.assign(new_one.end_position,-2)
