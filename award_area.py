@@ -1,5 +1,35 @@
-import generator
+import generator,random
+def more_door(new_board):
+    'open more doors, only after award_area_optimize)'
+    new_board.parrelel_door=[]
+    for i in new_board.door:
+        result=award_return(new_board,i)
+        another_door=random.randint(0,10)
+        if another_door==1:
+            for j in new_board.wall:
+                success=True
+                for k in award_return(new_board,j):
+                    if k not in result:
+                        success=False
+            if success:
+                new_board.parrelel_door.append[i,j]
+                new_board.assign(j,3)
+                new_board.door.append(j)
+                new_board.wall.remove(j)
+    return None
+                        
+            
 
+def award_return(new_board,door):
+    'return the layer of all award areas around the given tile'
+    result=[]
+    for j in return_boundary(door):
+        if new_board.valid_position(j):
+            if new_board.award[j[0]][j[1]]!=None:
+                result.append(new_board.award[j[0]][j[1]])
+    return result
+
+    
 def award_area_optimize(new_board):
     'award return the award area index of a give position, award index return the layer of given position, award listing return the immediate previous area of an area and the immediate door leading to this area'
     new_board.award=list()
@@ -111,7 +141,8 @@ def clean_board(board):
         board.assign(i,0)
     for i in board.side_route:
         board.assign(i,0)
-    board.assign(board.start_position,0)
+    if board.start_position!=None:
+        board.assign(board.start_position,0)
     board.assign(board.end_position,0)
     return None
 
@@ -124,7 +155,8 @@ def restore_board(board):
         board.assign(i,1)
     for i in board.door:
         board.assign(i,3)
-    board.assign(board.start_position,-1)
+    if board.start_position!=None:
+        board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
 
