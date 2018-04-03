@@ -1,4 +1,28 @@
 import generator,random
+
+def key_position(new_board):
+    'after all doors are set'
+    new_board.area_key=list()
+    for i in range(len(new_board.award_area)):
+        new_board.area_key.append([])
+    for i in new_board.door:
+        hah=return_boundary(i)
+        award_listing=[]
+        key=[]
+        for j in hah:
+            award_listing.append(new_board.award[j[0]][j[1]])
+        for j in hah:
+            if award_listing.count(new_board.award[j[0]][j[1]])==1:
+                key.append[j]
+        root=[]            
+        for j in hah:
+            root.append(new_board.award_index[j[0]][j[1]])
+        root.sort()
+        new_board.area_key[root].extend(key)
+    return None
+
+            
+
 def more_door(new_board):
     'open more doors, only after award_area_optimize)'
     new_board.parrelel_door=[]
