@@ -6,7 +6,7 @@ def key_position(new_board):
     for i in range(len(new_board.award_area)):
         new_board.area_key.append([])
     for i in new_board.door:
-        hah=return_boundary(i)
+        hah=generator.return_boundary(i)
         award_listing=[]
         key=[]
         for j in hah:
@@ -47,7 +47,7 @@ def more_door(new_board):
 def award_return(new_board,door):
     'return the layer of all award areas around the given tile'
     result=[]
-    for j in return_boundary(door):
+    for j in generator.return_boundary(door):
         if new_board.valid_position(j):
             if new_board.award[j[0]][j[1]]!=None:
                 result.append(new_board.award[j[0]][j[1]])
