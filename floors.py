@@ -5,7 +5,7 @@ from kivy.clock import Clock
 from cells import *
 import award_area, generator
 
-SECTION_SIZE = 20
+SECTION_SIZE = 10
 DEBUG_LOG = True
 
 dim = 11

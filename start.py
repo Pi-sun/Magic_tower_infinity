@@ -21,12 +21,23 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-from cells import Point
+from cells import Point, KEYS
 from hero import Hero
 
 LOADING_MAX_LENGTH = 5
 
-WHITE = (204 / 255, 204 / 255, 204 / 255)
+# test
+def fill(x):
+	with x.canvas:
+		Color(1, 1, 1)
+		Rectangle(pos = x.pos, size = x.size)
+
+def StatusLabel(**kwargs):
+	return Label(
+		valign = "middle",
+		color = (1, 1, 1, 1),
+		text_size = kwargs["size"],
+		**kwargs)
 
 class ColorWidget(Widget):
 	def __init__(self, color, **kwargs):
@@ -61,19 +72,34 @@ class MagicTowerApp(App):
 		for row in self.cellDisplays:
 			for cell in row:
 				self.grid.add_widget(cell)
-				
-		self.hero = Hero(self.grid, START_ROW, START_COL)
+		
+		statusLabels = [StatusLabel(
+			font_size = CELL_SIZE * 0.4,
+			halign = "right",
+			pos = (CELL_SIZE * 1.4375, CELL_SIZE * (9.21875 - 0.75 * i)),
+			size = (CELL_SIZE * 1.96875, CELL_SIZE * 0.53125)) for i in range(4)]
+		for label in statusLabels:
+			self.root.add_widget(label)
+		
+		self.hero = Hero(self.grid, START_ROW, START_COL, *statusLabels)
 		self.grid.add_widget(self.hero)
 		
 		self.spark = Image(
 			source = "res/spark.png",
 			allow_stretch = True,
 			size = (CELL_SIZE, CELL_SIZE))
+			
+		self.levelLabel = StatusLabel(
+			font_size = CELL_SIZE * 0.5,
+			halign = "center",
+			pos = (CELL_SIZE * 0.59375, CELL_SIZE * 10.125),
+			size = (CELL_SIZE * 2.8125, CELL_SIZE * 0.65625))
+		self.root.add_widget(self.levelLabel)
 		
 		self.loading = Widget(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
 		borderWidth = round(CELL_SIZE * 0.06)
 		with self.loading.canvas:
-			Color(*WHITE)
+			Color(204 / 255, 204 / 255, 204 / 255)
 			Rectangle(
 				pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2) - borderWidth, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65) - borderWidth),
 				size = (borderWidth, CELL_SIZE * 0.5 + borderWidth * 2))
@@ -89,11 +115,11 @@ class MagicTowerApp(App):
 		
 		self.loading.add_widget(Label(
 			text = "Preparing levels...",
-			font_size = CELL_SIZE / 2,
-			color = WHITE + (1,),
+			font_size = CELL_SIZE * 0.5,
+			color = (204 / 255, 204 / 255, 204 / 255, 1),
 			center = (self.loading.pos[0] + CELL_SIZE * GRID_DIM / 2, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 + 0.4))))
 		
-		self.loadingBar = ColorWidget(WHITE, pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2), self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65)))
+		self.loadingBar = ColorWidget((204 / 255, 204 / 255, 204 / 255), pos = (self.loading.pos[0] + CELL_SIZE * (GRID_DIM / 2 - LOADING_MAX_LENGTH / 2), self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 - 0.65)))
 		self.loading.add_widget(self.loadingBar)
 		
 		return self.root
@@ -115,6 +141,8 @@ class MagicTowerApp(App):
 	def showFloor(self, floor):
 		self.root.remove_widget(self.grid)
 		self.root.add_widget(self.loading)
+		
+		self.levelLabel.text = "Level %d" % floor
 		
 		self.floorsLoading = floors.prepareFloor(floor, self.handleFloorPrepared)
 		self.targetFloorLoading = floor

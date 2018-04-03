@@ -30,6 +30,8 @@ KEY_YELLOW = "yellow"
 KEY_BLUE = "blue"
 KEY_RED = "red"
 
+KEYS = [KEY_YELLOW, KEY_BLUE, KEY_RED]
+
 KEY_TEXTURES = {
 	KEY_YELLOW: (10, 0),
 	KEY_BLUE: (10, 1),
@@ -122,11 +124,11 @@ class Monster(Cell):
 		self.defence = defence
 		
 	def interact(self, app):
-		heroDamage = max(app.hero.attack - self.defence, 0)
+		heroDamage = max(app.hero.attack.value - self.defence, 0)
 		heroStrikes = -1 if heroDamage == 0 else self.health // heroDamage + (self.health % heroDamage > 0)
 		
-		monsterDamage = max(self.attack - app.hero.defence, 0)
-		monsterStrikes = -1 if monsterDamage == 0 else app.hero.health // monsterDamage + (app.hero.health % monsterDamage > 0)
+		monsterDamage = max(self.attack - app.hero.defence.value, 0)
+		monsterStrikes = -1 if monsterDamage == 0 else app.hero.health.value // monsterDamage + (app.hero.health.value % monsterDamage > 0)
 		
 		if heroStrikes != -1 and (monsterStrikes == -1 or monsterStrikes >= heroStrikes):
 			app.hero.moveBy(self.location - app.hero.location)
@@ -138,7 +140,7 @@ class Monster(Cell):
 					app.showSpark()
 					Clock.schedule_once(lambda dt: app.hideSpark(), 0.15)
 					if i != heroStrikes - 1:
-						app.hero.updateHealth(-monsterDamage)
+						app.hero.health.update(-monsterDamage)
 				def createStrike(i):
 					return lambda dt: strike(i)
 				Clock.schedule_once(createStrike(i), 0.3 * i + 0.15)
@@ -179,7 +181,7 @@ class AttackCrystal(PropertyImprover):
 		self.quantity = quantity
 		
 	def interact(self, app):
-		app.hero.updateAttack(self.quantity)
+		app.hero.attack.update(self.quantity)
 		super().interact(app)
 		
 class DefenceCrystal(PropertyImprover):
@@ -188,7 +190,7 @@ class DefenceCrystal(PropertyImprover):
 		self.quantity = quantity
 		
 	def interact(self, app):
-		app.hero.updateDefence(self.quantity)
+		app.hero.defence.update(self.quantity)
 		super().interact(app)
 		
 class SmallHealthPotion(PropertyImprover):
@@ -197,5 +199,14 @@ class SmallHealthPotion(PropertyImprover):
 		self.quantity = quantity
 		
 	def interact(self, app):
-		app.hero.updateHealth(self.quantity)
+		app.hero.health.update(self.quantity)
+		super().interact(app)
+		
+class LargeHealthPotion(PropertyImprover):
+	def __init__(self, quantity):
+		super().__init__(SingleTexture(11, 1))
+		self.quantity = quantity
+		
+	def interact(self, app):
+		app.hero.health.update(self.quantity)
 		super().interact(app)
