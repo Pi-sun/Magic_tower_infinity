@@ -81,7 +81,15 @@ class MagicTowerApp(App):
 		for label in statusLabels:
 			self.root.add_widget(label)
 		
-		self.hero = Hero(self.grid, START_ROW, START_COL, *statusLabels)
+		keyLabels = dict(zip(KEYS, (StatusLabel(
+			font_size = CELL_SIZE * 0.4,
+			halign = "right",
+			pos = (CELL_SIZE * 17.375, CELL_SIZE * (7.125 - 0.75 * i)),
+			size = (CELL_SIZE * 2.09375, CELL_SIZE * 0.53125)) for i in range(len(KEYS)))))
+		for key in KEYS:
+			self.root.add_widget(keyLabels[key])
+		
+		self.hero = Hero(self, self.grid, START_ROW, START_COL, *statusLabels, keyLabels)
 		self.grid.add_widget(self.hero)
 		
 		self.spark = Image(

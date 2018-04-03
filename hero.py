@@ -1,4 +1,4 @@
-import collections
+import weakref
 
 from kivy.clock import Clock
 
@@ -27,8 +27,10 @@ class HeroProperty:
 		self.label.text = str(self.value)
 
 class Hero(TextureDisplay):
-	def __init__(self, parent, row, col, healthLabel, attackLabel, defenceLabel, moneyLabel):
+	def __init__(self, app, parent, row, col, healthLabel, attackLabel, defenceLabel, moneyLabel, keyLabels):
 		super().__init__(pos = (parent.pos[0] + CELL_SIZE * col, parent.pos[1] + CELL_SIZE * (dim - row - 1)), size = (CELL_SIZE, CELL_SIZE))
+		
+		self.app = weakref.ref(app)
 		self.base_pos = parent.pos
 		
 		self.step = 0
@@ -40,13 +42,10 @@ class Hero(TextureDisplay):
 		self.defence = HeroProperty(10, defenceLabel)
 		self.money = HeroProperty(0, moneyLabel)
 		
-		self.keys = collections.defaultdict(lambda: 0)
-		self.keys["yellow"] = 100000 # for testing
+		self.keys = dict(map(lambda key: (key, HeroProperty(0, keyLabels[key])), keyLabels))
+		self.keys["yellow"].update(100000) # for testing
 		
 		self.draw(texture(heroTextureRow(), self.step))
-		
-	def updateKey(self, key, change):
-		self.keys[key] += change
 		
 	def moveBy(self, offset):
 		if self.stepTimer:
@@ -59,9 +58,16 @@ class Hero(TextureDisplay):
 		self.pos = (self.base_pos[0] + CELL_SIZE * self.location.col, self.base_pos[1] + CELL_SIZE * (dim - self.location.row - 1))
 		self.nextStep(textureRow)
 	
-		if self.step % 2 != 0:
-			self.stepTimer = Clock.schedule_once(lambda dt: self.nextStep(textureRow), 0.15)
-			
+		app = self.app()
+		if app:
+			app.blockActions()
+		
+		def work(dt):
+			self.nextStep(textureRow)
+			if app:
+				app.unblockActions()
+		Clock.schedule_once(work, 0.1)
+				
 	def nextStep(self, textureRow):
 		self.step += 1
 		self.step %= 4
