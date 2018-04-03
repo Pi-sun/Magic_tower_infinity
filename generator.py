@@ -205,7 +205,7 @@ class Board:
         d = self.__dict__
         keys = sorted(d.keys())
         for key in keys:
-            if key == "content" or key == "award_area":
+            if key in ["award", "award_area", "award_index", "content"]:
                 print(" " * 4 + key + ":", file = file)
                 for line in d[key]:
                     print(" " * 6 + str(line), file = file)
