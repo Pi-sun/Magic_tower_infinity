@@ -26,12 +26,6 @@ from hero import Hero
 
 LOADING_MAX_LENGTH = 5
 
-# test
-def fill(x):
-	with x.canvas:
-		Color(1, 1, 1)
-		Rectangle(pos = x.pos, size = x.size)
-
 def StatusLabel(**kwargs):
 	return Label(
 		valign = "middle",
@@ -84,7 +78,7 @@ class MagicTowerApp(App):
 		keyLabels = dict(zip(KEYS, (StatusLabel(
 			font_size = CELL_SIZE * 0.4,
 			halign = "right",
-			pos = (CELL_SIZE * 17.375, CELL_SIZE * (7.125 - 0.75 * i)),
+			pos = (CELL_SIZE * (6.375 + GRID_DIM), CELL_SIZE * (7.125 - 0.75 * i)),
 			size = (CELL_SIZE * 2.09375, CELL_SIZE * 0.53125)) for i in range(len(KEYS)))))
 		for key in KEYS:
 			self.root.add_widget(keyLabels[key])
@@ -103,6 +97,30 @@ class MagicTowerApp(App):
 			pos = (CELL_SIZE * 0.59375, CELL_SIZE * 10.125),
 			size = (CELL_SIZE * 2.8125, CELL_SIZE * 0.65625))
 		self.root.add_widget(self.levelLabel)
+		
+		self.monsterDisplay = TextureDisplay(
+			pos = (CELL_SIZE * (6.5 + GRID_DIM), CELL_SIZE * 3.8125),
+			size = (CELL_SIZE, CELL_SIZE))
+		self.root.add_widget(self.monsterDisplay)
+		
+		self.monsterTexture = SingleTexture(-1, -1)
+		self.monsterTexture.initialize(self.monsterDisplay)
+		
+		self.monsterNameLabel = StatusLabel(
+			font_size = CELL_SIZE * 0.36,
+			halign = "center",
+			pos = (CELL_SIZE * (5.625 + GRID_DIM), CELL_SIZE * 3.15625),
+			size = (CELL_SIZE * 2.75, CELL_SIZE * 0.53125))
+		self.root.add_widget(self.monsterNameLabel)
+		
+		monsterStatusLabels = [StatusLabel(
+			font_size = CELL_SIZE * 0.4,
+			halign = "right",
+			pos = (CELL_SIZE * (6.4375 + GRID_DIM), CELL_SIZE * (2.53125 - 0.625 * i)),
+			size = (CELL_SIZE * 1.9375, CELL_SIZE * 0.53125)) for i in range(3)]
+		for label in monsterStatusLabels:
+			self.root.add_widget(label)
+		self.monsterHealthLabel, self.monsterAttackLabel, self.monsterDefenceLabel = monsterStatusLabels
 		
 		self.loading = Widget(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
 		borderWidth = round(CELL_SIZE * 0.06)
@@ -175,6 +193,7 @@ class MagicTowerApp(App):
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
 					self.floors[self.currentFloor][row][col].update()
+		self.monsterTexture.update()
 	
 	def onKeyDown(self, keyboard, keycode, text, modifiers):
 		print("Pressed", keycode[1], ("with " + ", ".join(modifiers)) if modifiers else "")
@@ -205,6 +224,24 @@ class MagicTowerApp(App):
 		
 	def hideSpark(self):
 		self.grid.remove_widget(self.spark)
+		
+	def showMonster(self, monster):
+		if monster:
+			self.monsterTexture = monster.texture.copy()
+			self.monsterNameLabel.text = monster.name
+			self.monsterHealthLabel.text = str(monster.health)
+			self.monsterAttackLabel.text = str(monster.attack)
+			self.monsterDefenceLabel.text = str(monster.defence)
+		else:
+			self.monsterTexture = SingleTexture(-1, -1)
+			self.monsterNameLabel.text = ""
+			self.monsterHealthLabel.text = ""
+			self.monsterAttackLabel.text = ""
+			self.monsterDefenceLabel.text = ""
+		self.monsterTexture.initialize(self.monsterDisplay)
+				
+	def updateMonsterHealth(self, health):
+		self.monsterHealthLabel.text = str(health)
 				
 	def moveByFloors(self, change):
 		if self.currentFloor + change > 0:

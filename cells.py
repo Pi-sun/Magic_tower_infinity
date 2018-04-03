@@ -116,9 +116,10 @@ class Downstair(Stair):
 		super().__init__(SingleTexture(17, 3), -1)
 		
 class Monster(Cell):
-	def __init__(self, health, attack, defence, texture):
+	def __init__(self, name, health, attack, defence, texture):
 		super().__init__(texture)
 		
+		self.name = name
 		self.health = health
 		self.attack = attack
 		self.defence = defence
@@ -134,29 +135,36 @@ class Monster(Cell):
 			app.hero.moveBy(self.location - app.hero.location)
 			
 			app.blockActions()
+			app.showMonster(self)
 			
 			for i in range(heroStrikes):
 				def strike(i):
 					app.showSpark()
-					Clock.schedule_once(lambda dt: app.hideSpark(), 0.15)
-					if i != heroStrikes - 1:
-						app.hero.health.update(-monsterDamage)
+					self.health -= heroDamage
+					app.updateMonsterHealth(self.health)
+					
+					def hide(dt):
+						app.hideSpark()
+						if i != heroStrikes - 1:
+							app.hero.health.update(-monsterDamage)
+					Clock.schedule_once(hide, 0.15)
 				def createStrike(i):
 					return lambda dt: strike(i)
 				Clock.schedule_once(createStrike(i), 0.3 * i + 0.15)
 				
 			def clearBlock(dt):
 				app.setCell(Empty(), self.location)
+				app.showMonster(None)
 				app.unblockActions()
 			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
 		
 class GreenSlime(Monster):
 	def __init__(self):
-		super().__init__(20, 15, 5, FourTexture(0, 4))
+		super().__init__("Green Slime", 20, 15, 5, FourTexture(0, 4))
 		
 class SlimeKing(Monster):
 	def __init__(self):
-		super().__init__(20, 100, 0, FourTexture(3, 4))
+		super().__init__("Slime King", 20, 100, 0, FourTexture(3, 4))
 
 class PropertyImprover(Cell):
 	def __init__(self, texture, property, quantity):
@@ -173,14 +181,6 @@ class Key(PropertyImprover):
 	def __init__(self, key):
 		super().__init__(SingleTexture(*KEY_TEXTURES[key]), lambda hero: hero.keys[key], 1)
 		
-class AttackCrystal(PropertyImprover):
-	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 2), lambda hero: hero.attack, quantity)
-		
-class DefenceCrystal(PropertyImprover):
-	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 3), lambda hero: hero.defence, quantity)
-		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(11, 0), lambda hero: hero.health, quantity)
@@ -188,3 +188,11 @@ class SmallHealthPotion(PropertyImprover):
 class LargeHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(11, 1), lambda hero: hero.health, quantity)
+		
+class AttackCrystal(PropertyImprover):
+	def __init__(self, quantity):
+		super().__init__(SingleTexture(11, 2), lambda hero: hero.attack, quantity)
+		
+class DefenceCrystal(PropertyImprover):
+	def __init__(self, quantity):
+		super().__init__(SingleTexture(11, 3), lambda hero: hero.defence, quantity)

@@ -31,6 +31,9 @@ class Texture:
 		
 	def update(self):
 		pass
+		
+	def copy(self):
+		return Texture()
 
 class SingleTexture(Texture):
 	def __init__(self, textureRow, textureCol):
@@ -55,6 +58,9 @@ class SingleTexture(Texture):
 			else:
 				self.display.draw(texture(self.textureRow, self.textureCol))
 		
+	def copy(self):
+		return SingleTexture(self.textureRow, self.textureCol)
+		
 class FourTexture(Texture):
 	def __init__(self, textureRow, textureCol):
 		super().__init__()
@@ -65,11 +71,15 @@ class FourTexture(Texture):
 		
 	def initialize(self, display):
 		super().initialize(display)
-		
-		self.display.draw(texture(self.textureRow + self.currentTexture, self.textureCol))
+		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture))
 
 	def update(self):
 		super().update()
 		self.currentTexture += 1
 		self.currentTexture %= 4
 		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture))
+
+	def copy(self):
+		texture = FourTexture(self.textureRow, self.textureCol)
+		texture.currentTexture = self.currentTexture
+		return texture

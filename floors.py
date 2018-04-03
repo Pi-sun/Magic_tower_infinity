@@ -52,6 +52,8 @@ def generate_section(callback, file = sys.stdout):
         starts = []
         ends = []
         
+        empties = [] # Testing
+        
         floor = []
         for ri in range(dim):
             row = []
@@ -66,6 +68,7 @@ def generate_section(callback, file = sys.stdout):
                     row.append(Upstair())
                 elif item == 0 or item == 1:
                     row.append(Empty())
+                    empties.append((ri, ci)) # Testing
                 elif item == 2:
                     row.append(Wall())
                 elif item == 3:
@@ -73,6 +76,10 @@ def generate_section(callback, file = sys.stdout):
                 elif item == 5:
                     row.append(Empty()) # TODO: Special entities
             floor.append(row)
+        
+        # Testing
+        loc = random.choice(empties)
+        floor[loc[0]][loc[1]] = GreenSlime()
         
         if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
             if DEBUG_LOG:
