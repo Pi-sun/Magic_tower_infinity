@@ -1,7 +1,4 @@
-
-import random,sys
-
-
+import random, sys
 
 def boss_floor_generate(start_position,size):
     new_one=Board(size)

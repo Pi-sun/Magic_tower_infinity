@@ -82,8 +82,8 @@ class KeyedDoor(Cell):
 		self.key = key
 		
 	def interact(self, app):
-		if app.hero.keys[self.key] > 0:
-			app.hero.updateKey(self.key, -1)
+		if app.hero.keys[self.key].value > 0:
+			app.hero.keys[self.key].update(-1)
 			
 			app.blockActions()
 		
@@ -172,7 +172,7 @@ class Key(PropertyImprover):
 		self.key = key
 		
 	def interact(self, app):
-		app.hero.updateKey(self.key, 1)
+		app.hero.keys[self.key].update(1)
 		super().interact(app)
 		
 class AttackCrystal(PropertyImprover):
