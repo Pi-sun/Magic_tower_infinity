@@ -159,54 +159,32 @@ class SlimeKing(Monster):
 		super().__init__(20, 100, 0, FourTexture(3, 4))
 
 class PropertyImprover(Cell):
-	def __init__(self, texture):
+	def __init__(self, texture, property, quantity):
 		super().__init__(texture)
+		self.property = property
+		self.quantity = quantity
 		
 	def interact(self, app):
+		self.property(app.hero).update(self.quantity)
 		app.hero.moveBy(self.location - app.hero.location)
 		app.setCell(Empty(), self.location)
 		
 class Key(PropertyImprover):
 	def __init__(self, key):
-		super().__init__(SingleTexture(*KEY_TEXTURES[key]))
-		self.key = key
-		
-	def interact(self, app):
-		app.hero.keys[self.key].update(1)
-		super().interact(app)
+		super().__init__(SingleTexture(*KEY_TEXTURES[key]), lambda hero: hero.keys[key], 1)
 		
 class AttackCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 2))
-		self.quantity = quantity
-		
-	def interact(self, app):
-		app.hero.attack.update(self.quantity)
-		super().interact(app)
+		super().__init__(SingleTexture(11, 2), lambda hero: hero.attack, quantity)
 		
 class DefenceCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 3))
-		self.quantity = quantity
-		
-	def interact(self, app):
-		app.hero.defence.update(self.quantity)
-		super().interact(app)
+		super().__init__(SingleTexture(11, 3), lambda hero: hero.defence, quantity)
 		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 0))
-		self.quantity = quantity
-		
-	def interact(self, app):
-		app.hero.health.update(self.quantity)
-		super().interact(app)
+		super().__init__(SingleTexture(11, 0), lambda hero: hero.health, quantity)
 		
 class LargeHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 1))
-		self.quantity = quantity
-		
-	def interact(self, app):
-		app.hero.health.update(self.quantity)
-		super().interact(app)
+		super().__init__(SingleTexture(11, 1), lambda hero: hero.health, quantity)
