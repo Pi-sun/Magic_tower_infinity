@@ -118,7 +118,7 @@ class Downstair(Stair):
 class Monster(Cell):
 	def __init__(self, name, health, attack, defence, texture):
 		super().__init__(texture)
-		
+		self.difficulty=[]
 		self.name = name
 		self.health = health
 		self.attack = attack
