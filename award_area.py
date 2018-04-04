@@ -13,7 +13,7 @@ def key_position(new_board):
             award_listing.append(new_board.award[j[0]][j[1]])
         for j in hah:
             if award_listing.count(new_board.award[j[0]][j[1]])==1:
-                key.append[j]
+                key.append(j)
         root=[]            
         for j in hah:
             root.append(new_board.award_index[j[0]][j[1]])
@@ -38,6 +38,7 @@ def more_door(new_board):
                 for l in result:
                     if l not in award_return(new_board,j):
                         success=False
+
                 print(success)
                 if success:
                     new_board.parrelel_door.append([i,j])
@@ -45,6 +46,7 @@ def more_door(new_board):
                     new_board.door.append(j)
                     new_board.wall.remove(j)
                     break
+
     return None
                         
             
@@ -190,7 +192,9 @@ def restore_board(board):
     return None
 
 if __name__ == "__main__":
+
     a=generator.map_generate(11,[1,7])
+
     award_area_optimize(a)
     more_door(a)
     a.present()

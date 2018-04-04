@@ -1,6 +1,6 @@
 import generator
 
-'difficulty is a two_dimensional vector measuring roughly how many damage the monster can do to hero in the early and later part of the section'
+'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
 'on the other hand, a skeleton with high attack and low defense will have lower early_section difficulty and higher late-section difficulty, such as[15,5]'
 'and high defense guard may have extremely high early_section difficulty and low late_section one, such as[99,8]'
@@ -15,7 +15,7 @@ import generator
 def section_design(section_size):
     'return the difficulty of each floor using different designs'
     'pass-difficulty-design includes standard, less_standard, half-half'
-        result=[0]*section_size
+    result=[0]*section_size
     design_index=random.randint(0,2)
     if design_index==0:
         design='standard'
@@ -25,7 +25,7 @@ def section_design(section_size):
         design='less standard'
         for i in range(section_size):
             result[i]=(i/size*2)**2*2.5
-    if design_inde==2:
+    if design_index==2:
         design='half-half'
         for i in range(int(0.5*section_size)):
             result[i]=i/size*9
