@@ -7,7 +7,7 @@ from monsters import *
 
 import award_area, generator
 
-SECTION_SIZE = 10
+SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
 DEBUG_LOG = True
 
 dim = 11
@@ -40,13 +40,17 @@ def generate_section(callback, file = sys.stdout):
 
     global nextFloor, nextStart
     
+    shopIndex = random.randint(0, SECTION_SIZE - 2)
+    
     start_pos = nextStart
     i = 0
     while i < SECTION_SIZE:
         index = nextFloor + i
-    
+        
         if i == SECTION_SIZE - 1:
             board = generator.boss_floor_generate(list(start_pos), dim)
+        elif i == shopIndex:
+            board = generator.map_generate(dim, list(start_pos), "shop")
         else:
             board = generator.map_generate(dim, list(start_pos))
         award_area.award_area_optimize(board)
@@ -74,7 +78,16 @@ def generate_section(callback, file = sys.stdout):
                 elif item == 3:
                     row.append(KeyedDoor(KEY_YELLOW))
                 elif item == 5:
-                    row.append(Empty()) # TODO: Special entities
+                    if i == shopIndex:
+                        if ci > 0 and board.content[ri][ci - 1] == 5:
+                            if ci > 1 and board.content[ri][ci - 2] == 5:
+                                row.append(ShopRight())
+                            else:
+                                row.append(Shop()) # TODO: Shop center
+                        else:
+                            row.append(ShopLeft())
+                    else:
+                        row.append(Empty()) # TODO: Other special entities
             floor.append(row)
         
         # Testing

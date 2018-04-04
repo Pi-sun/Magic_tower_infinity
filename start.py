@@ -78,10 +78,13 @@ class MagicTowerApp(App):
 		keyLabels = dict(zip(KEYS, (StatusLabel(
 			font_size = CELL_SIZE * 0.4,
 			halign = "right",
-			pos = (CELL_SIZE * (6.375 + GRID_DIM), CELL_SIZE * (7.125 - 0.75 * i)),
-			size = (CELL_SIZE * 2.09375, CELL_SIZE * 0.53125)) for i in range(len(KEYS)))))
+			pos = (CELL_SIZE * (6.40625 + GRID_DIM), CELL_SIZE * (7.125 - 0.75 * i)),
+			size = (CELL_SIZE * 2.03125, CELL_SIZE * 0.53125)) for i in range(len(KEYS)))))
 		for key in KEYS:
 			self.root.add_widget(keyLabels[key])
+			with keyLabels[key].canvas:
+				Color(1, 1, 1)
+				#Rectangle(pos = keyLabels[key].pos, size = keyLabels[key].size)
 		
 		self.hero = Hero(self, self.grid, START_ROW, START_COL, *statusLabels, keyLabels)
 		self.grid.add_widget(self.hero)

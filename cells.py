@@ -75,7 +75,7 @@ class Impassable(Cell):
 class Wall(Impassable):
 	def __init__(self):
 		super().__init__(SingleTexture(8, 0))
-		
+
 class KeyedDoor(Cell):
 	def __init__(self, key):
 		super().__init__(SingleTexture(DOOR_TEXTURE_ROWS[key], 0))
@@ -145,3 +145,19 @@ class AttackCrystal(PropertyImprover):
 class DefenceCrystal(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(11, 3), lambda hero: hero.defence, quantity)
+
+class Shop(Cell):
+	def __init__(self):
+		super().__init__(FourTexture(17, 5, 3))
+	
+	def interact(self, app):
+		if app.hero.location - self.location == Point(1, 0):
+			print("Shopping!") # TODO: Add shop interactions
+		
+class ShopLeft(Impassable):
+	def __init__(self):
+		super().__init__(FourTexture(17, 4, 3))
+
+class ShopRight(Impassable):
+	def __init__(self):
+		super().__init__(FourTexture(17, 6, 3))
