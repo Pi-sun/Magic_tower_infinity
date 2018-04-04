@@ -13,7 +13,7 @@ def key_position(new_board):
             award_listing.append(new_board.award[j[0]][j[1]])
         for j in hah:
             if award_listing.count(new_board.award[j[0]][j[1]])==1:
-                key.append[j]
+                key.append(j)
         root=[]            
         for j in hah:
             root.append(new_board.award_index[j[0]][j[1]])
@@ -36,7 +36,7 @@ def more_door(new_board):
                     if k not in result:
                         success=False
             if success:
-                new_board.parrelel_door.append[i,j]
+                new_board.parrelel_door.append([i,j])
                 new_board.assign(j,3)
                 new_board.door.append(j)
                 new_board.wall.remove(j)
@@ -47,7 +47,7 @@ def more_door(new_board):
 def award_return(new_board,door):
     'return the layer of all award areas around the given tile'
     result=[]
-    for j in generator.return_boundary(door):
+    for j in generator.return_boundary([door]):
         if new_board.valid_position(j):
             if new_board.award[j[0]][j[1]]!=None:
                 result.append(new_board.award[j[0]][j[1]])
@@ -185,7 +185,7 @@ def restore_board(board):
     return None
 
 if __name__ == "__main__":
-    a=generator.map_generate(11,[1,7],'no_return')
+    a=generator.map_generate(11,[1,7],"no_return")
     a.prettyPrint()
     print()
     award_area_optimize(a)

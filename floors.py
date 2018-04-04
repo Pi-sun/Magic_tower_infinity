@@ -48,9 +48,7 @@ def generate_section(callback, file = sys.stdout):
         else:
             board = generator.map_generate(dim, list(start_pos))
         award_area.award_area_optimize(board)
-        
-        starts = []
-        ends = []
+        award_area.more_door(board)
         
         empties = [] # Testing
         
