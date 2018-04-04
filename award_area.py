@@ -26,6 +26,7 @@ def key_position(new_board):
 def more_door(new_board):
     'open more doors, only after award_area_optimize)'
     new_board.parrelel_door=[]
+    new_door=[]
     for i in new_board.door:
         result=award_return(new_board,i)
         another_door=random.randint(0,2)
@@ -43,10 +44,11 @@ def more_door(new_board):
                 if success and j not in generator.return_boundary([i]):
                     new_board.parrelel_door.append([i,j])
                     new_board.assign(j,3)
-                    new_board.door.append(j)
+                    new_door.append(j)
                     new_board.wall.remove(j)
                     break
-
+    for i in new_door:
+        new_board.append(i)
     return None
                         
             
