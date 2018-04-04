@@ -285,6 +285,7 @@ def main_route_generate(size,start_posi,new_one):
     new_one.assign(node,-2)
     new_one.end_position=node
     new_one.area_assign(0,route)
+    print('main route generated')
     'main route generated'
 
     'side route generated began'
@@ -406,7 +407,7 @@ def main_route_generate(size,start_posi,new_one):
         new_one.special_assign(2,side_route[0])
         new_one.special_assign(3,side_route[-1])
     new_one.assign(start_posi,-1)
-
+    print('side route generated')
 
 
     
@@ -431,7 +432,7 @@ def main_route_generate(size,start_posi,new_one):
             if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
-                
+    print('wall generated')
 
     return new_one
 
