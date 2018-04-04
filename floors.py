@@ -3,6 +3,8 @@ import ctypes, datetime, os, random, sys, threading
 from kivy.clock import Clock
 
 from cells import *
+from monsters import *
+
 import award_area, generator
 
 SECTION_SIZE = 10
@@ -77,7 +79,7 @@ def generate_section(callback, file = sys.stdout):
         
         # Testing
         loc = random.choice(empties)
-        floor[loc[0]][loc[1]] = GreenSlime()
+        floor[loc[0]][loc[1]] = GreenSlime(20, 15, 5, 2)
         
         if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
             if DEBUG_LOG:

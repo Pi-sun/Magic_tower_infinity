@@ -639,7 +639,8 @@ def pre_generate(size,starting_position,size_area):
             dragon_x=random.randint(0,size-dragon_width-1)
             dragon_y=random.randint(0,size-dragon_length-1)
             if (starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width) and (starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length):
-                print('smile')
+                #print('smile')
+                pass
             else:
                 break
         dragon=[]

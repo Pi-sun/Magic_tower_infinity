@@ -115,58 +115,6 @@ class Downstair(Stair):
 	def __init__(self):
 		super().__init__(SingleTexture(17, 3), -1)
 		
-class Monster(Cell):
-	def __init__(self, name, health, attack, defence, texture):
-		super().__init__(texture)
-		
-		self.difficulty=[]
-		self.name = name
-		self.health = health
-		self.attack = attack
-		self.defence = defence
-		
-	def interact(self, app):
-		heroDamage = max(app.hero.attack.value - self.defence, 0)
-		heroStrikes = -1 if heroDamage == 0 else self.health // heroDamage + (self.health % heroDamage > 0)
-		
-		monsterDamage = max(self.attack - app.hero.defence.value, 0)
-		monsterStrikes = -1 if monsterDamage == 0 else app.hero.health.value // monsterDamage + (app.hero.health.value % monsterDamage > 0)
-		
-		if heroStrikes != -1 and (monsterStrikes == -1 or monsterStrikes >= heroStrikes):
-			app.hero.moveBy(self.location - app.hero.location)
-			
-			app.blockActions()
-			app.showMonster(self)
-			
-			for i in range(heroStrikes):
-				def strike(i):
-					app.showSpark()
-					self.health -= heroDamage
-					app.updateMonsterHealth(self.health)
-					
-					def hide(dt):
-						app.hideSpark()
-						if i != heroStrikes - 1:
-							app.hero.health.update(-monsterDamage)
-					Clock.schedule_once(hide, 0.15)
-				def createStrike(i):
-					return lambda dt: strike(i)
-				Clock.schedule_once(createStrike(i), 0.3 * i + 0.15)
-				
-			def clearBlock(dt):
-				app.setCell(Empty(), self.location)
-				app.showMonster(None)
-				app.unblockActions()
-			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
-		
-class GreenSlime(Monster):
-	def __init__(self):
-		super().__init__("Green Slime", 20, 15, 5, FourTexture(0, 4))
-		
-class SlimeKing(Monster):
-	def __init__(self):
-		super().__init__("Slime King", 20, 100, 0, FourTexture(3, 4))
-
 class PropertyImprover(Cell):
 	def __init__(self, texture, property, quantity):
 		super().__init__(texture)
