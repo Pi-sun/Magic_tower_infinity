@@ -1,4 +1,4 @@
-import generator, random
+import generator,random
 
 def key_position(new_board):
     'after all doors are set'
@@ -24,7 +24,7 @@ def key_position(new_board):
             
 
 def more_door(new_board):
-    'open more doors, only after award_area_optimize'
+    'open more doors, only after award_area_optimize)'
     new_board.parrelel_door=[]
     for i in new_board.door:
         result=award_return(new_board,i)
@@ -35,11 +35,15 @@ def more_door(new_board):
                 for k in award_return(new_board,j):
                     if k not in result:
                         success=False
+                for l in result:
+                    if l not in award_return(new_board,j):
+                        success=False
             if success:
                 new_board.parrelel_door.append[i,j]
                 new_board.assign(j,3)
                 new_board.door.append(j)
                 new_board.wall.remove(j)
+                break
     return None
                         
             
@@ -191,6 +195,3 @@ if __name__ == "__main__":
     award_area_optimize(a)
     a.present()
     a.award_present()
-    print()
-    more_door(a)
-    a.present()
