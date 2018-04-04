@@ -29,7 +29,7 @@ def more_door(new_board):
     new_door=[]
     for i in new_board.door:
         result=award_return(new_board,i)
-        another_door=random.randint(0,2)
+        another_door=random.randint(0,6)
         if another_door==1:
             for j in new_board.wall:
                 success=True
@@ -60,7 +60,7 @@ def award_return(new_board,door):
     result=[]
     for j in generator.return_boundary([door]):
         if new_board.valid_position(j):
-            if new_board.award[j[0]][j[1]]!=None:
+            if new_board.award[j[0]][j[1]]!=-9:
                 result.append(new_board.award[j[0]][j[1]])
     return result
 

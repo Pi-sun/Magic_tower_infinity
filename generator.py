@@ -713,6 +713,9 @@ def map_generate(size,starting_position,*special_requirement):
         if version_c.check_item(version_c.special_door)==2:
             version_c.assign(version_c.special_door,0)
             version_c.wall.remove(version_c.special_door)
+        if version_c.check_item(version_c.special_door)==3:
+            version_c.assign(version_c.special_door,0)
+            version_c.wall.door(version_c.special_door)
     for i in version_c.special:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
