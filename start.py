@@ -32,7 +32,7 @@ def StatusLabel(**kwargs):
 		color = (1, 1, 1, 1),
 		text_size = kwargs["size"],
 		**kwargs)
-
+ 
 class ColorWidget(Widget):
 	def __init__(self, color, **kwargs):
 		super().__init__(**kwargs)
@@ -233,7 +233,7 @@ class MagicTowerApp(App):
 			self.monsterAttackLabel.text = str(monster.attack)
 			self.monsterDefenceLabel.text = str(monster.defence)
 		else:
-			self.monsterTexture = SingleTexture(-1, -1)
+			self.monsterTexture = SingleTexture(*EMPTY_TEXTURE)
 			self.monsterNameLabel.text = ""
 			self.monsterHealthLabel.text = ""
 			self.monsterAttackLabel.text = ""

@@ -90,7 +90,7 @@ class KeyedDoor(Cell):
 			def clearBlock():
 				app.setCell(Empty(), self.location)
 				app.unblockActions()
-			animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [(-1, -1)], clearBlock)
+			animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 		
 class Stair(Cell):
 	def __init__(self, texture, direction):
