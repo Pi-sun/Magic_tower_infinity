@@ -20,7 +20,7 @@ def section_design(section_size):
     result=list()
     for i in range(section_size):
         result.append([0,0])
-    design_index=random.randint(0,2)
+    design_index=random.randint(0,5)
     if design_index==0:
         design='standard'
         for i in range(section_size):
@@ -35,9 +35,24 @@ def section_design(section_size):
             result[i][0]=i/section_size*9
         for i in range(int(0.5*section_size),section_size):
             result[i][0]=10-(section_size-i)/section_size*9
+    if design_index==3:
+        design='hill'
+        for i in range(section_size):
+            result[i][0]=i/(section_size/10)
+        result[int(0.5*section_size)][0]=8.5
+    if design_index==4:
+        design='bad'
+        for i in range(section_size):
+            result[i][0]=(i/section_size*100)**0.5
+    if design_index==5:
+        design='restart'
+        for i in range(int(0.5*section_size)):
+            result[i][0]=i/section_size*16
+        for i in range(int(0.5*section_size),section_size):
+            result[i][0]=(i+1-0.5*section_size)/section_size*16
     print(design)
     'generation of second difficulty index'        
-    design_index=random.randint(0,4)
+    design_index=random.randint(0,5)
     if design_index==0:
         design_2='standard'
         for i in range(section_size):
@@ -60,6 +75,10 @@ def section_design(section_size):
         design_2='hell'
         for i in range(section_size):
             result[i][1]=7.5-i/(section_size/10)/2
+    if design_index==5:
+        design_2='random'
+        for i in range(section_size):
+            result[i][1]=random.randint(3.7)
     
     
     result=fluctuate(result)
@@ -92,7 +111,7 @@ def fluctuate(section):
         if section[i][1]<0:
             section[i][1]=0
     return section
-
-for i in section_design(10):
-    print(i)
+if __name__=='__main__':
+    for i in section_design(10):
+        print(i)
     
