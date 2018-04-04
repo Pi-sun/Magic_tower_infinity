@@ -64,24 +64,25 @@ class SingleTexture(Texture):
 		return SingleTexture(self.textureRow, self.textureCol)
 		
 class FourTexture(Texture):
-	def __init__(self, textureRow, textureCol):
+	def __init__(self, textureRow, textureCol, step = 1):
 		super().__init__()
 		
 		self.textureRow = textureRow
 		self.textureCol = textureCol
+		self.step = step
 		self.currentTexture = 0
 		
 	def initialize(self, display):
 		super().initialize(display)
-		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture))
+		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture * self.step))
 
 	def update(self):
 		super().update()
 		self.currentTexture += 1
 		self.currentTexture %= 4
-		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture))
+		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture * self.step))
 
 	def copy(self):
-		texture = FourTexture(self.textureRow, self.textureCol)
+		texture = FourTexture(self.textureRow, self.textureCol, self.step)
 		texture.currentTexture = self.currentTexture
 		return texture
