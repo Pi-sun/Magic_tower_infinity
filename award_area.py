@@ -6,7 +6,7 @@ def key_position(new_board):
     for i in range(len(new_board.award_area)):
         new_board.area_key.append([])
     for i in new_board.door:
-        hah=generator.return_boundary(i)
+        hah=generator.return_boundary([i])
         award_listing=[]
         key=[]
         for j in hah:
@@ -28,7 +28,7 @@ def more_door(new_board):
     new_board.parrelel_door=[]
     for i in new_board.door:
         result=award_return(new_board,i)
-        another_door=random.randint(0,10)
+        another_door=random.randint(0,2)
         if another_door==1:
             for j in new_board.wall:
                 success=True
@@ -38,12 +38,13 @@ def more_door(new_board):
                 for l in result:
                     if l not in award_return(new_board,j):
                         success=False
-            if success:
-                new_board.parrelel_door.append[i,j]
-                new_board.assign(j,3)
-                new_board.door.append(j)
-                new_board.wall.remove(j)
-                break
+                print(success)
+                if success:
+                    new_board.parrelel_door.append([i,j])
+                    new_board.assign(j,3)
+                    new_board.door.append(j)
+                    new_board.wall.remove(j)
+                    break
     return None
                         
             
@@ -51,7 +52,7 @@ def more_door(new_board):
 def award_return(new_board,door):
     'return the layer of all award areas around the given tile'
     result=[]
-    for j in generator.return_boundary(door):
+    for j in generator.return_boundary([door]):
         if new_board.valid_position(j):
             if new_board.award[j[0]][j[1]]!=None:
                 result.append(new_board.award[j[0]][j[1]])
@@ -189,9 +190,7 @@ def restore_board(board):
     return None
 
 if __name__ == "__main__":
-    a=generator.map_generate(11,[1,7],'no_return')
-    a.prettyPrint()
-    print()
+    a=generator.map_generate(11,[1,7])
     award_area_optimize(a)
+    more_door(a)
     a.present()
-    a.award_present()
