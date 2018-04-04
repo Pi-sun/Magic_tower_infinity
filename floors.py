@@ -83,7 +83,7 @@ def generate_section(callback, file = sys.stdout):
                             if ci > 1 and board.content[ri][ci - 2] == 5:
                                 row.append(ShopRight())
                             else:
-                                row.append(Shop()) # TODO: Shop center
+                                row.append(Shop())
                         else:
                             row.append(ShopLeft())
                     else:

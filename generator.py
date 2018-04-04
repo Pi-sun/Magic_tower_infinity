@@ -720,8 +720,3 @@ def map_generate(size,starting_position,*special_requirement):
         version_d.assign(version_a.start_position,0)
         version_d.start_position=None
     return version_d
-
-if __name__=='__main__':
-    a=map_generate(11,[9,3],'no_return')
-    a.present()
-    print(a.special_wall)
