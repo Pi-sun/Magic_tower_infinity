@@ -5,6 +5,8 @@ from kivy.uix.widget import Widget
 TEXTURE_SIZE = 32
 CELL_SIZE = 50
 
+EMPTY_TEXTURE = (-1, -1)
+
 def init_textures():
 	global atlas
 	atlas = TextureImage("res/mttexture.png").texture
@@ -53,7 +55,7 @@ class SingleTexture(Texture):
 		
 	def draw(self):
 		if self.display:
-			if self.textureRow == -1 and self.textureCol == -1:
+			if (self.textureRow, self.textureCol) == EMPTY_TEXTURE:
 				self.display.draw(None)
 			else:
 				self.display.draw(texture(self.textureRow, self.textureCol))
