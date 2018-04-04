@@ -40,7 +40,7 @@ def more_door(new_board):
                         success=False
 
                 print(success)
-                if success:
+                if success and j not in generator.return_boundary([i]):
                     new_board.parrelel_door.append([i,j])
                     new_board.assign(j,3)
                     new_board.door.append(j)
