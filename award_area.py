@@ -40,7 +40,9 @@ def more_door(new_board):
                     if l not in award_return(new_board,j):
                         success=False
 
-                #print(success)
+                for l in result:
+                    if len(result)==result.count(l):
+                        success=False
                 if success and j not in generator.return_boundary([i]):
                     new_board.parrelel_door.append([i,j])
                     new_board.assign(j,3)
@@ -90,7 +92,7 @@ def award_area_optimize(new_board):
             new_board.award[j[0]][j[1]]=index
         index+=1
     'all walkable square on the board indexed -1 for main nad side route, 0,1,2,3,4 for award areas'
-    #new_board.present()
+    new_board.present()
     clean_board(new_board)
     for i in new_board.main_route:
         new_board.assign(i,1)
@@ -107,7 +109,7 @@ def award_area_optimize(new_board):
         remain_door.append(i)
     index=0
     while True:
-        #print(remain_door,index)
+        print(remain_door,index)
         temp_set=[]
         temp_door=[]
         success=False
@@ -116,7 +118,7 @@ def award_area_optimize(new_board):
             temp_set=[]
             for j in generator.return_boundary([i]):
                 if new_board.valid_position(j):
-                    #print(j,new_board.award_index[j[0]][j[1]],int(index-1))
+                    print(j,new_board.award_index[j[0]][j[1]],int(index-1))
                     if new_board.award_index[j[0]][j[1]]==index-1:
                         success=True
                         root=new_board.award[j[0]][j[1]]
@@ -133,8 +135,8 @@ def award_area_optimize(new_board):
         for i in temp_door:
             remain_door.remove(i)
         index+=0.5
-        #new_board.present()
-        #new_board.award_present()
+        new_board.present()
+        new_board.award_present()
         if len(remain_door)==0:
             break
     restore_board(new_board)

@@ -276,7 +276,7 @@ def main_route_generate(size,start_posi,new_one):
         else:
             trial+=1
 
-        if trial>20:
+        if (trial>20 and len(route)!=1):
             new_one.assign(node,1)
             break
 
@@ -711,7 +711,8 @@ def map_generate(size,starting_position,*special_requirement):
     version_c=door_generate(award_area_generate(version_a))
     if 'shop' in special_requirement or 'guard_area' in special_requirement:
         if version_c.check_item(version_c.special_door)==2:
-            version_c.assign(version_c.special_door,0) 
+            version_c.assign(version_c.special_door,0)
+            version_c.wall.remove(version_c.special_door)
     for i in version_c.special:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
