@@ -48,7 +48,7 @@ def more_door(new_board):
                     new_board.wall.remove(j)
                     break
     for i in new_door:
-        new_board.append(i)
+        new_board.door.append(i)
     return None
                         
             
