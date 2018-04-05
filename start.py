@@ -4,12 +4,13 @@ from textures import *
 GRID_DIM = floors.dim
 START_FLOOR, START_ROW, START_COL = floors.start
 
-# Import this as early as possible,
+# Set these as early as possible,
 # otherwise Kivy may not register these settings
 from kivy.config import Config
 Config.set("graphics", "resizable", 0)
 Config.set("graphics", "width", CELL_SIZE * (GRID_DIM + 9))
 Config.set("graphics", "height", CELL_SIZE * (GRID_DIM + 1))
+Config.set("kivy", "exit_on_escape", "0")
 
 import os, sys
 
