@@ -605,24 +605,15 @@ def door_generate(new_board):
                     new_board.assign(i,0)
                 if len(area_detect(blank_board))==1:
                     break
-    if len(area_detect(blank_board))!=1:
-        new_board.error=['step3']
-        for i in walls:
-            if i not in new_board.special_wall:
-                blank_board1=Board(blank_board.size)
-                for row_index in range(blank_board.length()):
-                    for column_index in range(new_board.length()):
-                        if blank_board.check_item([row_index,column_index])==2:
-                            blank_board1.assign([row_index,column_index],2)
-                blank_board1.assign(i,0)
-                if len(area_detect(blank_board1))<len(area_detect(blank_board)):
-                    doors.append(i)
-
-                    new_board.wall.remove(i)
-                    blank_board.assign(i,0)
-                    new_board.assign(i,0)
-                if len(area_detect(blank_board))==1:
-                    break
+    areas=area_detect(blank_board)
+    if len(areas)!=1:
+        new_board.vault=[]
+        for i in areas:
+            if new_board.end_position not in i:
+                for j in i:
+                    new_board.vault.append(j)
+                    new_board.assign(j,5)
+    
 
     new_board.error.append(area_detect(blank_board))
     for i in doors:
