@@ -126,7 +126,6 @@ def award_area_optimize(new_board):
                         temp_set.append(new_board.award[j[0]][j[1]])
             if success:
                 temp_door.append(i)
-            if success:
                 for j in temp_set:
                     new_board.award_listing[j]=[root,i]
                     for k in new_board.award_area[j]:
