@@ -119,7 +119,7 @@ class Board:
 
     def check_item(self,position):
         'return the object at the given position on the board'
-        if position[0]>=0 and position[0]>=0 and position[0]<self.size and position[1]<self.size:
+        if position[0]>=0 and position[1]>=0 and position[0]<self.size and position[1]<self.size:
             return self.content[position[0]][position[1]]
         else:
             return 0
