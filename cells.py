@@ -33,9 +33,9 @@ KEY_RED = "red"
 KEYS = [KEY_YELLOW, KEY_BLUE, KEY_RED]
 
 KEY_TEXTURES = {
-	KEY_YELLOW: (10, 0),
-	KEY_BLUE: (10, 1),
-	KEY_RED: (10, 2)
+	KEY_YELLOW: (18, 0),
+	KEY_BLUE: (18, 1),
+	KEY_RED: (18, 2)
 }
 
 DOOR_TEXTURE_ROWS = {
@@ -109,11 +109,11 @@ class Stair(Cell):
 		
 class Upstair(Stair):
 	def __init__(self):
-		super().__init__(SingleTexture(17, 2), 1)
+		super().__init__(SingleTexture(24, 2), 1)
 		
 class Downstair(Stair):
 	def __init__(self):
-		super().__init__(SingleTexture(17, 3), -1)
+		super().__init__(SingleTexture(24, 3), -1)
 		
 class PropertyImprover(Cell):
 	def __init__(self, texture, property, quantity):
@@ -132,23 +132,23 @@ class Key(PropertyImprover):
 		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 0), lambda hero: hero.health, quantity)
+		super().__init__(SingleTexture(16, 0), lambda hero: hero.health, quantity)
 		
 class LargeHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 1), lambda hero: hero.health, quantity)
+		super().__init__(SingleTexture(16, 1), lambda hero: hero.health, quantity)
 		
 class AttackCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 2), lambda hero: hero.attack, quantity)
+		super().__init__(SingleTexture(18, 3), lambda hero: hero.attack, quantity)
 		
 class DefenceCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(11, 3), lambda hero: hero.defence, quantity)
+		super().__init__(SingleTexture(19, 3), lambda hero: hero.defence, quantity)
 
 class Shop(Cell):
 	def __init__(self):
-		super().__init__(FourTexture(17, 5, 3))
+		super().__init__(FourTexture(6, 5, 3))
 	
 	def interact(self, app):
 		if app.hero.location - self.location == Point(1, 0):
@@ -156,8 +156,8 @@ class Shop(Cell):
 		
 class ShopLeft(Impassable):
 	def __init__(self):
-		super().__init__(FourTexture(17, 4, 3))
+		super().__init__(FourTexture(6, 4, 3))
 
 class ShopRight(Impassable):
 	def __init__(self):
-		super().__init__(FourTexture(17, 6, 3))
+		super().__init__(FourTexture(6, 6, 3))

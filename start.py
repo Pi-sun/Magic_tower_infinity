@@ -82,18 +82,12 @@ class MagicTowerApp(App):
 			size = (CELL_SIZE * 2.03125, CELL_SIZE * 0.53125)) for i in range(len(KEYS)))))
 		for key in KEYS:
 			self.root.add_widget(keyLabels[key])
-			with keyLabels[key].canvas:
-				Color(1, 1, 1)
-				#Rectangle(pos = keyLabels[key].pos, size = keyLabels[key].size)
 		
 		self.hero = Hero(self, self.grid, START_ROW, START_COL, *statusLabels, keyLabels)
 		self.grid.add_widget(self.hero)
 		
-		self.spark = Image(
-			source = "res/spark.png",
-			allow_stretch = True,
-			size = (CELL_SIZE, CELL_SIZE))
-			
+		self.spark = TextureDisplay(size = (CELL_SIZE, CELL_SIZE))
+		
 		self.levelLabel = StatusLabel(
 			font_size = CELL_SIZE * 0.5,
 			halign = "center",
@@ -112,8 +106,8 @@ class MagicTowerApp(App):
 		self.monsterNameLabel = StatusLabel(
 			font_size = CELL_SIZE * 0.36,
 			halign = "center",
-			pos = (CELL_SIZE * (5.625 + GRID_DIM), CELL_SIZE * 3.15625),
-			size = (CELL_SIZE * 2.75, CELL_SIZE * 0.53125))
+			pos = (CELL_SIZE * (5.53125 + GRID_DIM), CELL_SIZE * 3.15625),
+			size = (CELL_SIZE * 2.9375, CELL_SIZE * 0.53125))
 		self.root.add_widget(self.monsterNameLabel)
 		
 		monsterStatusLabels = [StatusLabel(
@@ -223,6 +217,7 @@ class MagicTowerApp(App):
 		
 	def showSpark(self):
 		self.spark.pos = self.hero.pos
+		self.spark.draw(texture(24, 16))
 		self.grid.add_widget(self.spark)
 		
 	def hideSpark(self):
