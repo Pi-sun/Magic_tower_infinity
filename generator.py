@@ -111,6 +111,7 @@ class Board:
         self.award_area=[]
         self.size=size
         self.special=[]
+        self.special_actual=[]
         self.special_door=[]
         self.content=list()
         for i in range(size):
@@ -621,7 +622,7 @@ def door_generate(new_board):
         new_board.assign(i,3)
     return new_board
 
-def pre_generate(size,starting_position,size_area):
+def pre_generate(size,starting_position,size_area,surround_back=False):
     
     dragon_width=size_area[0]
     dragon_length=size_area[1]
@@ -630,18 +631,27 @@ def pre_generate(size,starting_position,size_area):
         while True:
             dragon_x=random.randint(0,size-dragon_width-1)
             dragon_y=random.randint(0,size-dragon_length-1)
-            if (starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width) and (starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length):
-                #print('smile')
-                pass
+            if surround_back:
+                if starting_position[0]<(dragon_x-1) or starting_position[0]>dragon_x+dragon_width or starting_position[1]<(dragon_y-1) or starting_position[1]>(dragon_y+dragon_length+1):
+                    break
             else:
-                break
+                if starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width or starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length:
+                    break
         dragon=[]
         for x_cood in range(dragon_x,dragon_x+dragon_width):
             for y_cood in range(dragon_y,dragon_y+dragon_length):
                 dragon.append([x_cood,y_cood])
-        for i in dragon:
+        if surround_back:
+            surround=[]
+            for x_cood in range(max(dragon_x-1,0),dragon_x+dragon_width):
+                for y_cood in range(max(dragon_y-1,0),min(dragon_y+dragon_length+1,size)):
+                    surround.append([x_cood,y_cood])
+        else:
+            surround=dragon
+        for i in surround:
             version_0.assign(i,2)
-        version_0.special=dragon
+        version_0.special=surround
+        version_0.special_actual=dragon
         version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
         version_a=main_route_generate(size,starting_position,version_0)
         return version_a
@@ -697,7 +707,7 @@ def map_generate(size,starting_position,*special_requirement):
     if 'guarded_area' in special_requirement:
         version_a=pre_generate(size,starting_position,[6,5])
     if 'shop' in special_requirement:
-        version_a=pre_generate(size,starting_position,[1,3])
+        version_a=pre_generate(size,starting_position,[1,3],True)
 
         
     version_c=door_generate(award_area_generate(version_a))
@@ -708,7 +718,7 @@ def map_generate(size,starting_position,*special_requirement):
         if version_c.check_item(version_c.special_door)==3:
             version_c.assign(version_c.special_door,0)
             version_c.wall.door(version_c.special_door)
-    for i in version_c.special:
+    for i in version_c.special_actual:
         version_c.assign(i,5)
     version_d=wall_optimize(version_c)
     if 'no_return' in special_requirement:
