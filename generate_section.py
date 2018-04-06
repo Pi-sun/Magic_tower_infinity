@@ -15,8 +15,8 @@ def generate_section(callback, file = sys.stdout):
     # `nextFloor` is kept as 11 (the first floor's index)
     # `nextStart` is kept as the start position of level 11
     # `start_pos` is constantly updated to be the start position of the next floor
-    # `board` is the current floor, represented as a Board object (from generator.py)
-    # `floor` is the current floor, represented as an array of Cells (from cells.py)
+    # `board` is the current floor, represented as a Board object (from generator module)
+    # `floor` is the current floor, represented as an array of Cells (from mt_cells package)
     # `callback` parameter of this function must be called after every round of
     #    generation to update graphics
 
