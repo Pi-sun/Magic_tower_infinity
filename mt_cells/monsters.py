@@ -5,9 +5,10 @@ from textures import *
 from . import Cell, Empty
 
 class Monster(Cell):
-	def __init__(self, name, health, attack, defence, money, texture):
+	def __init__(self, name, health, attack, defence, money, texture, origin):
 		super().__init__(texture)
-		
+
+		self.origin=origin
 		self.name = name
 		self.health = health
 		self.attack = attack
@@ -49,10 +50,10 @@ class Monster(Cell):
 				app.unblockActions()
 			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
 			
-def _monsterTypeCreator(name, textureCoordinate):
-	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate))
+def _monsterTypeCreator(name, textureCoordinate, origin=1):
+	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate),origin)
 			
-GreenSlimeB = _monsterTypeCreator("Green Slime B", (7, 4))
+GreenSlimeB = _monsterTypeCreator("Green Slime B", (7, 4),1)
 GreenSlimeA = _monsterTypeCreator("Green Slime A", (8, 4))
 RedSlimeB = _monsterTypeCreator("Red Slime B", (9, 4))
 RedSlimeA = _monsterTypeCreator("Red Slime A", (10, 4))
