@@ -78,17 +78,12 @@ def generate_section(callback, file = sys.stdout):
                 elif item == 3:
                     row.append(KeyedDoor(KEY_YELLOW))
                 elif item == 5:
-                    if i == shopIndex:
-                        if ci > 0 and board.content[ri][ci - 1] == 5:
-                            if ci > 1 and board.content[ri][ci - 2] == 5:
-                                row.append(ShopRight())
-                            else:
-                                row.append(Shop())
-                        else:
-                            row.append(ShopLeft())
-                    else:
-                        row.append(Empty()) # TODO: Other special entities
+                    row.append(Empty()) # TODO: Other special entities
             floor.append(row)
+        
+        if i == shopIndex:
+            for loc, item in zip(sorted(board.special_actual), (ShopLeft(), Shop(), ShopRight())):
+                floor[loc[0]][loc[1]] = item
         
         # Testing
         loc = random.choice(empties)

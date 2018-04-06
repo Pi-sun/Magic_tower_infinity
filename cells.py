@@ -10,7 +10,7 @@ def animate(texture, keyframes, completion = None):
 				completion()
 		def createWork(i):
 			return lambda dt: work(i)
-		Clock.schedule_once(createWork(i), 0.1 * i)
+		Clock.schedule_once(createWork(i), 0.08 * i)
 
 class Point:
 	def __init__(self, row, col):
@@ -60,7 +60,7 @@ class Cell:
 		
 class Empty(Cell):
 	def __init__(self):
-		super().__init__(SingleTexture(-1, -1))
+		super().__init__(SingleTexture(*EMPTY_TEXTURE))
 	
 	def interact(self, app):
 		app.hero.moveBy(self.location - app.hero.location)
@@ -75,6 +75,32 @@ class Impassable(Cell):
 class Wall(Impassable):
 	def __init__(self):
 		super().__init__(SingleTexture(8, 0))
+
+class HiddenWall(Impassable):
+	def __init__(self):
+		super().__init__(SingleTexture(*EMPTY_TEXTURE))
+		self.hidden = True
+		
+	def interact(self, app):
+		if self.hidden:
+			app.blockActions()
+		
+			def clearBlock():
+				self.hidden = False
+				app.unblockActions()
+			animate(self.texture, [EMPTY_TEXTURE] + [(8, 3 - i) for i in range(4)], clearBlock)
+
+class FakeWall(Cell):
+	def __init__(self):
+		super().__init__(SingleTexture(8, 0))
+		
+	def interact(self, app):
+		app.blockActions()
+		
+		def clearBlock():
+			app.setCell(Empty(), self.location)
+			app.unblockActions()
+		animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 
 class KeyedDoor(Cell):
 	def __init__(self, key):
