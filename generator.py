@@ -720,6 +720,9 @@ def map_generate(size,starting_position,*special_requirement):
             version_c.wall.door(version_c.special_door)
     for i in version_c.special_actual:
         version_c.assign(i,5)
+    for i in version_c.special:
+        if not i in version_c.special_actual:
+            version_c.wall.append(i)
     version_d=wall_optimize(version_c)
     if 'no_return' in special_requirement:
         version_d.assign(version_a.start_position,0)
