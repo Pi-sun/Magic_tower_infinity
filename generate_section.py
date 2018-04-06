@@ -1,7 +1,6 @@
 import random, sys
 
-from cells import *
-from monsters import *
+from mt_cells import *
 
 import award_area, generator
 

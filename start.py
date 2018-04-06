@@ -22,7 +22,7 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-from cells import Point, KEYS
+from mt_cells import Point, KEYS
 from hero import Hero
 
 LOADING_MAX_LENGTH = 5
