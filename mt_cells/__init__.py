@@ -2,7 +2,7 @@ from kivy.clock import Clock
 
 from textures import *
 
-def animate(texture, keyframes, completion = None):
+def _animate(texture, keyframes, completion = None):
 	for i in range(len(keyframes)):
 		def work(i):
 			texture.reload(*keyframes[i])
@@ -88,7 +88,7 @@ class HiddenWall(Impassable):
 			def clearBlock():
 				self.hidden = False
 				app.unblockActions()
-			animate(self.texture, [EMPTY_TEXTURE] + [(8, 3 - i) for i in range(4)], clearBlock)
+			_animate(self.texture, [EMPTY_TEXTURE] + [(8, 3 - i) for i in range(4)], clearBlock)
 
 class FakeWall(Cell):
 	def __init__(self):
@@ -100,7 +100,7 @@ class FakeWall(Cell):
 		def clearBlock():
 			app.setCell(Empty(), self.location)
 			app.unblockActions()
-		animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
+		_animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 
 class KeyedDoor(Cell):
 	def __init__(self, key):
@@ -116,7 +116,7 @@ class KeyedDoor(Cell):
 			def clearBlock():
 				app.setCell(Empty(), self.location)
 				app.unblockActions()
-			animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
+			_animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 		
 class Stair(Cell):
 	def __init__(self, texture, direction):
@@ -187,3 +187,6 @@ class ShopLeft(Impassable):
 class ShopRight(Impassable):
 	def __init__(self):
 		super().__init__(FourTexture(6, 6, 3))
+
+# Expose other cells as well
+from .monsters import *

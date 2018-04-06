@@ -113,6 +113,7 @@ class Board:
         self.special=[]
         self.special_actual=[]
         self.special_door=[]
+        self.vault = []
         self.content=list()
         for i in range(size):
             self.content.append([0]*size)
