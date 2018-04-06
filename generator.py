@@ -1,23 +1,24 @@
 import random, sys
 
 def boss_floor_generate(start_position,size):
+    half_size=size//2
     new_one=Board(size)
     new_one.start_position=start_position
     new_one.assign(start_position,-1)
     new_one.main_route=[start_position]
     if start_position[0]+1>0.5*size:
-        wall_y=int(0.5*size)-1
+        wall_y=half_size-1
         boss=1
     else:
-        wall_y=int(0.5*size)
+        wall_y=half_size
         boss=0
     if boss==1:
-        for x in range(0,int(0.5*size)-1):
+        for x in range(0,half_size-1):
             for y in range(size):
                 new_one.special.append([x,y])
                 new_one.assign([x,y],5)
     else:
-        for x in range(int(0.5*size)+1,size):
+        for x in range(half_size+1,size):
             for y in range(size):
                 new_one.special.append([x,y])
                 new_one.assign([x,y],5)
@@ -26,38 +27,38 @@ def boss_floor_generate(start_position,size):
         new_one.assign([wall_y,i],2)
         new_one.wall.append([wall_y,i])
         new_one.special_wall.append([wall_y,i])
-    if start_position[1]<int(0.5*size):
-        for i in range(start_position[1]+1,int(0.5*size)+1):
+    if start_position[1]<half_size:
+        for i in range(start_position[1]+1,half_size+1):
             position=[start_position[0],i]
             new_one.assign(position,1)
             new_one.main_route.append(position)
     else:
-        for i in range(int(0.5*size)+1,start_position[1]+1):
+        for i in range(half_size+1,start_position[1]+1):
             position=[start_position[0],i]
             new_one.assign(position,1)
             new_one.main_route.append(position)
-    if start_position[0]<int(0.5*size):
-        for i in range(start_position[0],int(0.5*size)):
-            position=[i,int(0.5*size)]
+    if start_position[0]<half_size:
+        for i in range(start_position[0],half_size):
+            position=[i,half_size]
             new_one.assign(position,1)
             new_one.main_route.append(position)
-        new_one.assign([int(0.5*size),int(0.5*size)],3)
-        new_one.door.append([int(0.5*size),int(0.5*size)])
+        new_one.assign([half_size,half_size],3)
+        new_one.door.append([half_size,half_size])
     else:
-        for i in range(int(0.5*size),start_position[0]+1):
-            position=[i,int(0.5*size)]
+        for i in range(half_size,start_position[0]+1):
+            position=[i,half_size]
             new_one.assign(position,1)
             new_one.main_route.append(position)
-        new_one.assign([int(0.5*size)-1,int(0.5*size)],3)
-        new_one.door.append([int(0.5*size)-1,int(0.5*size)])
+        new_one.assign([half_size-1,half_size],3)
+        new_one.door.append([half_size-1,half_size])
     for i in return_boundary_s(new_one.main_route):
         if new_one.check_item(i)!=3 and new_one.valid_position(i):
             new_one.assign(i,2)
             new_one.wall.append(i)
     if boss==1:
-        new_one.end_position=[random.randint(0,int(0.5*size)-2),int(0.5*size)]
+        new_one.end_position=[random.randint(0,half_size-2),half_size]
     if boss==0:
-        new_one.end_position=[random.randint(int(0.5*size)+1,size-1),int(0.5*size)]
+        new_one.end_position=[random.randint(half_size+1,size-1),half_size]
     new_one_v2=door_generate(award_area_generate(new_one))
     new_one_v3=wall_optimize(new_one_v2)
     
