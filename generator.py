@@ -121,41 +121,14 @@ class Board:
 
     def check_item(self,position):
         'return the object at the given position on the board'
-        if position[0]>=0 and position[1]>=0 and position[0]<self.size and position[1]<self.size:
+        if self.valid_position(position):
             return self.content[position[0]][position[1]]
         else:
             return 0
 
-    def area_assign(self,index,positions):
-        if index==0:
-            self.main_route=positions
-        if index==1:
-            self.side_route=positions
-        if index>1:
-            self.award_area.append(positions)
-        return None
-
     def assign(self,position,thing):
         self.content[position[0]][position[1]]=thing
         return None
-
-    def special_assign(self,index,position):
-        'assign starting position (index 0), ending position(index 1), starting position of side route (index 3), ending position of side route(index 2),door (index 4)'
-        if index==0:
-            self.start_position=position
-        if index==1:
-            self.end_position=position
-        if index==3:
-            self.side_start=position
-        if index==2:
-            self.side_end=position
-        if index==4:
-            self.door.append(position)
-        return None
-        
-
-    def length(self):
-        return self.size
 
     def nearby_check(self,position,thing):
         result=0
@@ -171,10 +144,7 @@ class Board:
 
     def valid_position(self,position):
         'check whether a position is valid in the board'
-        if position[0]>=0 and position[1]>=0 and position[0]<self.size and position[1]<self.size:
-            return True
-        else:
-            return False
+        return position[0]>=0 and position[1]>=0 and position[0]<self.size and position[1]<self.size
 
     def can_walk(self,position):
         'check whether a position in the board'
@@ -182,8 +152,8 @@ class Board:
             return False
         else:
             'To be continued'
-
             return True
+            
     def award_present(self):
         for line in self.award_index:
             print(line)
@@ -193,14 +163,11 @@ class Board:
         print('\n')
         print(self.award_listing,'\n')
 
-
     def present(self):
         for line in self.content:
             print(line)
         print('\n')
         return None
-
-
             
     def prettyPrint(self, message = "Board", file = sys.stdout):
         print(message + ":", file = file)
@@ -283,10 +250,10 @@ def main_route_generate(size,start_posi,new_one):
             break
 
     new_one.assign(start_posi,-1)
-    new_one.special_assign(0,start_posi)
+    new_one.start_position=start_posi
     new_one.assign(node,-2)
     new_one.end_position=node
-    new_one.area_assign(0,route)
+    new_one.main_route=route
     print('main route generated')
     'main route generated'
 
@@ -405,9 +372,9 @@ def main_route_generate(size,start_posi,new_one):
                         trial=0
 
     if if_side:
-        new_one.area_assign(1,side_route)
-        new_one.special_assign(2,side_route[0])
-        new_one.special_assign(3,side_route[-1])
+        new_one.side_route=side_route
+        new_one.side_end=side_route[0]
+        new_one.side_start=side_route[-1]
     new_one.assign(start_posi,-1)
     print('side route generated')
 
@@ -441,8 +408,8 @@ def main_route_generate(size,start_posi,new_one):
 def area_detect(new_board):
     all_area=[]
     area_list=[]
-    for row_index in range(new_board.length()):
-        for column_index in range(new_board.length()):
+    for row_index in range(new_board.size):
+        for column_index in range(new_board.size):
             if new_board.check_item([row_index,column_index])==0 and [row_index,column_index] not in area_list:
                 area=[[row_index,column_index]]
                 pre_area=area
@@ -563,8 +530,8 @@ def door_generate(new_board):
     doors=[]
     walls=[]
     blank_board=Board(new_board.size)
-    for row_index in range(new_board.length()):
-        for column_index in range(new_board.length()):
+    for row_index in range(new_board.size):
+        for column_index in range(new_board.size):
             if new_board.check_item([row_index,column_index])==2:
                 blank_board.assign([row_index,column_index],2)
                 if [row_index,column_index] not in new_board.special:
@@ -572,8 +539,8 @@ def door_generate(new_board):
     for i in walls:
         if i not in new_board.special_wall:
             blank_board1=Board(blank_board.size)
-            for row_index in range(blank_board.length()):
-                for column_index in range(new_board.length()):
+            for row_index in range(blank_board.size):
+                for column_index in range(new_board.size):
                     if blank_board.check_item([row_index,column_index])==2:
                         blank_board1.assign([row_index,column_index],2)
             blank_board1.assign(i,0)
@@ -594,8 +561,8 @@ def door_generate(new_board):
         for i in walls:
             if i not in new_board.special_wall:
                 blank_board1=Board(blank_board.size)
-                for row_index in range(blank_board.length()):
-                    for column_index in range(new_board.length()):
+                for row_index in range(blank_board.size):
+                    for column_index in range(new_board.size):
                         if blank_board.check_item([row_index,column_index])==2:
                             blank_board1.assign([row_index,column_index],2)
                 blank_board1.assign(i,0)
@@ -619,7 +586,7 @@ def door_generate(new_board):
 
     new_board.error.append(area_detect(blank_board))
     for i in doors:
-        new_board.special_assign(4,i)
+        new_board.door.append(i)
         new_board.assign(i,3)
     return new_board
 

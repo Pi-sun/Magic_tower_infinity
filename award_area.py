@@ -21,8 +21,6 @@ def key_position(new_board):
         new_board.area_key[root].extend(key)
     return None
 
-            
-
 def more_door(new_board):
     'open more doors, only after award_area_optimize)'
     new_board.parrelel_door=[]
@@ -51,9 +49,7 @@ def more_door(new_board):
                     break
     for i in new_door:
         new_board.door.append(i)
-    return None
-                        
-            
+    return None    
 
 def award_return(new_board,door):
     'return the layer of all award areas around the given tile'
@@ -63,7 +59,6 @@ def award_return(new_board,door):
             if new_board.award[j[0]][j[1]]!=-9:
                 result.append(new_board.award[j[0]][j[1]])
     return result
-
     
 def award_area_optimize(new_board):
     'award return the award area index of a give position, award index return the layer of given position, award listing return the immediate previous area of an area and the immediate door leading to this area'
