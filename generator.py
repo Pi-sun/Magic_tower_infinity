@@ -545,7 +545,7 @@ def door_generate(new_board):
                     if blank_board.check_item([row_index,column_index])==2:
                         blank_board1.assign([row_index,column_index],2)
             blank_board1.assign(i,0)
-            if len(area_detect(blank_board1))<len(area_detect(blank_board)):
+            if len(area_detect(blank_board1))==len(area_detect(blank_board))-1:
                 ifgen=random.randint(0,1)
                 if ifgen==1:
                     doors.append(i)
@@ -567,7 +567,7 @@ def door_generate(new_board):
                         if blank_board.check_item([row_index,column_index])==2:
                             blank_board1.assign([row_index,column_index],2)
                 blank_board1.assign(i,0)
-                if len(area_detect(blank_board1))<len(area_detect(blank_board)):
+                if len(area_detect(blank_board1))==len(area_detect(blank_board))-1:
                     doors.append(i)
 
                     new_board.wall.remove(i)

@@ -1,4 +1,4 @@
-import generator,random
+import generator,random,award_area
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
@@ -60,7 +60,7 @@ def section_design(section_size):
     if design_index==1:
         design_2='less standard'
         for i in range(section_size):
-            result[i][1]=(i/section_size*2)**2*2.5/2+2.5
+            result[i][1]=(i/section_size*2)**2*2.5/2+3
     if design_index==2:
         design_2='half-half'
         for i in range(int(0.5*section_size)):
@@ -78,7 +78,7 @@ def section_design(section_size):
     if design_index==5:
         design_2='random'
         for i in range(section_size):
-            result[i][1]=random.randint(3.7)
+            result[i][1]=random.randint(3,7)
     
     
     result=fluctuate(result)
@@ -112,9 +112,52 @@ def fluctuate(section):
             section[i][1]=0
     return section
 
-
+def floor_monster_main(board,difficulty):
+    'return the difficulty of monster on the board'
+    board.difficulty=list()
+    for i in range(board.size):
+        board.difficulty.append([0]*board.size)
+    real_difficulty=2*difficulty
+    key=[]
+    trial=0
+    for i in board.key_main:
+        key.append(i)
+    while True:
+        for i in key:
+            if_mon=random.randint(0,2)
+            'there is mon'
+            if if_mon==0:
+                mon_diff=random.randint(0,real_difficulty)
+                if mon_diff>=1.2*difficulty:
+                    if_ultra=random.randint(0,10)
+                    if if_ultra==0:
+                        board.difficulty[i[0]][i[1]]=mon_diff
+                        real_difficulty-=mon_diff
+                        key.remove(i)
+                else:
+                    board.difficulty[i[0]][i[1]]=mon_diff
+                    real_difficulty-=mon_diff
+                    key.remove(i)
+        if real_difficulty==0:
+            break
+        else:
+            trial+=1
+        if trial==30:
+            board.difficulty=list()
+            for i in range(board.size):
+                board.difficulty.append([0]*board.size)
+            real_difficulty=2*difficulty
+            key=[]
+            for i in board.key_main:
+                key.append(i)
+        if trial==60:
+            break
+    return board
+                    
 
 if __name__=='__main__':
-    for i in section_design(10):
+    a=floor_monster_main(award_area.key_position(award_area.award_area_optimize(generator.map_generate(11,[1,1]))),7)
+    a.present()
+    for i in a.difficulty:
         print(i)
     
