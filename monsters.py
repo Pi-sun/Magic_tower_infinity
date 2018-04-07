@@ -12,9 +12,15 @@ def _monster_creator(cls, baseHealth, baseAttack, baseDefence, baseMoney, baseSe
 		actual_health=int(round(baseHealth*(ratio)*1.02**((section-baseSection)/5)))
 		actual_attack=int(round((standard_attack+(baseAttack-origin_attack)/ratio)*1.02**((section-baseSection)/5)))
 		actual_defence=int(round((standard_defence+(baseDefence-origin_attack)/ratio)*1.02**((section-baseSection)/5)))
-		actual_money=int(round(baseMoney))# TODO: calculate monster money increment
+		actual_money=int(round(baseMoney*40**((section-baseSection)/5)))))# TODO: calculate monster money increment
 		return cls(actual_health, actual_attack, actual_defence, actual_money)
 	return create
+
+#difficulty in main/side route on xth floor in a section is calculated as such:
+# early_difficulty*(1-0.3*x)+end_difficulty*(0.3*x)
+
+# difficulty in award area on xth floor in a section is calculated as such
+# early_difficulty*(1-0.6x)+end_difficulty*0.6x
 
 GreenSlimeB = _monster_creator(mons.GreenSlimeB,35,18,1,1,1)
 RedSlimeB = _monster_creator(mons.RedSlimeB,45,20,2,2,1)

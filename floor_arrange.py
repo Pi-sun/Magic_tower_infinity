@@ -111,6 +111,9 @@ def fluctuate(section):
         if section[i][1]<0:
             section[i][1]=0
     return section
+
+
+
 if __name__=='__main__':
     for i in section_design(10):
         print(i)
