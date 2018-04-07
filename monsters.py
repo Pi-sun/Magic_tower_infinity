@@ -50,7 +50,7 @@ monsters = [
 		(9,8): _monster_creator(KnightB,180,210,100,75,3),
 	},
 	{ # section 4
-		(1,2): _monster_creator(Slimelord,320,270,10,52,4),
+		(1,2): _monster_creator(GreenSlimeA,320,270,10,52,4),
 		(2,2): _monster_creator(VampireBatB,190,360,80,58,4),
 		(4,3): _monster_creator(MagicianB,210,350,100,78,4),
 		(6,5): _monster_creator(MagicianA,190,370,120,92,4),
@@ -59,8 +59,8 @@ monsters = [
 		(10,9): _monster_creator(GateKeeperA,160,380,230,160,4),
 	},
 	{ # section 5
-		(1,1): _monster_creator(GreenSlimeA,550,310,100,90,5),
-		(3,2): _monster_creator(RedSlimeA,500,360,140,100,5),
+		(1,1): _monster_creator(RedSlimeA,550,310,100,90,5),
+		(3,2): _monster_creator(Slimelord,500,360,140,100,5),
 		(5,4): _monster_creator(DarkPriest,250,420,200,110,5),
 		(6,4): _monster_creator(KnightA,400,400,210,125,5),
 		(5,5): _monster_creator(SmokeMan,480,450,165,133,5),
