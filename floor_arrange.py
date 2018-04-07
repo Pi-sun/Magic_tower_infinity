@@ -152,6 +152,7 @@ def floor_monster_main(board,difficulty):
                 key.append(i)
         if trial==60:
             break
+<<<<<<< HEAD
         
     real_difficulty=2*difficulty
     key=[]
@@ -199,7 +200,19 @@ def floor_monster_award(board,difficulty):
 
 if __name__=='__main__':
     a=floor_monster_main(award_area.key_position(award_area.award_area_optimize(generator.map_generate(11,[1,1]))),3)
+=======
+    return None
+                    
+
+if __name__=='__main__':
+    a=generator.map_generate(11,[1,7])
+    award_area.award_area_optimize(a)
+    award_area.more_door(a)
+    award_area.key_position(a)
+    floor_monster_main(a,7)
+    
+    print("-" * 40)
+>>>>>>> aa6cff80df3bffcbf3fca6b4d3c3c1ebf6221d02
     a.present()
     for i in a.difficulty:
-        print(i)
-    
+    	print(i)

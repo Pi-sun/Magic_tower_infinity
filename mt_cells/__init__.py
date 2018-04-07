@@ -1,6 +1,6 @@
 from kivy.clock import Clock
 
-from textures import *
+from mt_core.textures import *
 
 def _animate(texture, keyframes, completion = None):
 	for i in range(len(keyframes)):
