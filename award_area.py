@@ -22,7 +22,7 @@ def key_position(new_board):
                 root.append(new_board.award[j[0]][j[1]])
         root.sort()
         new_board.area_key[root[-1]].extend(key)
-    return None
+    return new_board
 
 def more_door(new_board):
     'open more doors, only after award_area_optimize)'
@@ -62,7 +62,33 @@ def award_return(new_board,door):
             if new_board.award[j[0]][j[1]]!=-9:
                 result.append(new_board.award[j[0]][j[1]])
     return result
-    
+
+def find_key(board):
+    board.key_main=[]
+    board.key_side=[]
+    for i in board.door:
+        board.assign(i,3)
+    for i in board.side_route:
+        board.assign(i,1)
+    for i in board.main_route:
+        board.assign(i,0)
+    template=len(generator.area_detect(board))
+    for i in board.main_route:
+        board.assign(i,1)
+        if len(generator.area_detect(board))>template:
+            board.key_main.append(i)
+        board.assign(i,0)
+    for i in board.main_route:
+        board.assign(i,1)
+    template=len(generator.area_detect(board))
+    for i in board.side_route:
+        board.assign(i,1)
+        if len(generator.area_detect(board))>template:
+            board.key_side.append(i)
+        board.assign(i,0)
+    clean_board(board)
+    return None
+
 def award_area_optimize(new_board):
     'award return the award area index of a give position, award index return the layer of given position, award listing return the immediate previous area of an area and the immediate door leading to this area'
     new_board.award=list()
@@ -94,16 +120,7 @@ def award_area_optimize(new_board):
     'all walkable square on the board indexed -1 for main nad side route, 0,1,2,3,4 for award areas'
     new_board.present()
     clean_board(new_board)
-    for i in new_board.main_route:
-        new_board.assign(i,1)
-        if len(generator.area_detect(new_board))>1 and i!=new_board.start_position and i!=new_board.end_position:
-            new_board.key_main.append(i)
-        new_board.assign(i,0)
-    for i in new_board.side_route:
-        new_board.assign(i,1)
-        if len(generator.area_detect(new_board))>1 and i!=new_board.start_position and i!=new_board.end_position:
-            new_board.key_side.append(i)
-        new_board.assign(i,0)
+    find_key(new_board)
     remain_door=[]
     for i in new_board.door:
         remain_door.append(i)
@@ -139,7 +156,9 @@ def award_area_optimize(new_board):
         if len(remain_door)==0:
             break
     restore_board(new_board)
-    return None
+            
+    
+    return new_board
 
 def check_connect(board,posi1,posi2):
     result=False
@@ -191,3 +210,9 @@ def restore_board(board):
         board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
+
+if __name__ == "__main__":
+    a=generator.map_generate(11,[1,7])
+    award_area_optimize(a)
+    more_door(a)
+    a.present()
