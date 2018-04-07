@@ -10,16 +10,18 @@ def key_position(new_board):
         award_listing=[]
         key=[]
         for j in hah:
-            award_listing.append(new_board.award[j[0]][j[1]])
+            if new_board.valid_position(j):
+                award_listing.append(new_board.award[j[0]][j[1]])
         for j in hah:
-            if award_listing.count(new_board.award[j[0]][j[1]])==1:
-                key.append(j)
+            if new_board.valid_position(j):
+                if award_listing.count(new_board.award[j[0]][j[1]])==1:
+                    key.append(j)
         root=[]            
         for j in hah:
-            root.append(new_board.award_index[j[0]][j[1]])
+            root.append(new_board.award[j[0]][j[1]])
         root.sort()
-        new_board.area_key[root].extend(key)
-    return None
+        new_board.area_key[root[-1]].extend(key)
+    return new_board
 
 def more_door(new_board):
     'open more doors, only after award_area_optimize)'
@@ -138,7 +140,7 @@ def award_area_optimize(new_board):
     restore_board(new_board)
             
     
-    return None
+    return new_board
 
 def check_connect(board,posi1,posi2):
     result=False
