@@ -9,9 +9,9 @@ def _monster_creator(cls, baseHealth, baseAttack, baseDefence, baseMoney, baseSe
 		origin_attack=origin_index*25+10
 		ratio=standard_attack/origin_attack
 
-		actual_health=int(round(baseHealth*(ratio)*1.02**((section-baseSection)/5)))
-		actual_attack=int(round((standard_attack+(baseAttack-origin_attack)/ratio)*1.02**((section-baseSection)/5)))
-		actual_defence=int(round((standard_defence+(baseDefence-origin_attack)/ratio)*1.02**((section-baseSection)/5)))
+		actual_health=int(round(baseHealth*(ratio)*1.05**((section-baseSection)/5)))
+		actual_attack=int(round((standard_attack+(baseAttack-origin_attack)/ratio)*1.05**((section-baseSection)/5)))
+		actual_defence=int(round((standard_defence+(baseDefence-origin_attack)/ratio)*1.05**((section-baseSection)/5)))
 		actual_money=int(round(baseMoney*8**((section-baseSection)/5)))))# TODO: calculate monster money increment
 		return cls(actual_health, actual_attack, actual_defence, actual_money)
 	return create
