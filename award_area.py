@@ -81,7 +81,7 @@ def award_area_optimize(new_board):
     for i in range(new_board.size):
         new_board.award.append([-9]*new_board.size)
     for i in new_board.vault:
-        new_board.award[i[0]][i[1]]=99        
+        new_board.award_index[i[0]][i[1]]=99        
     for i in new_board.main_route:
         new_board.award[i[0]][i[1]]=-1
     for i in new_board.side_route:

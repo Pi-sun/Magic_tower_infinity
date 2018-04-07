@@ -152,6 +152,44 @@ def floor_monster_main(board,difficulty):
                 key.append(i)
         if trial==60:
             break
+        
+    real_difficulty=2*difficulty
+    key=[]
+    trial=0
+    for i in board.key_side:
+        key.append(i)
+    while True:
+        for i in key:
+            if_mon=random.randint(0,2)
+            'there is mon'
+            if if_mon==0:
+                mon_diff=random.randint(0,real_difficulty)
+                if mon_diff>=1.2*difficulty:
+                    if_ultra=random.randint(0,10)
+                    if if_ultra==0:
+                        board.difficulty[i[0]][i[1]]=mon_diff
+                        real_difficulty-=mon_diff
+                        key.remove(i)
+                else:
+                    board.difficulty[i[0]][i[1]]=mon_diff
+                    real_difficulty-=mon_diff
+                    key.remove(i)
+        if real_difficulty==0:
+            break
+        else:
+            trial+=1
+        if trial==30:
+            board.difficulty=list()
+            for i in range(board.size):
+                board.difficulty.append([0]*board.size)
+            real_difficulty=2*difficulty
+            key=[]
+            for i in board.key_side:
+                key.append(i)
+        if trial==60:
+            break
+
+    
     return board
                     
 
