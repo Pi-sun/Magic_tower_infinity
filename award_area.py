@@ -18,7 +18,8 @@ def key_position(new_board):
                     key.append(j)
         root=[]            
         for j in hah:
-            root.append(new_board.award[j[0]][j[1]])
+            if new_board.valid_position(j):
+                root.append(new_board.award[j[0]][j[1]])
         root.sort()
         new_board.area_key[root[-1]].extend(key)
     return new_board
@@ -95,12 +96,12 @@ def award_area_optimize(new_board):
     clean_board(new_board)
     for i in new_board.main_route:
         new_board.assign(i,1)
-        if len(generator.area_detect(new_board))>1:
+        if len(generator.area_detect(new_board))>1 and i!=new_board.start_position and i!=new_board.end_position:
             new_board.key_main.append(i)
         new_board.assign(i,0)
     for i in new_board.side_route:
         new_board.assign(i,1)
-        if len(generator.area_detect(new_board))>1:
+        if len(generator.area_detect(new_board))>1 and i!=new_board.start_position and i!=new_board.end_position:
             new_board.key_side.append(i)
         new_board.assign(i,0)
     remain_door=[]

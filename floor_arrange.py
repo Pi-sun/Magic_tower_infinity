@@ -138,7 +138,7 @@ def floor_monster_main(board,difficulty):
                     board.difficulty[i[0]][i[1]]=mon_diff
                     real_difficulty-=mon_diff
                     key.remove(i)
-        if real_difficulty==0:
+        if real_difficulty==0 or len(key)==0:
             break
         else:
             trial+=1
@@ -174,27 +174,31 @@ def floor_monster_main(board,difficulty):
                     board.difficulty[i[0]][i[1]]=mon_diff
                     real_difficulty-=mon_diff
                     key.remove(i)
-        if real_difficulty==0:
+        if real_difficulty==0 or len(key)==0:
             break
         else:
             trial+=1
         if trial==30:
-            board.difficulty=list()
-            for i in range(board.size):
-                board.difficulty.append([0]*board.size)
+            for i in board.side_route:
+                board.difficulty[i[0]][i[1]]=0
+
             real_difficulty=2*difficulty
             key=[]
             for i in board.key_side:
                 key.append(i)
         if trial==60:
             break
-
+    print(board.key_main,board.key_side)
     
     return board
+
+def floor_monster_award(board,difficulty):
+    return None
+    
                     
 
 if __name__=='__main__':
-    a=floor_monster_main(award_area.key_position(award_area.award_area_optimize(generator.map_generate(11,[1,1]))),7)
+    a=floor_monster_main(award_area.key_position(award_area.award_area_optimize(generator.map_generate(11,[1,1]))),3)
     a.present()
     for i in a.difficulty:
         print(i)
