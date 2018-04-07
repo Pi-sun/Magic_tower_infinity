@@ -3,7 +3,7 @@ from kivy.graphics import Rectangle
 from kivy.uix.widget import Widget
 
 TEXTURE_SIZE = 32
-CELL_SIZE = 50
+CELL_SIZE = 48
 
 EMPTY_TEXTURE = (-1, -1)
 

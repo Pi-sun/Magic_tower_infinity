@@ -1,4 +1,4 @@
-Monster,Health,Attack,Defense,P-Difficulty,E-Difficultly,Gold,Experience,Cost(beginning),cost(end),section,av hp,av att,av def,
+Monster,Health,Attack,Defense,P-Difficulty,E-Difficulty,Gold,Experience,Cost(beginning),cost(end),section,av hp,av att,av def,
 Green Slime B,35,18,1,1,1,8,1,31.11111111,-17.5,1,47.14285714,35.71428571,7.714285714,1
 Red Slime B,45,20,2,2,1,9,1,56.25,-20.45454545,1,148.3333333,93.33333333,21.5,2
 Bat,35,38,3,2,2,13,1,140,3.28125,1,183.3333333,170,60.83333333,3
