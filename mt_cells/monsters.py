@@ -1,6 +1,6 @@
 from kivy.clock import Clock
 
-from textures import *
+from mt_core.textures import *
 
 from . import Cell, Empty
 

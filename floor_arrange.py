@@ -165,5 +165,4 @@ if __name__=='__main__':
     print("-" * 40)
     a.present()
     for i in a.difficulty:
-        print(i)
-    
+    	print(i)

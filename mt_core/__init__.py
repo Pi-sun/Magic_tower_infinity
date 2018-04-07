@@ -1,5 +1,5 @@
-import floors
-from textures import *
+from . import floors
+from .textures import *
 
 GRID_DIM = floors.dim
 START_FLOOR, START_ROW, START_COL = floors.start
@@ -21,7 +21,7 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
 from mt_cells import Point, KEYS
-from hero import Hero
+from .hero import Hero
 
 LOADING_MAX_LENGTH = 5
 

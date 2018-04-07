@@ -2,9 +2,9 @@ import weakref
 
 from kivy.clock import Clock
 
-from floors import dim
-from textures import *
 from mt_cells import Point
+from .floors import dim
+from .textures import *
 
 def heroTextureRow(offset = Point(1, 0)):
 	if offset == Point(1, 0):

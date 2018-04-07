@@ -190,9 +190,3 @@ def restore_board(board):
         board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
-
-if __name__ == "__main__":
-    a=generator.map_generate(11,[1,7])
-    award_area_optimize(a)
-    more_door(a)
-    a.present()
