@@ -73,7 +73,7 @@ def generate_section(callback, file = sys.stdout):
         
         # Testing
         loc = random.choice(empties)
-        floor[loc[0]][loc[1]] = monsters[min(monsters.keys())](currentSection)
+        floor[loc[0]][loc[1]] = monsters[0](currentSection)
         
         if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
             if DEBUG_LOG:

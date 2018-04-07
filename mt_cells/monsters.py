@@ -45,6 +45,7 @@ class Monster(Cell):
 				Clock.schedule_once(createStrike(i), 0.3 * i + 0.15)
 				
 			def clearBlock(dt):
+				# To be implemented: app.hero.experience.update(1)
 				app.hero.money.update(self.money)
 				app.setCell(Empty(), self.location)
 				app.showMonster(None)

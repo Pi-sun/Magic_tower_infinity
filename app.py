@@ -95,12 +95,12 @@ class MagicTowerApp(App):
 		
 		self.spark = TextureDisplay(size = (CELL_SIZE, CELL_SIZE))
 		
-		self.levelLabel = StatusLabel(
+		self.floorLabel = StatusLabel(
 			font_size = CELL_SIZE * 0.5,
 			halign = "center",
 			pos = (CELL_SIZE * 0.59375, CELL_SIZE * 10.125),
 			size = (CELL_SIZE * 2.8125, CELL_SIZE * 0.65625))
-		self.root.add_widget(self.levelLabel)
+		self.root.add_widget(self.floorLabel)
 		
 		self.monsterDisplay = TextureDisplay(
 			pos = (CELL_SIZE * (6.5 + GRID_DIM), CELL_SIZE * 3.8125),
@@ -144,7 +144,7 @@ class MagicTowerApp(App):
 				size = (CELL_SIZE * LOADING_MAX_LENGTH + borderWidth * 2, borderWidth))
 		
 		self.loading.add_widget(Label(
-			text = "Preparing levels...",
+			text = "Preparing floors...",
 			font_size = CELL_SIZE * 0.5,
 			color = (204 / 255, 204 / 255, 204 / 255, 1),
 			center = (self.loading.pos[0] + CELL_SIZE * GRID_DIM / 2, self.loading.pos[1] + CELL_SIZE * (GRID_DIM / 2 + 0.4))))
@@ -172,7 +172,7 @@ class MagicTowerApp(App):
 		self.root.remove_widget(self.grid)
 		self.root.add_widget(self.loading)
 		
-		self.levelLabel.text = "Level %d" % floor
+		self.floorLabel.text = "Floor %d" % floor
 		
 		self.floorsLoading = floors.prepareFloor(floor, self.handleFloorPrepared)
 		self.targetFloorLoading = floor

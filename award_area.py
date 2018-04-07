@@ -21,7 +21,7 @@ def key_position(new_board):
             root.append(new_board.award[j[0]][j[1]])
         root.sort()
         new_board.area_key[root[-1]].extend(key)
-    return new_board
+    return None
 
 def more_door(new_board):
     'open more doors, only after award_area_optimize)'
@@ -138,9 +138,7 @@ def award_area_optimize(new_board):
         if len(remain_door)==0:
             break
     restore_board(new_board)
-            
-    
-    return new_board
+    return None
 
 def check_connect(board,posi1,posi2):
     result=False
