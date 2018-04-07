@@ -126,7 +126,6 @@ def award_area_optimize(new_board):
         remain_door.append(i)
     index=0
     while True:
-        print(remain_door,index)
         temp_set=[]
         temp_door=[]
         success=False
@@ -135,7 +134,6 @@ def award_area_optimize(new_board):
             temp_set=[]
             for j in generator.return_boundary([i]):
                 if new_board.valid_position(j):
-                    print(j,new_board.award_index[j[0]][j[1]],int(index-1))
                     if new_board.award_index[j[0]][j[1]]==index-1:
                         success=True
                         root=new_board.award[j[0]][j[1]]
