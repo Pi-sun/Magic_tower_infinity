@@ -5,10 +5,9 @@ from textures import *
 from . import Cell, Empty
 
 class Monster(Cell):
-	def __init__(self, name, health, attack, defence, money, texture, origin):
+	def __init__(self, name, health, attack, defence, money, texture):
 		super().__init__(texture)
 
-		self.origin=origin
 		self.name = name
 		self.health = health
 		self.attack = attack
@@ -16,6 +15,8 @@ class Monster(Cell):
 		self.money = money
 		
 	def interact(self, app):
+		print("Attacking %s <%d, %d, %d, %d>" % (self.name, self.health, self.attack, self.defence, self.money))
+		
 		heroDamage = max(app.hero.attack.value - self.defence, 0)
 		heroStrikes = -1 if heroDamage == 0 else self.health // heroDamage + (self.health % heroDamage > 0)
 		
@@ -31,7 +32,7 @@ class Monster(Cell):
 			for i in range(heroStrikes):
 				def strike(i):
 					app.showSpark()
-					self.health -= heroDamage
+					self.health = max(self.health - heroDamage, 0)
 					app.updateMonsterHealth(self.health)
 					
 					def hide(dt):
@@ -50,10 +51,10 @@ class Monster(Cell):
 				app.unblockActions()
 			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
 			
-def _monsterTypeCreator(name, textureCoordinate, origin=1):
-	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate),origin)
+def _monsterTypeCreator(name, textureCoordinate):
+	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate))
 			
-GreenSlimeB = _monsterTypeCreator("Green Slime B", (7, 4),1)
+GreenSlimeB = _monsterTypeCreator("Green Slime B", (7, 4))
 GreenSlimeA = _monsterTypeCreator("Green Slime A", (8, 4))
 RedSlimeB = _monsterTypeCreator("Red Slime B", (9, 4))
 RedSlimeA = _monsterTypeCreator("Red Slime A", (10, 4))

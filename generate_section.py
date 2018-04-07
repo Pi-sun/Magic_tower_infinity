@@ -2,6 +2,9 @@ import random, sys
 
 from mt_cells import *
 
+# override base monster classes with generator's scaled monster data creators
+from monsters import *
+
 import award_area, generator
 
 SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
@@ -21,6 +24,8 @@ def generate_section(callback, file = sys.stdout):
     #    generation to update graphics
 
     global nextFloor, nextStart
+    
+    currentSection = nextFloor // SECTION_SIZE + 1
     
     shopIndex = random.randint(0, SECTION_SIZE - 2)
     
@@ -69,7 +74,7 @@ def generate_section(callback, file = sys.stdout):
         
         # Testing
         loc = random.choice(empties)
-        floor[loc[0]][loc[1]] = GreenSlimeB(20, 15, 5, 2)
+        floor[loc[0]][loc[1]] = GreenSlimeB(currentSection)
         
         if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
             if DEBUG_LOG:
