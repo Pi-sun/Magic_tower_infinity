@@ -1,7 +1,6 @@
 from kivy.clock import Clock
 
-from mt_core.textures import *
-
+# Required by initialization of mt_core
 class Point:
 	def __init__(self, row, col):
 		self.row = row
@@ -33,6 +32,8 @@ DOOR_TEXTURE_ROWS = {
 	KEY_BLUE: 5,
 	KEY_RED: 6
 }
+
+from mt_core.textures import *
 
 def _animate(texture, keyframes, completion = None):
 	for i in range(len(keyframes)):
@@ -176,12 +177,14 @@ class DefenceCrystal(PropertyImprover):
 		super().__init__(SingleTexture(19, 3), lambda hero: hero.defence, quantity)
 
 class Shop(Cell):
-	def __init__(self):
+	def __init__(self, contentProvider):
 		super().__init__(FourTexture(6, 5, 3))
+		self.contentProvider = contentProvider
 	
 	def interact(self, app):
 		if app.hero.location - self.location == Point(1, 0):
-			print("Shopping!") # TODO: Add shop interactions
+			text, hotkeys = self.contentProvider.get(self)
+			app.showDialog(text, hotkeys)
 		
 class ShopLeft(Impassable):
 	def __init__(self):

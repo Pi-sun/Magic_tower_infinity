@@ -1,13 +1,14 @@
 import random, sys
 
-from mt_cells import *
-
-from monsters import monsters_for
-import award_area, generator
-
 DIM = 11
 SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
 DEBUG_LOG = True
+
+from mt_cells import *
+
+import award_area, generator
+from monsters import monsters_for
+import npc_content_provider as provider
 
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:
@@ -70,7 +71,7 @@ def generate_section(callback = None, file = sys.stdout):
             floor.append(row)
         
         if i == shopIndex:
-            for loc, item in zip(sorted(board.special_actual), (ShopLeft(), Shop(), ShopRight())):
+            for loc, item in zip(sorted(board.special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 floor[loc[0]][loc[1]] = item
         
         # Testing
@@ -99,15 +100,18 @@ def generate_section(callback = None, file = sys.stdout):
 def getState():
     return {
         "nextFloor": nextFloor,
-        "nextStart": nextStart
+        "nextStart": nextStart,
+        "providers": provider.getState()
     }
 
 def setState(state):
     global nextFloor, nextStart
     nextFloor = state["nextFloor"]
     nextStart = state["nextStart"]
+    provider.setState(state["providers"])
     
 def newState():
     global nextFloor, nextStart
     nextStart = [random.randint(0, DIM - 1), random.randint(0, DIM - 1)]
     nextFloor = 1
+    provider.newState()
