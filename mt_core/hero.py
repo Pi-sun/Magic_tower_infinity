@@ -3,8 +3,8 @@ import weakref
 from kivy.clock import Clock
 
 from mt_cells import Point
-from .floors import dim
-from .textures import *
+from mt_cells.textures import *
+from .floors import DIM
 
 def heroTextureRow(offset = Point(1, 0)):
 	if offset == Point(1, 0):
@@ -28,7 +28,7 @@ class HeroProperty:
 
 class Hero(TextureDisplay):
 	def __init__(self, app, parent, row, col, healthLabel, attackLabel, defenceLabel, moneyLabel, keyLabels):
-		super().__init__(pos = (parent.pos[0] + CELL_SIZE * col, parent.pos[1] + CELL_SIZE * (dim - row - 1)), size = (CELL_SIZE, CELL_SIZE))
+		super().__init__(pos = (parent.pos[0] + CELL_SIZE * col, parent.pos[1] + CELL_SIZE * (DIM - row - 1)), size = (CELL_SIZE, CELL_SIZE))
 		
 		self.app = weakref.ref(app)
 		self.base_pos = parent.pos
@@ -55,7 +55,7 @@ class Hero(TextureDisplay):
 		textureRow = heroTextureRow(offset)
 
 		self.location += offset
-		self.pos = (self.base_pos[0] + CELL_SIZE * self.location.col, self.base_pos[1] + CELL_SIZE * (dim - self.location.row - 1))
+		self.pos = (self.base_pos[0] + CELL_SIZE * self.location.col, self.base_pos[1] + CELL_SIZE * (DIM - self.location.row - 1))
 		self.nextStep(textureRow)
 	
 		app = self.app()

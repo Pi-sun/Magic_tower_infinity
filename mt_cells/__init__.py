@@ -1,16 +1,6 @@
 from kivy.clock import Clock
 
-from mt_core.textures import *
-
-def _animate(texture, keyframes, completion = None):
-	for i in range(len(keyframes)):
-		def work(i):
-			texture.reload(*keyframes[i])
-			if i == len(keyframes) - 1 and completion:
-				completion()
-		def createWork(i):
-			return lambda dt: work(i)
-		Clock.schedule_once(createWork(i), 0.08 * i)
+from .textures import *
 
 class Point:
 	def __init__(self, row, col):
@@ -43,6 +33,16 @@ DOOR_TEXTURE_ROWS = {
 	KEY_BLUE: 5,
 	KEY_RED: 6
 }
+
+def _animate(texture, keyframes, completion = None):
+	for i in range(len(keyframes)):
+		def work(i):
+			texture.reload(*keyframes[i])
+			if i == len(keyframes) - 1 and completion:
+				completion()
+		def createWork(i):
+			return lambda dt: work(i)
+		Clock.schedule_once(createWork(i), 0.08 * i)
 
 class Cell:
 	def __init__(self, texture):

@@ -1,8 +1,8 @@
 from . import floors
-from .textures import *
+from mt_cells.textures import *
 
-GRID_DIM = floors.dim
-START_FLOOR, START_ROW, START_COL = floors.start
+GRID_DIM = floors.DIM
+START_FLOOR, START_ROW, START_COL = floors.START
 
 # Set these as early as possible,
 # otherwise Kivy may not register these settings
@@ -47,8 +47,11 @@ class ColorWidget(Widget):
 				size = self.size)
 
 class MagicTowerApp(App):
-	def run(self):
+	def __init__(self):
 		init_textures()
+		super().__init__()
+
+	def run(self):
 		try:
 			super().run()
 		except KeyboardInterrupt:

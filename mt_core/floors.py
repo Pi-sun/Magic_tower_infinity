@@ -7,17 +7,9 @@ import generate_section as generator
 SECTION_SIZE = generator.SECTION_SIZE
 DEBUG_LOG = generator.DEBUG_LOG
 
-dim = 11
-
-def genLoc():
-	return (random.randint(0, dim - 1), random.randint(0, dim - 1))
-
-start = (1,) + genLoc()
+DIM = generator.DIM
+START = (1,) + tuple(generator.nextStart)
 floors = {}
-
-generator.dim = dim
-generator.nextFloor = 1
-generator.nextStart = start[1:]
 
 class EndGeneration(Exception):
 	pass

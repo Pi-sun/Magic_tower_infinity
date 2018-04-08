@@ -5,10 +5,14 @@ from mt_cells import *
 from monsters import monsters_for
 import award_area, generator
 
+DIM = 11
 SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
 DEBUG_LOG = True
 
-def generate_section(callback, file = sys.stdout):
+nextStart = [random.randint(0, DIM - 1), random.randint(0, DIM - 1)]
+nextFloor = 1
+
+def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:
     # (when generating levels 11 - 15, where SECTION_SIZE = 5)
     # `i` takes values 0 - 4
@@ -18,7 +22,7 @@ def generate_section(callback, file = sys.stdout):
     # `start_pos` is constantly updated to be the start position of the next floor
     # `board` is the current floor, represented as a Board object (from generator.py)
     # `floor` is the current floor, represented as an array of Cells (from package mt_cells)
-    # `callback` parameter of this function must be called after every round of
+    # `callback` parameter of this function shall be called after every round of
     #    generation to update graphics
 
     global nextFloor, nextStart
@@ -34,11 +38,11 @@ def generate_section(callback, file = sys.stdout):
         index = nextFloor + i
         
         if i == SECTION_SIZE - 1:
-            board = generator.boss_floor_generate(list(start_pos), dim)
+            board = generator.boss_floor_generate(start_pos, DIM)
         elif i == shopIndex:
-            board = generator.map_generate(dim, list(start_pos), "shop")
+            board = generator.map_generate(DIM, start_pos, "shop")
         else:
-            board = generator.map_generate(dim, list(start_pos))
+            board = generator.map_generate(DIM, start_pos)
         award_area.award_area_optimize(board)
         award_area.more_door(board)
         award_area.key_position(board)
@@ -46,9 +50,9 @@ def generate_section(callback, file = sys.stdout):
         empties = [] # Testing
         
         floor = []
-        for ri in range(dim):
+        for ri in range(DIM):
             row = []
-            for ci in range(dim):
+            for ci in range(DIM):
                 item = board.content[ri][ci]
                 if item == -1:
                     if index == 1:
@@ -76,13 +80,14 @@ def generate_section(callback, file = sys.stdout):
         loc = random.choice(empties)
         floor[loc[0]][loc[1]] = monsters[0](currentSection)
         
-        if board.start_position and board.end_position and tuple(board.start_position) == start_pos:
+        if board.start_position and board.end_position and board.start_position == start_pos:
             if DEBUG_LOG:
                 board.prettyPrint("Successful generation for #%d" % index, file)
             
-            callback(i + 1, index, floor)
+            if callback:
+                callback(i + 1, index, floor)
             i += 1
-            start_pos = tuple(board.end_position)
+            start_pos = board.end_position
         else:
             if DEBUG_LOG:
                 board.prettyPrint("Failed generation for #%d" % index, file)

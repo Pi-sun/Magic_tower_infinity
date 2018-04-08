@@ -1,8 +1,7 @@
 from kivy.clock import Clock
 
-from mt_core.textures import *
-
 from . import Cell, Empty
+from .textures import *
 
 class Monster(Cell):
 	def __init__(self, name, health, attack, defence, money, texture):
