@@ -183,7 +183,7 @@ class Shop(Cell):
 	
 	def interact(self, app):
 		if app.hero.location - self.location == Point(1, 0):
-			text, hotkeys = self.contentProvider.get(self)
+			text, hotkeys = self.contentProvider.get(app, self)
 			app.showDialog(text, hotkeys)
 		
 class ShopLeft(Impassable):
