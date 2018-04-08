@@ -9,15 +9,13 @@ def boss_floor_generate(start_position,size):
     if start_position[0]+1>0.5*size:
         wall_y=half_size-1
         boss=1
-    else:
-        wall_y=half_size
-        boss=0
-    if boss==1:
         for x in range(0,half_size-1):
             for y in range(size):
                 new_one.special.append([x,y])
                 new_one.assign([x,y],5)
     else:
+        wall_y=half_size
+        boss=0
         for x in range(half_size+1,size):
             for y in range(size):
                 new_one.special.append([x,y])
@@ -57,7 +55,7 @@ def boss_floor_generate(start_position,size):
             new_one.wall.append(i)
     if boss==1:
         new_one.end_position=[random.randint(0,half_size-2),half_size]
-    if boss==0:
+    elif boss==0:
         new_one.end_position=[random.randint(half_size+1,size-1),half_size]
     new_one_v2=door_generate(award_area_generate(new_one))
     new_one_v3=wall_optimize(new_one_v2)
@@ -115,9 +113,7 @@ class Board:
         self.special_actual=[]
         self.special_door=[]
         self.vault = []
-        self.content=list()
-        for i in range(size):
-            self.content.append([0]*size)
+        self.content=[[0]*size for i in range(size)]
         return None
 
     def check_item(self,position):
@@ -206,7 +202,7 @@ def main_route_generate(size,start_posi,new_one):
                     else:
                         success=False
                         break
-            if direction==2:
+            elif direction==2:
                 for step in range(distance):
                     new_point=[node[0],node[1]+step+1]
                     if new_one.nearby_check(new_point,0)==4:
@@ -214,7 +210,7 @@ def main_route_generate(size,start_posi,new_one):
                     else:
                         success=False
                         break
-            if direction==3:
+            elif direction==3:
                 for step in range(distance):
                     new_point=[node[0]-step-1,node[1]]
                     if new_one.nearby_check(new_point,0)==4:
@@ -222,7 +218,7 @@ def main_route_generate(size,start_posi,new_one):
                     else:
                         success=False
                         break
-            if direction==4:
+            elif direction==4:
                 for step in range(distance):
                     new_point=[node[0],node[1]-step-1]
                     if new_one.nearby_check(new_point,0)==4:
@@ -286,7 +282,7 @@ def main_route_generate(size,start_posi,new_one):
                         else:
                             success='n'
                             break
-                if direction==2:
+                elif direction==2:
                     for step in range(distance):
                         new_point=[node[0],node[1]+step+1]
                         if new_one.nearby_check(new_point,0)==4:
@@ -298,7 +294,7 @@ def main_route_generate(size,start_posi,new_one):
                         else:
                             success='n'
                             break
-                if direction==3:
+                elif direction==3:
                     for step in range(distance):
                         new_point=[node[0]-step-1,node[1]]
                         if new_one.nearby_check(new_point,0)==4:
@@ -310,7 +306,7 @@ def main_route_generate(size,start_posi,new_one):
                         else:
                             success='n'
                             break
-                if direction==4:
+                elif direction==4:
                     for step in range(distance):
                         new_point=[node[0],node[1]-step-1]
                         if new_one.nearby_check(new_point,0)==4:
@@ -332,28 +328,29 @@ def main_route_generate(size,start_posi,new_one):
                         new_one.assign(i,3)
                     node=side_route[-1]
                     new_one.assign(node,0)
-                elif success=='t' and (len(side_route)+len(temp_route1))>2:
-                    new_one.side_trial+='t'
-                    side_route.extend(temp_route1)
-                    new_one.assign(node,3)
-                    for i in side_route:
-                        new_one.assign(i,1)
-                    if_side=True
-                    break
                 elif success=='t':
-                    new_one.side_trial+='t'
-                    for i in side_route:
-                        new_one.assign(i,0)
-                    if_side=False
-                    new_one.assign(starting,1)
-                    if_end=random.randint(0,5)
-                    if if_end==1:
+                    if (len(side_route)+len(temp_route1))>2:
+                        new_one.side_trial+='t'
+                        side_route.extend(temp_route1)
+                        new_one.assign(node,3)
+                        for i in side_route:
+                            new_one.assign(i,1)
+                        if_side=True
                         break
                     else:
-                        side_route=[starting]
-                        node=starting
-                        new_one.assign(starting,0)
-                        trial=0
+                        new_one.side_trial+='t'
+                        for i in side_route:
+                            new_one.assign(i,0)
+                        if_side=False
+                        new_one.assign(starting,1)
+                        if_end=random.randint(0,5)
+                        if if_end==1:
+                            break
+                        else:
+                            side_route=[starting]
+                            node=starting
+                            new_one.assign(starting,0)
+                            trial=0
                 else:
                     new_one.side_trial+='n'
                     trial+=1
@@ -432,12 +429,9 @@ def area_detect(new_board):
 def create_subarea(area,starting_position,size):
     trial=0
     while True:
-
-
         area1=[starting_position]
         pre_area=[starting_position]
         while True:
- 
             temp_area=[]
             for tile in return_boundary(pre_area):
                 if tile in area:
@@ -452,7 +446,6 @@ def create_subarea(area,starting_position,size):
                 temp_area.remove(temp_area[index])
 
             if len(area1)==size:
-
                 break
         wall_area=[]
         for item in return_boundary_s(area1):
@@ -485,12 +478,8 @@ def divide_area(area):
         if len(remaining_area)>9:
             for starting_point in range(len(remaining_area)):
                 size=random.randint(3,8)
-                temp=(create_subarea(remaining_area,remaining_area[starting_point],size))
-                if len(temp[1])!=0:
-                    
-                    temp_area=temp[0]
-                    temp_wall=temp[1]
-
+                temp_area,temp_wall=(create_subarea(remaining_area,remaining_area[starting_point],size))
+                if len(temp_wall)!=0:
                     temp_remove=temp_area+temp_wall
                     final_area.append(temp_remove)
                     wall_area.extend(temp_wall)
@@ -546,8 +535,7 @@ def door_generate(new_board):
                         blank_board1.assign([row_index,column_index],2)
             blank_board1.assign(i,0)
             if len(area_detect(blank_board1))==len(area_detect(blank_board))-1:
-                ifgen=random.randint(0,1)
-                if ifgen==1:
+                if random.randint(0,1)==1:
                     doors.append(i)
 
                     new_board.wall.remove(i)
@@ -673,20 +661,21 @@ def map_generate(size,starting_position,special_requirement=None,no_return=False
     version_a=main_route_generate(size,starting_position,version_0)
     if special_requirement=='dragon':
         version_a=pre_generate(size,starting_position,[4,3])
-    if special_requirement=='guarded_area':
+    elif special_requirement=='guarded_area':
         version_a=pre_generate(size,starting_position,[6,5])
-    if special_requirement=='shop':
+    elif special_requirement=='shop':
         version_a=pre_generate(size,starting_position,[1,3],True)
 
         
     version_c=door_generate(award_area_generate(version_a))
     if special_requirement=='shop' or special_requirement=='guard_area':
-        if version_c.check_item(version_c.special_door)==2:
-            version_c.assign(version_c.special_door,0)
-            version_c.wall.remove(version_c.special_door)
-        if version_c.check_item(version_c.special_door)==3:
-            version_c.assign(version_c.special_door,0)
-            version_c.door.remove(version_c.special_door)
+        door = version_c.special_door
+        if version_c.check_item(door)==2:
+            version_c.assign(door,0)
+            version_c.wall.remove(door)
+        elif version_c.check_item(door)==3:
+            version_c.assign(door,0)
+            version_c.door.remove(door)
     for i in version_c.special_actual:
         version_c.assign(i,5)
     for i in version_c.special:
