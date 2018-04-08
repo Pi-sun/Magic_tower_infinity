@@ -1,9 +1,12 @@
 from kivy.core.image import Image as TextureImage
 from kivy.graphics import Rectangle
+from kivy.metrics import dp
 from kivy.uix.widget import Widget
 
 TEXTURE_SIZE = 32
-CELL_SIZE = 48
+
+CELL_SIZE_RAW = 48
+CELL_SIZE = dp(CELL_SIZE_RAW) # Convert for ratina screens
 
 EMPTY_TEXTURE = (-1, -1)
 
