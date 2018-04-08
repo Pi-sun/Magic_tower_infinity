@@ -6,12 +6,13 @@ DEBUG_LOG = True
 
 from mt_cells import *
 
+# Required by npc_content_provider
+def floor2section(floor):
+	return (floor - 1) // SECTION_SIZE + 1
+
 import award_area, generator
 from monsters import monsters_for
 import npc_content_provider as provider
-
-def floor2section(floor):
-	return (floor - 1) // SECTION_SIZE + 1
 
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:

@@ -16,12 +16,15 @@ from kivy.uix.widget import Widget
 
 from mt_cells import Point, KEYS
 
+from .textures import *
+
 # Required by initialization of mt_core.floors
 REF_KEY_ANY = "__any__"
+LARGE_TEXT_GAP = "[size=%d]\n\n[/size]" % round(CELL_SIZE * 0.7)
+SMALL_TEXT_GAP = "[size=%d]\n\n[/size]" % round(CELL_SIZE * 0.3)
 
 from . import floors
 from .hero import Hero
-from .textures import *
 
 GRID_DIM = floors.DIM
 
@@ -182,7 +185,7 @@ class MagicTowerApp(App):
 		self.keyboard = Window.request_keyboard(lambda: None, self.root)
 		self.keyboard.bind(on_key_down = self.onKeyDown)
 		
-		dialogText = "Magic Tower![size=%d]\n\n[/size][ref=n][u]N[/u]ew Game[/ref][size=%d]\n \n[/size]" % (round(CELL_SIZE * 0.7), round(CELL_SIZE * 0.3))
+		dialogText = "Magic Tower!" + LARGE_TEXT_GAP + "[ref=n][u]N[/u]ew Game[/ref]" + SMALL_TEXT_GAP
 		dialogHotkeys = {"n": lambda: self.newGame() or True}
 		if os.path.isfile("data.dat"):
 			dialogText += "[ref=l][u]L[/u]oad Game[/ref]"
