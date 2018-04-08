@@ -667,20 +667,20 @@ def wall_optimize(new_one):
     return new_one
     
     
-def map_generate(size,starting_position,*special_requirement):
+def map_generate(size,starting_position,special_requirement=None,no_return=False):
     'generate a random map with starting_position and size, special requirement include shop, dragon, no_return,guarded_area'
     version_0=Board(size)
     version_a=main_route_generate(size,starting_position,version_0)
-    if 'dragon' in special_requirement:
+    if special_requirement=='dragon':
         version_a=pre_generate(size,starting_position,[4,3])
-    if 'guarded_area' in special_requirement:
+    if special_requirement=='guarded_area':
         version_a=pre_generate(size,starting_position,[6,5])
-    if 'shop' in special_requirement:
+    if special_requirement=='shop':
         version_a=pre_generate(size,starting_position,[1,3],True)
 
         
     version_c=door_generate(award_area_generate(version_a))
-    if 'shop' in special_requirement or 'guard_area' in special_requirement:
+    if special_requirement=='shop' or special_requirement=='guard_area':
         if version_c.check_item(version_c.special_door)==2:
             version_c.assign(version_c.special_door,0)
             version_c.wall.remove(version_c.special_door)
@@ -693,7 +693,7 @@ def map_generate(size,starting_position,*special_requirement):
         if not i in version_c.special_actual:
             version_c.wall.append(i)
     version_d=wall_optimize(version_c)
-    if 'no_return' in special_requirement:
+    if no_return:
         version_d.assign(version_a.start_position,0)
         version_d.start_position=None
     return version_d
