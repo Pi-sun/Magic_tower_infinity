@@ -2,8 +2,8 @@ import generator,random,award_area
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
-'on the other hand, a skeleton with high attack and low defense will have lower early_section difficulty and higher late-section difficulty, such as[15,5]'
-'and high defense guard may have extremely high early_section difficulty and low late_section one, such as[99,8]'
+'on the other hand, a skeleton with high attack and low defense will have lower early_section difficulty and higher late-section difficulty, such as [15,5]'
+'and high defense guard may have extremely high early_section difficulty and low late_section one, such as [99,8]'
 'difficulty will only be measured within a setion, meaning that all sections will have a similar difficulty'
 
 'award is also measured in two ways, health/defense and attack'
@@ -191,14 +191,8 @@ def floor_monster_main(board,difficulty):
             break
     print(board.key_main,board.key_side)
     
-    return board
-
 def floor_monster_award(board,difficulty):
     return None
-    
-                    
-
-       
 
 if __name__=='__main__':
     a=generator.map_generate(11,[1,7])

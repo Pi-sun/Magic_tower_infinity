@@ -22,10 +22,9 @@ def key_position(new_board):
                 root.append(new_board.award[j[0]][j[1]])
         root.sort()
         new_board.area_key[root[-1]].extend(key)
-    return new_board
 
 def more_door(new_board):
-    'open more doors, only after award_area_optimize)'
+    'open more doors, only after award_area_optimize'
     new_board.parrelel_door=[]
     new_door=[]
     for i in new_board.door:
@@ -154,9 +153,6 @@ def award_area_optimize(new_board):
         if len(remain_door)==0:
             break
     restore_board(new_board)
-            
-    
-    return new_board
 
 def check_connect(board,posi1,posi2):
     result=False
@@ -180,8 +176,6 @@ def check_award_index(board,position):
         if nearby_index.count(board.award[i[0]][i[1]])==1:
             result.append(i)
     return result
-            
-            
 
 def clean_board(board):
     for i in board.door:
@@ -208,9 +202,3 @@ def restore_board(board):
         board.assign(board.start_position,-1)
     board.assign(board.end_position,-2)
     return None
-
-if __name__ == "__main__":
-    a=generator.map_generate(11,[1,7])
-    award_area_optimize(a)
-    more_door(a)
-    a.present()
