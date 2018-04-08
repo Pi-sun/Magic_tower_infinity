@@ -21,7 +21,8 @@ def key_position(new_board):
             if new_board.valid_position(j):
                 root.append(new_board.award[j[0]][j[1]])
         root.sort()
-        new_board.area_key[root[-1]].extend(key)
+        if len(root)>0:
+            new_board.area_key[root[-1]].extend(key)
 
 def more_door(new_board):
     'open more doors, only after award_area_optimize'

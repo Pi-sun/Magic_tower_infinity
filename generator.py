@@ -505,8 +505,9 @@ def award_area_generate(new_board):
         if len(area)<=7:
             final_area.append(area)
         else:
-            temp_wall=(divide_area(area))[1]
-            temp_area=(divide_area(area))[0]
+            a=divide_area(area)
+            temp_wall=a[1]
+            temp_area=a[0]
             final_area.append(temp_area)
             for i in temp_wall:
                 new_board.wall.append(i)
