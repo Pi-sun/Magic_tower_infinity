@@ -21,7 +21,7 @@ def key_position(new_board):
             if new_board.valid_position(j):
                 root.append(new_board.award[j[0]][j[1]])
         root.sort()
-        if len(root)>0:
+        if len(root)>0 and root[-1]!=-1:
             new_board.area_key[root[-1]].extend(key)
 
 def more_door(new_board):
