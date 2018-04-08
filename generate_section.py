@@ -8,12 +8,34 @@ from mt_cells import *
 
 # Required by npc_content_provider
 def floor2section(floor):
-	return (floor - 1) // SECTION_SIZE + 1
+    return (floor - 1) // SECTION_SIZE + 1
 
 import award_area, generator
 from monsters import monsters_for
 import npc_content_provider as provider
 
+class Section:
+    def __init__(self,size):
+        self.red_gem=0
+        self.blue_gem=0
+        self.flask_health=0
+        self.monster_count=0
+        self.yellow_key=0
+        self.blue_key=0
+        self.red_key=0
+        self.yellow_door=0
+        self.blue_door=0
+        self.red_door=0
+        self.shop_index=random.randint(0,size-3)
+        while True:
+            self.sword_position=random.randint(0,size-2)
+            if self.sword_position!=self.shop_index:
+                break
+        while True:
+            self.shield_position=random.randint(0,size-2)
+            if self.shield_position not in [self.sword_position,self.shop_index]:
+                break
+        
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:
     # (when generating levels 11 - 15, where SECTION_SIZE = 5)
@@ -29,10 +51,10 @@ def generate_section(callback = None, file = sys.stdout):
 
     global nextFloor, nextStart
     
-    currentSection = floor2section(nextFloor)
+    currentSection = nextFloor // SECTION_SIZE + 1
     monsters = monsters_for(currentSection)
     
-    shopIndex = random.randint(0, SECTION_SIZE - 2)
+    shopIndex = random.randint(0, SECTION_SIZE - 3)
     
     start_pos = nextStart
     i = 0
