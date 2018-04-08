@@ -17,13 +17,16 @@ def heroTextureRow(offset = Point(1, 0)):
 		return 1
 
 class HeroProperty:
-	def __init__(self, value, label):
+	def __init__(self, label, value = None):
 		self.label = label
 		self.set(value)
 	
 	def set(self, value):
 		self.value = value
-		self.label.text = str(self.value)
+		if value == None:
+			self.label.text = ""
+		else:
+			self.label.text = str(self.value)
 		
 	def update(self, change):
 		self.set(self.value + change)
@@ -39,13 +42,12 @@ class Hero(TextureDisplay):
 		self.stepTimer = None
 		self.location = Point(0, 0)
 		
-		self.health = HeroProperty(100, healthLabel)
-		self.attack = HeroProperty(10, attackLabel)
-		self.defence = HeroProperty(10, defenceLabel)
-		self.money = HeroProperty(0, moneyLabel)
+		self.health = HeroProperty(healthLabel)
+		self.attack = HeroProperty(attackLabel)
+		self.defence = HeroProperty(defenceLabel)
+		self.money = HeroProperty(moneyLabel)
 		
-		self.keys = dict((key, HeroProperty(0, keyLabels[key])) for key in KEYS)
-		self.keys["yellow"].set(100000) # for testing
+		self.keys = dict((key, HeroProperty(keyLabels[key])) for key in KEYS)
 		
 		self.draw(texture(heroTextureRow(), self.step))
 		
@@ -73,6 +75,16 @@ class Hero(TextureDisplay):
 		
 		self.step = 0
 		self.setLocation(state["location"])
+		
+	def newState(self):
+		self.health.set(100)
+		self.attack.set(10)
+		self.defence.set(10)
+		self.money.set(0)
+		
+		for key in KEYS:
+			self.keys[key].set(0)
+		self.keys["yellow"].set(100000) # for testing
 		
 	def setLocation(self, location):
 		self.location = location

@@ -9,9 +9,6 @@ DIM = 11
 SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
 DEBUG_LOG = True
 
-nextStart = [random.randint(0, DIM - 1), random.randint(0, DIM - 1)]
-nextFloor = 1
-
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:
     # (when generating levels 11 - 15, where SECTION_SIZE = 5)
@@ -109,3 +106,8 @@ def setState(state):
     global nextFloor, nextStart
     nextFloor = state["nextFloor"]
     nextStart = state["nextStart"]
+    
+def newState():
+    global nextFloor, nextStart
+    nextStart = [random.randint(0, DIM - 1), random.randint(0, DIM - 1)]
+    nextFloor = 1

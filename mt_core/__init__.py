@@ -68,7 +68,6 @@ class MagicTowerApp(App):
 			size = Window.size))
 		
 		self.grid = Widget(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
-		self.root.add_widget(self.grid)
 		
 		# Cells are enlarged on each side to avoid gaps showing between the tiles
 		self.cellDisplays = [[TextureDisplay(
@@ -159,11 +158,9 @@ class MagicTowerApp(App):
 		return self.root
 		
 	def on_start(self):
-		START_FLOOR, START_ROW, START_COL = floors.START
-		self.showFloor(START_FLOOR)
-		self.hero.setLocation(Point(START_ROW, START_COL))
-		
 		self.blockedActions = 0
+		self.floorsLoading = 0
+		self.currentFloor = None
 		
 		self.keyboard = Window.request_keyboard(lambda: None, self)
 		self.keyboard.bind(on_key_down = self.onKeyDown)
@@ -198,7 +195,7 @@ class MagicTowerApp(App):
 					floors.floors[self.currentFloor][row][col].initialize(self.cellDisplays[row][col])					
 		
 	def update(self, dt):
-		if not self.floorsLoading:
+		if not self.floorsLoading and self.currentFloor != None:
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
 					floors.floors[self.currentFloor][row][col].update()
@@ -221,26 +218,37 @@ class MagicTowerApp(App):
 			elif keycode[1] == "z":
 				self.moveByFloors(-1)
 			elif keycode[1] == "s":
-				self.save()
+				self.saveGame()
 			elif keycode[1] == "l":
-				self.load()
+				self.loadGame()
+			elif keycode[1] == "n":
+				self.newGame()
 	
-	def save(self):
-		data = {
-			"hero": self.hero.getState(),
-			"floors": floors.getState(),
-			"currentFloor": self.currentFloor
-		}
-		with open("data.dat", "wb") as f:
-			pickle.dump(data, f)
+	def saveGame(self):
+		if self.currentFloor != None:
+			data = {
+				"hero": self.hero.getState(),
+				"floors": floors.getState(),
+				"currentFloor": self.currentFloor
+			}
+			with open("data.dat", "wb") as f:
+				pickle.dump(data, f)
 	
-	def load(self):
+	def loadGame(self):
 		with open("data.dat", "rb") as f:
 			data = pickle.load(f)
 		
 		self.hero.setState(data["hero"])
 		floors.setState(data["floors"])
 		self.showFloor(data["currentFloor"])
+		
+	def newGame(self):
+		floors.newState()
+		
+		START_FLOOR, START_ROW, START_COL = floors.START
+		self.showFloor(START_FLOOR)
+		self.hero.newState()
+		self.hero.setLocation(Point(START_ROW, START_COL))
 		
 	def blockActions(self):
 		self.blockedActions += 1

@@ -6,10 +6,7 @@ import generate_section as generator
 
 SECTION_SIZE = generator.SECTION_SIZE
 DEBUG_LOG = generator.DEBUG_LOG
-
 DIM = generator.DIM
-START = (1,) + tuple(generator.nextStart)
-floors = {}
 
 class EndGeneration(Exception):
 	pass
@@ -81,3 +78,11 @@ def setState(state):
 	global floors
 	floors = state["floors"]
 	generator.setState(state["generator"])
+	
+def newState():
+	global START, floors
+	
+	generator.newState()
+
+	START = (1,) + tuple(generator.nextStart)
+	floors = {}
