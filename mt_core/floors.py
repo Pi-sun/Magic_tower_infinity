@@ -70,3 +70,14 @@ def stopPreparation():
 		# and you should call it again with exc=NULL to revert the effect"""
 		ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(generationThread.ident), None)
 		raise SystemError("PyThreadState_SetAsyncExc failed!")
+
+def getState():
+	return {
+		"floors": floors,
+		"generator": generator.getState()
+	}
+
+def setState(state):
+	global floors
+	floors = state["floors"]
+	generator.setState(state["generator"])

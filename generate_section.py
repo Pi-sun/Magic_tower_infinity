@@ -80,6 +80,10 @@ def generate_section(callback = None, file = sys.stdout):
         loc = random.choice(empties)
         floor[loc[0]][loc[1]] = monsters[0](currentSection)
         
+        for ri in range(DIM):
+        	for ci in range(DIM):
+        		floor[ri][ci].placeAt(index, Point(ri, ci))
+        
         if board.start_position and board.end_position and board.start_position == start_pos:
             if DEBUG_LOG:
                 board.prettyPrint("Successful generation for #%d" % index, file)
@@ -94,3 +98,14 @@ def generate_section(callback = None, file = sys.stdout):
                 
     nextFloor += SECTION_SIZE
     nextStart = start_pos
+
+def getState():
+    return {
+        "nextFloor": nextFloor,
+        "nextStart": nextStart
+    }
+
+def setState(state):
+    global nextFloor, nextStart
+    nextFloor = state["nextFloor"]
+    nextStart = state["nextStart"]

@@ -1,8 +1,9 @@
+import pickle
+
 from . import floors
 from mt_cells.textures import *
 
 GRID_DIM = floors.DIM
-START_FLOOR, START_ROW, START_COL = floors.START
 
 # Set these as early as possible,
 # otherwise Kivy may not register these settings
@@ -93,7 +94,7 @@ class MagicTowerApp(App):
 		for key in KEYS:
 			self.root.add_widget(keyLabels[key])
 		
-		self.hero = Hero(self, self.grid, START_ROW, START_COL, *statusLabels, keyLabels)
+		self.hero = Hero(self, self.grid, *statusLabels, keyLabels)
 		self.grid.add_widget(self.hero)
 		
 		self.spark = TextureDisplay(size = (CELL_SIZE, CELL_SIZE))
@@ -158,11 +159,12 @@ class MagicTowerApp(App):
 		return self.root
 		
 	def on_start(self):
-		self.floors = floors.floors
+		START_FLOOR, START_ROW, START_COL = floors.START
 		self.showFloor(START_FLOOR)
+		self.hero.setLocation(Point(START_ROW, START_COL))
 		
 		self.blockedActions = 0
-				
+		
 		self.keyboard = Window.request_keyboard(lambda: None, self)
 		self.keyboard.bind(on_key_down = self.onKeyDown)
 		
@@ -193,13 +195,13 @@ class MagicTowerApp(App):
 			self.currentFloor = self.targetFloorLoading
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
-					self.floors[self.currentFloor][row][col].initialize(Point(row, col), self.cellDisplays[row][col])					
+					floors.floors[self.currentFloor][row][col].initialize(self.cellDisplays[row][col])					
 		
 	def update(self, dt):
 		if not self.floorsLoading:
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
-					self.floors[self.currentFloor][row][col].update()
+					floors.floors[self.currentFloor][row][col].update()
 		self.monsterTexture.update()
 	
 	def onKeyDown(self, keyboard, keycode, text, modifiers):
@@ -218,7 +220,28 @@ class MagicTowerApp(App):
 				self.moveByFloors(1)
 			elif keycode[1] == "z":
 				self.moveByFloors(-1)
+			elif keycode[1] == "s":
+				self.save()
+			elif keycode[1] == "l":
+				self.load()
 	
+	def save(self):
+		data = {
+			"hero": self.hero.getState(),
+			"floors": floors.getState(),
+			"currentFloor": self.currentFloor
+		}
+		with open("data.dat", "wb") as f:
+			pickle.dump(data, f)
+	
+	def load(self):
+		with open("data.dat", "rb") as f:
+			data = pickle.load(f)
+		
+		self.hero.setState(data["hero"])
+		floors.setState(data["floors"])
+		self.showFloor(data["currentFloor"])
+		
 	def blockActions(self):
 		self.blockedActions += 1
 			
@@ -255,13 +278,17 @@ class MagicTowerApp(App):
 		if self.currentFloor + change > 0:
 			self.showFloor(self.currentFloor + change)
 			
-	def setCell(self, cell, location):
-		cell.initialize(location, self.cellDisplays[location.row][location.col])
-		self.floors[self.currentFloor][location.row][location.col] = cell
+	def setCell(self, cell, location, floor = None):
+		if floor == None or floor == self.currentFloor:
+			cell.initialize(self.cellDisplays[location.row][location.col])
+			floors.floors[self.currentFloor][location.row][location.col] = cell
+		else:
+			floors.floors[floor][location.row][location.col] = cell
+		cell.placeAt(self.currentFloor if floor == None else floor, location)
 
 	def interactBy(self, offset):
 		self.hero.turnTo(offset)
 	
 		target = self.hero.location + offset
 		if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
-			self.floors[self.currentFloor][target.row][target.col].interact(self)
+			floors.floors[self.currentFloor][target.row][target.col].interact(self)

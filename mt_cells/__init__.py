@@ -48,8 +48,11 @@ class Cell:
 	def __init__(self, texture):
 		self.texture = texture
 		
-	def initialize(self, location, display):
+	def placeAt(self, floor, location):
+		self.floor = floor
 		self.location = location
+		
+	def initialize(self, display):
 		self.texture.initialize(display)
 		
 	def update(self):
@@ -98,7 +101,7 @@ class FakeWall(Cell):
 		app.blockActions()
 		
 		def clearBlock():
-			app.setCell(Empty(), self.location)
+			app.setCell(Empty(), self.location, self.floor)
 			app.unblockActions()
 		_animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 
@@ -114,7 +117,7 @@ class KeyedDoor(Cell):
 			app.blockActions()
 		
 			def clearBlock():
-				app.setCell(Empty(), self.location)
+				app.setCell(Empty(), self.location, self.floor)
 				app.unblockActions()
 			_animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 		
@@ -150,7 +153,7 @@ class PropertyImprover(Cell):
 	def interact(self, app):
 		self.property(app.hero).update(self.quantity)
 		app.hero.moveBy(self.location - app.hero.location)
-		app.setCell(Empty(), self.location)
+		app.setCell(Empty(), self.location, self.floor)
 		
 class Key(PropertyImprover):
 	def __init__(self, key):

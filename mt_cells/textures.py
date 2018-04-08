@@ -28,6 +28,13 @@ class Texture:
 	def __init__(self):
 		self.display = None
 
+	def __getstate__(self):
+		return {i[0]: i[1] for i in self.__dict__.items() if i[0] != "display"}
+		
+	def __setstate__(self, state):
+		self.__dict__.update(state)
+		self.display = None
+
 	def initialize(self, display):
 		self.display = display
 		
