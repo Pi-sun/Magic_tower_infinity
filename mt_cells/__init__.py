@@ -1,6 +1,6 @@
 from kivy.clock import Clock
 
-from .textures import *
+from mt_core.textures import *
 
 class Point:
 	def __init__(self, row, col):
