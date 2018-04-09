@@ -434,19 +434,14 @@ def create_subarea(area,starting_position,size):
         wall_area=[item for item in return_boundary_s(area1) if item in area]
         if len(area) - len(area1) - len(wall_area) >= 3:
             remaining_area = [item for item in area if (item not in area1) and (item not in wall_area)]
-            
-            all_success = True
-            while len(remaining_area) > 1:
-                item = remaining_area.pop()
-                success = False
+            queue = [remaining_area.pop()]
+            while queue:
+                item = queue.pop()
                 for i in return_boundary([item]):
                     if i in remaining_area:
-                        success = True
-                        break
-                if not success:
-                    all_success = False
-                    break
-            if all_success:
+                        remaining_area.remove(i)
+                        queue.append(i)
+            if not remaining_area:
                 return (area1, wall_area)
         
     return (area, [])
