@@ -169,7 +169,7 @@ def check_award_index(board,position):
     nearby_index=[]
     nearby=[[position[0],position[1]+1],[position[0],position[1]-1],[position[0]-1,position[1]],[position[0]+1,position[1]]]
     for i in nearby:
-        if (not board.valid_position) or board.check_item(i)!=0:
+        if (not board.valid_position) or board.content[i[0]][i[1]]!=0:
             nearby.remove(i)
         else:
             nearby_index.append(board.award[i[0]][i[1]])
