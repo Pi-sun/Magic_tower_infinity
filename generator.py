@@ -126,14 +126,12 @@ class Board:
 
     def nearby_check(self,position,thing):
         result=0
-        num_near=0
         if not self.valid_position(position):
             result=-1
         else:
             for item in return_boundary([position]):
                 if self.check_item(item)== thing:
-                    num_near+=1
-            result=num_near
+                    result+=1
         return result
 
     def valid_position(self,position):
@@ -378,21 +376,22 @@ def main_route_generate(size,start_posi,new_one):
     'wall generation starts the next line'
 
     if not if_side:
-        for wall_posi in return_boundary_s(route):
+        boundary = return_boundary_s(route)
+        for wall_posi in boundary:
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
-        for wall_posi in return_boundary_s(route):
+        for wall_posi in boundary:
             if new_one.nearby_check(wall_posi,2)==2 and new_one.content[wall_posi[0]][wall_posi[1]]==0:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
     else:
-        all_route=route+side_route
-        for wall_posi in return_boundary_s(all_route):
+        boundary = return_boundary_s(route+side_route)
+        for wall_posi in boundary:
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
-        for wall_posi in return_boundary_s(all_route):
+        for wall_posi in boundary:
             if new_one.nearby_check(wall_posi,2)==2 and new_one.content[wall_posi[0]][wall_posi[1]]==0:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
@@ -413,10 +412,11 @@ def area_detect(new_board):
                     pre_area=[]
                     for i in temp_area:
                         if new_board.valid_position(i) and new_board.content[i[0]][i[1]]==0 and (i not in area):
-                            area.append(i)
                             pre_area.append(i)
                     if not pre_area:
                         break
+                    else:
+                        area.extend(pre_area)
                 area_list.extend(area)
                 all_area.append(area)
     return all_area
