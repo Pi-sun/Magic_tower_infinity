@@ -422,46 +422,34 @@ def area_detect(new_board):
     return all_area
 
 def create_subarea(area,starting_position,size):
-    trial=0
-    while True:
+    for trial in range(5):
         area1=[starting_position]
-        pre_area=[starting_position]
         while True:
-            temp_area=[]
-            for tile in return_boundary(pre_area):
-                if tile in area:
-                    area1.append(tile)
-                    temp_area.append(tile)
-            pre_area.extend(temp_area)
-            while len(area1)>size:
-                index=random.randint(0,len(temp_area)-1)
-                area1.remove(temp_area[index])
-                pre_area.remove(temp_area[index])
-                temp_area.remove(temp_area[index])
-
-            if len(area1)==size:
+            temp_area=[tile for tile in return_boundary(area1) if tile in area]
+            if len(area1)+len(temp_area)>=size:
+                area1.extend(random.sample(temp_area, size - len(area1)))
                 break
-        wall_area=[]
-        for item in return_boundary_s(area1):
-            if item in area:
-                wall_area.append(item)
-        trial_board=Board(100)
-        for row_index in range(100):
-            for column_index in range(100):
-                if [row_index,column_index] not in area or [row_index,column_index] in wall_area:
-                    trial_board.assign([row_index,column_index],1)
-        if len(area_detect(trial_board))==2 and (len(area)-len(area1)-len(wall_area))>=3:
-            break
-        else:
-            trial+=1
-
-        if trial>5:
-            area1=area
-            wall_area=[]
-            break
-    return (area1,wall_area)
+            else:
+                area1.extend(temp_area)
+        wall_area=[item for item in return_boundary_s(area1) if item in area]
+        if len(area) - len(area1) - len(wall_area) >= 3:
+            remaining_area = [item for item in area if (item not in area1) and (item not in wall_area)]
             
-    
+            all_success = True
+            while len(remaining_area) > 1:
+                item = remaining_area.pop()
+                success = False
+                for i in return_boundary([item]):
+                    if i in remaining_area:
+                        success = True
+                        break
+                if not success:
+                    all_success = False
+                    break
+            if all_success:
+                return (area1, wall_area)
+        
+    return (area, [])
                 
 def divide_area(area):
     remaining_area=area
