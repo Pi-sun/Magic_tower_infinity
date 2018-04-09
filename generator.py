@@ -227,12 +227,11 @@ def main_route_generate(size,start_posi,new_one):
             trial=0
             route.extend(temp_route)
             new_one.assign(node,1)
-            finisher=random.randint(1,3)
             for i in temp_route:
                 new_one.assign(i,1)
             node=route[-1]
             new_one.assign(node,0)
-            if finisher==1:
+            if random.randint(1,3)==1:
                 break
         else:
             trial+=1
@@ -557,35 +556,35 @@ def pre_generate(size,starting_position,size_area,surround_back=False):
     
     dragon_width=size_area[0]
     dragon_length=size_area[1]
-    if True:
-        version_0=Board(size)
-        while True:
-            dragon_x=random.randint(0,size-dragon_width-1)
-            dragon_y=random.randint(0,size-dragon_length-1)
-            if surround_back:
-                if starting_position[0]<(dragon_x-1) or starting_position[0]>dragon_x+dragon_width or starting_position[1]<(dragon_y-1) or starting_position[1]>(dragon_y+dragon_length+1):
-                    break
-            else:
-                if starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width or starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length:
-                    break
-        dragon=[]
-        for x_cood in range(dragon_x,dragon_x+dragon_width):
-            for y_cood in range(dragon_y,dragon_y+dragon_length):
-                dragon.append([x_cood,y_cood])
+    
+    version_0=Board(size)
+    while True:
+        dragon_x=random.randint(0,size-dragon_width-1)
+        dragon_y=random.randint(0,size-dragon_length-1)
         if surround_back:
-            surround=[]
-            for x_cood in range(max(dragon_x-1,0),dragon_x+dragon_width):
-                for y_cood in range(max(dragon_y-1,0),min(dragon_y+dragon_length+1,size)):
-                    surround.append([x_cood,y_cood])
+            if starting_position[0]<(dragon_x-1) or starting_position[0]>dragon_x+dragon_width or starting_position[1]<(dragon_y-1) or starting_position[1]>(dragon_y+dragon_length+1):
+                break
         else:
-            surround=dragon
-        for i in surround:
-            version_0.assign(i,2)
-        version_0.special=surround
-        version_0.special_actual=dragon
-        version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
-        version_a=main_route_generate(size,starting_position,version_0)
-        return version_a
+            if starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width or starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length:
+                break
+    dragon=[]
+    for x_cood in range(dragon_x,dragon_x+dragon_width):
+        for y_cood in range(dragon_y,dragon_y+dragon_length):
+            dragon.append([x_cood,y_cood])
+    if surround_back:
+        surround=[]
+        for x_cood in range(max(dragon_x-1,0),dragon_x+dragon_width):
+            for y_cood in range(max(dragon_y-1,0),min(dragon_y+dragon_length+1,size)):
+                surround.append([x_cood,y_cood])
+    else:
+        surround=dragon
+    for i in surround:
+        version_0.assign(i,2)
+    version_0.special=surround
+    version_0.special_actual=dragon
+    version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
+    version_a=main_route_generate(size,starting_position,version_0)
+    return version_a
 
 def square_test(area,tile):
     return (([tile[0],tile[1]+1] in area) and ([tile[0]+1,tile[1]+1] in area) and ([tile[0]+1,tile[1]] in area)) or ([tile[0],tile[1]+1] in area and [tile[0]-1,tile[1]+1] in area and [tile[0]-1,tile[1]] in area) or ([tile[0],tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area and [tile[0]+1,tile[1]] in area) or ([tile[0]-1,tile[1]] in area and [tile[0]-1,tile[1]-1] in area and [tile[0],tile[1]-1] in area)
@@ -627,15 +626,14 @@ def wall_optimize(new_one):
     
 def map_generate(size,starting_position,special_requirement=None,no_return=False):
     'generate a random map with starting_position and size, special requirement include shop, dragon, no_return,guarded_area'
-    version_0=Board(size)
-    version_a=main_route_generate(size,starting_position,version_0)
     if special_requirement=='dragon':
         version_a=pre_generate(size,starting_position,[4,3])
     elif special_requirement=='guarded_area':
         version_a=pre_generate(size,starting_position,[6,5])
     elif special_requirement=='shop':
         version_a=pre_generate(size,starting_position,[1,3],True)
-
+    else:
+        version_a=main_route_generate(size,starting_position,Board(size))
         
     version_c=door_generate(award_area_generate(version_a))
     if special_requirement=='shop' or special_requirement=='guard_area':

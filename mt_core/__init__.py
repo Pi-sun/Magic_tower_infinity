@@ -76,8 +76,8 @@ class MagicTowerApp(App):
 		
 		# Cells are enlarged on each side to avoid gaps showing between the tiles
 		self.cellDisplays = [[TextureDisplay(
-			pos = (self.grid.pos[0] + CELL_SIZE * col - 0.3, self.grid.pos[1] + CELL_SIZE * (GRID_DIM - row - 1) - 0.2),
-			size = (CELL_SIZE + 0.6, CELL_SIZE + 0.4)) for col in range(GRID_DIM)] for row in range(GRID_DIM)]
+			pos = (self.grid.pos[0] + CELL_SIZE * col, self.grid.pos[1] + CELL_SIZE * (GRID_DIM - row - 1)),
+			size = (CELL_SIZE, CELL_SIZE)) for col in range(GRID_DIM)] for row in range(GRID_DIM)]
 		for row in self.cellDisplays:
 			for cell in row:
 				self.grid.add_widget(cell)
