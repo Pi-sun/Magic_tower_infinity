@@ -197,7 +197,7 @@ def main_route_generate(size,start_posi,new_one):
             if direction==1:
                 for step in range(distance):
                     new_point=[node[0]+step+1,node[1]]
-                    if new_one.nearby_check(new_point,0)==4:
+                    if new_one.nearby_check(new_point,0)+new_one.nearby_check(new_point,5)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -205,7 +205,7 @@ def main_route_generate(size,start_posi,new_one):
             elif direction==2:
                 for step in range(distance):
                     new_point=[node[0],node[1]+step+1]
-                    if new_one.nearby_check(new_point,0)==4:
+                    if new_one.nearby_check(new_point,0)+new_one.nearby_check(new_point,5)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -213,7 +213,7 @@ def main_route_generate(size,start_posi,new_one):
             elif direction==3:
                 for step in range(distance):
                     new_point=[node[0]-step-1,node[1]]
-                    if new_one.nearby_check(new_point,0)==4:
+                    if new_one.nearby_check(new_point,0)+new_one.nearby_check(new_point,5)==4:
                         temp_route.append(new_point)
                     else:
                         success=False
@@ -221,7 +221,7 @@ def main_route_generate(size,start_posi,new_one):
             elif direction==4:
                 for step in range(distance):
                     new_point=[node[0],node[1]-step-1]
-                    if new_one.nearby_check(new_point,0)==4:
+                    if new_one.nearby_check(new_point,0)+new_one.nearby_check(new_point,5)==4:
                         temp_route.append(new_point)
                     else:
                         success=False

@@ -11,7 +11,9 @@ from monsters import monsters_for
 import npc_content_provider as provider
 
 class Section:
-    def __init__(self,size):
+    def __init__(self,size=10):
+        self.floors=[None]*size
+        self.gem_number=10
         self.red_gem=0
         self.blue_gem=0
         self.flask_health=0
@@ -51,22 +53,25 @@ def generate_section(callback = None, file = sys.stdout):
     currentSection = nextFloor // SECTION_SIZE + 1
     monsters = monsters_for(currentSection)
     
-    shopIndex = random.randint(0, SECTION_SIZE - 3)
     
     start_pos = nextStart
     i = 0
+
+    new_section=Section()
     while i < SECTION_SIZE:
         index = nextFloor + i
         
         if i == SECTION_SIZE - 1:
             board = generator.boss_floor_generate(start_pos, DIM)
-        elif i == shopIndex:
+        elif i == new_section.shop_index:
             board = generator.map_generate(DIM, start_pos, "shop")
         else:
             board = generator.map_generate(DIM, start_pos)
-        award_area.award_area_optimize(board)
-        award_area.more_door(board)
-        award_area.key_position(board)
+            
+        new_section.floors[i]=board
+        award_area.award_area_optimize(new_section.floors[i])
+        award_area.more_door(new_section.floors[i])
+        award_area.key_position(new_section.floors[i])
         
         empties = [] # Testing
         
@@ -74,7 +79,7 @@ def generate_section(callback = None, file = sys.stdout):
         for ri in range(DIM):
             row = []
             for ci in range(DIM):
-                item = board.content[ri][ci]
+                item = new_section.floors[i].content[ri][ci]
                 if item == -1:
                     if index == 1:
                         row.append(Empty())
@@ -93,7 +98,7 @@ def generate_section(callback = None, file = sys.stdout):
                     row.append(Empty()) # TODO: Other special entities
             floor.append(row)
         
-        if i == shopIndex:
+        if i == new_section.shop_index:
             for loc, item in zip(sorted(board.special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 floor[loc[0]][loc[1]] = item
         
@@ -112,10 +117,10 @@ def generate_section(callback = None, file = sys.stdout):
             if callback:
                 callback(i + 1, index, floor)
             i += 1
-            start_pos = board.end_position
+            start_pos = new_section.floors[i].end_position
         else:
             if DEBUG_LOG:
-                board.prettyPrint("Failed generation for #%d" % index, file)
+                new_section.floors[i].prettyPrint("Failed generation for #%d" % index, file)
                 
     nextFloor += SECTION_SIZE
     nextStart = start_pos

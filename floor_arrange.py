@@ -1,4 +1,4 @@
-import generator,random,award_area
+import generator,random,award_area,generate_section
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
@@ -14,7 +14,7 @@ import generator,random,award_area
 
 'for the ease of camparison, all difficulty and award level will be measured with a index from 0 to 10'
 
-def section_design(section_size):
+def section_design(section):
     'return the difficulty of each floor using different designs'
     'pass-difficulty-design includes standard, less_standard, half-half'
     result=list()
