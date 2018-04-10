@@ -6,6 +6,10 @@ DEBUG_LOG = True
 
 from mt_cells import *
 
+# Required by npc_content_provider
+def floor2section(floor):
+    return (floor - 1) // SECTION_SIZE + 1
+
 import award_area, generator
 from monsters import monsters_for
 import npc_content_provider as provider
@@ -34,7 +38,6 @@ class Section:
             if self.shield_position not in [self.sword_position,self.shop_index]:
                 break
         
-
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:
     # (when generating levels 11 - 15, where SECTION_SIZE = 5)

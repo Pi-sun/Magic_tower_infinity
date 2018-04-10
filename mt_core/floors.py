@@ -1,4 +1,4 @@
-import ctypes, datetime, os, random, threading
+import ctypes, datetime, os, random, threading, traceback
 
 from kivy.clock import Clock
 
@@ -32,9 +32,11 @@ def generateFloors(iters, callback):
 		try:
 			generator.generate_section(operate, file)
 		except EndGeneration:
+			if DEBUG_LOG:
+				traceback.print_exc(file = file)
 			return
 		finally:
-			if DEBUG_LOG and file:
+			if DEBUG_LOG:
 				file.close()
 
 generationThread = None

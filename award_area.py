@@ -1,4 +1,4 @@
-import generator,random
+import collections,generator,random
 
 def key_position(new_board):
     'after all doors are set'
@@ -6,23 +6,14 @@ def key_position(new_board):
     for i in range(len(new_board.award_area)):
         new_board.area_key.append([])
     for i in new_board.door:
-        hah=generator.return_boundary([i])
-        award_listing=[]
-        key=[]
-        for j in hah:
-            if new_board.valid_position(j):
-                award_listing.append(new_board.award[j[0]][j[1]])
-        for j in hah:
-            if new_board.valid_position(j):
-                if award_listing.count(new_board.award[j[0]][j[1]])==1:
-                    key.append(j)
-        root=[]            
-        for j in hah:
-            if new_board.valid_position(j):
-                root.append(new_board.award[j[0]][j[1]])
-        root.sort()
-        if len(root)>0 and root[-1]!=-1:
-            new_board.area_key[root[-1]].extend(key)
+        boundary=[j for j in generator.return_boundary([i]) if new_board.valid_position(j)]
+        if len(boundary):
+            root=[new_board.award[j[0]][j[1]] for j in boundary]
+            root_max = max(root)
+            if root_max >= 0: 
+                award_count=collections.Counter(root)
+                key=[j for j in boundary if award_count[new_board.award[j[0]][j[1]]]==1]
+                new_board.area_key[root_max].extend(key)
 
 def more_door(new_board):
     'open more doors, only after award_area_optimize'
@@ -169,7 +160,7 @@ def check_award_index(board,position):
     nearby_index=[]
     nearby=[[position[0],position[1]+1],[position[0],position[1]-1],[position[0]-1,position[1]],[position[0]+1,position[1]]]
     for i in nearby:
-        if (not board.valid_position) or board.check_item(i)!=0:
+        if (not board.valid_position) or board.content[i[0]][i[1]]!=0:
             nearby.remove(i)
         else:
             nearby_index.append(board.award[i[0]][i[1]])

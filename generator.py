@@ -9,22 +9,19 @@ def boss_floor_generate(start_position,size):
     if start_position[0]+1>0.5*size:
         wall_y=half_size-1
         boss=1
-        for x in range(0,half_size-1):
-            for y in range(size):
-                new_one.special.append([x,y])
-                new_one.assign([x,y],5)
+        specials = [[x,y] for x in range(0,half_size-1) for y in range(size)]
+
     else:
         wall_y=half_size
         boss=0
-        for x in range(half_size+1,size):
-            for y in range(size):
-                new_one.special.append([x,y])
-                new_one.assign([x,y],5)
-    new_one.special_wall=[]
+        specials = [[x,y] for x in range(half_size+1,size) for y in range(size)]
+    new_one.special += specials
+    for x,y in specials:
+        new_one.assign([x,y],5)
+    new_one.special_wall = [[wall_y,i] for i in range(size)]
+    new_one.wall += new_one.special_wall
     for i in range(size):
         new_one.assign([wall_y,i],2)
-        new_one.wall.append([wall_y,i])
-        new_one.special_wall.append([wall_y,i])
     if start_position[1]<half_size:
         for i in range(start_position[1]+1,half_size+1):
             position=[start_position[0],i]
@@ -50,7 +47,7 @@ def boss_floor_generate(start_position,size):
         new_one.assign([half_size-1,half_size],3)
         new_one.door.append([half_size-1,half_size])
     for i in return_boundary_s(new_one.main_route):
-        if new_one.check_item(i)!=3 and new_one.valid_position(i):
+        if new_one.valid_position(i) and new_one.content[i[0]][i[1]]!=3:
             new_one.assign(i,2)
             new_one.wall.append(i)
     if boss==1:
@@ -129,14 +126,12 @@ class Board:
 
     def nearby_check(self,position,thing):
         result=0
-        num_near=0
         if not self.valid_position(position):
             result=-1
         else:
             for item in return_boundary([position]):
                 if self.check_item(item)== thing:
-                    num_near+=1
-            result=num_near
+                    result+=1
         return result
 
     def valid_position(self,position):
@@ -232,12 +227,11 @@ def main_route_generate(size,start_posi,new_one):
             trial=0
             route.extend(temp_route)
             new_one.assign(node,1)
-            finisher=random.randint(1,3)
             for i in temp_route:
                 new_one.assign(i,1)
             node=route[-1]
             new_one.assign(node,0)
-            if finisher==1:
+            if random.randint(1,3)==1:
                 break
         else:
             trial+=1
@@ -381,22 +375,23 @@ def main_route_generate(size,start_posi,new_one):
     'wall generation starts the next line'
 
     if not if_side:
-        for wall_posi in return_boundary_s(route):
+        boundary = return_boundary_s(route)
+        for wall_posi in boundary:
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
-        for wall_posi in return_boundary_s(route):
-            if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
+        for wall_posi in boundary:
+            if new_one.nearby_check(wall_posi,2)==2 and new_one.content[wall_posi[0]][wall_posi[1]]==0:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
     else:
-        all_route=route+side_route
-        for wall_posi in return_boundary_s(all_route):
+        boundary = return_boundary_s(route+side_route)
+        for wall_posi in boundary:
             if new_one.nearby_check(wall_posi,2)==0 or new_one.nearby_check(wall_posi,2)==1:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
-        for wall_posi in return_boundary_s(all_route):
-            if new_one.nearby_check(wall_posi,2)==2 and new_one.check_item(wall_posi)==0:
+        for wall_posi in boundary:
+            if new_one.nearby_check(wall_posi,2)==2 and new_one.content[wall_posi[0]][wall_posi[1]]==0:
                 new_one.assign(wall_posi,2)
                 new_one.wall.append(wall_posi)
     print('wall generated')
@@ -408,94 +403,69 @@ def area_detect(new_board):
     area_list=[]
     for row_index in range(new_board.size):
         for column_index in range(new_board.size):
-            if new_board.check_item([row_index,column_index])==0 and [row_index,column_index] not in area_list:
+            if new_board.content[row_index][column_index]==0 and [row_index,column_index] not in area_list:
                 area=[[row_index,column_index]]
                 pre_area=area
                 while True:
-                    trial=0
                     temp_area=return_boundary(pre_area)
                     pre_area=[]
                     for i in temp_area:
-                        if new_board.check_item(i)==0 and new_board.valid_position(i) and (i not in area):
-                            area.append(i)
+                        if new_board.valid_position(i) and new_board.content[i[0]][i[1]]==0 and (i not in area):
                             pre_area.append(i)
-                            trial+=1
-                    if trial==0:
+                    if not pre_area:
                         break
+                    else:
+                        area.extend(pre_area)
                 area_list.extend(area)
                 all_area.append(area)
     return all_area
 
 def create_subarea(area,starting_position,size):
-    trial=0
-    while True:
+    for trial in range(5):
         area1=[starting_position]
-        pre_area=[starting_position]
         while True:
-            temp_area=[]
-            for tile in return_boundary(pre_area):
-                if tile in area:
-                    area1.append(tile)
-                    temp_area.append(tile)
-            pre_area.extend(temp_area)
-            while len(area1)>size:
-                #print('len(area1)',len(area1),size)
-                index=random.randint(0,len(temp_area)-1)
-                area1.remove(temp_area[index])
-                pre_area.remove(temp_area[index])
-                temp_area.remove(temp_area[index])
-
-            if len(area1)==size:
+            temp_area=[tile for tile in return_boundary(area1) if tile in area]
+            if len(area1)+len(temp_area)>=size:
+                area1.extend(random.sample(temp_area, size - len(area1)))
                 break
-        wall_area=[]
-        for item in return_boundary_s(area1):
-            if item in area:
-                wall_area.append(item)
-        trial_board=Board(100)
-        for row_index in range(100):
-            for column_index in range(100):
-                if [row_index,column_index] not in area or [row_index,column_index] in wall_area:
-                    trial_board.assign([row_index,column_index],1)
-        if len(area_detect(trial_board))==2 and (len(area)-len(area1)-len(wall_area))>=3:
-            break
-        else:
-            trial+=1
-
-        if trial>5:
-            area1=area
-            wall_area=[]
-            break
-    return [area1,wall_area]
-            
-    
+            else:
+                area1.extend(temp_area)
+        wall_area=[item for item in return_boundary_s(area1) if item in area]
+        if len(area) - len(area1) - len(wall_area) >= 3:
+            remaining_area = [item for item in area if (item not in area1) and (item not in wall_area)]
+            queue = [remaining_area.pop()]
+            while queue:
+                item = queue.pop()
+                for i in return_boundary([item]):
+                    if i in remaining_area:
+                        remaining_area.remove(i)
+                        queue.append(i)
+            if not remaining_area:
+                return (area1, wall_area)
+        
+    return (area, [])
                 
 def divide_area(area):
     remaining_area=area
     final_area=[]
     wall_area=[]
-    while True:
-
-        if len(remaining_area)>9:
-            for starting_point in range(len(remaining_area)):
-                size=random.randint(3,8)
-                temp_area,temp_wall=(create_subarea(remaining_area,remaining_area[starting_point],size))
-                if len(temp_wall)!=0:
-                    temp_remove=temp_area+temp_wall
-                    final_area.append(temp_remove)
-                    wall_area.extend(temp_wall)
-                    for i in temp_remove:
-                        remaining_area.remove(i)
-                    success=True
-                    break
-                else:
-                    success=False
-            if not success:
-                final_area.append(remaining_area)
+    while len(remaining_area)>9:
+        success=False
+        for starting_point in range(len(remaining_area)):
+            size=random.randint(3,8)
+            temp_area,temp_wall=create_subarea(remaining_area,remaining_area[starting_point],size)
+            if len(temp_wall)!=0:
+                temp_remove=temp_area+temp_wall
+                final_area.append(temp_remove)
+                wall_area.extend(temp_wall)
+                for i in temp_remove:
+                    remaining_area.remove(i)
+                success=True
                 break
-        else:
-            final_area.append(remaining_area)
+        if not success:
             break
-    return [final_area,wall_area]
+    
+    return (final_area + remaining_area,wall_area)
             
 
 def award_area_generate(new_board):
@@ -505,9 +475,7 @@ def award_area_generate(new_board):
         if len(area)<=7:
             final_area.append(area)
         else:
-            a=divide_area(area)
-            temp_wall=a[1]
-            temp_area=a[0]
+            temp_area, temp_wall = divide_area(area)
             final_area.append(temp_area)
             for i in temp_wall:
                 new_board.wall.append(i)
@@ -523,58 +491,62 @@ def door_generate(new_board):
     blank_board=Board(new_board.size)
     for row_index in range(new_board.size):
         for column_index in range(new_board.size):
-            if new_board.check_item([row_index,column_index])==2:
+            if new_board.content[row_index][column_index]==2:
                 blank_board.assign([row_index,column_index],2)
                 if [row_index,column_index] not in new_board.special:
                     walls.append([row_index,column_index])
+    
+    blank_areas = area_detect(blank_board)
     for i in walls:
         if i not in new_board.special_wall:
             blank_board1=Board(blank_board.size)
             for row_index in range(blank_board.size):
-                for column_index in range(new_board.size):
-                    if blank_board.check_item([row_index,column_index])==2:
+                for column_index in range(blank_board.size):
+                    if blank_board.content[row_index][column_index]==2:
                         blank_board1.assign([row_index,column_index],2)
             blank_board1.assign(i,0)
-            if len(area_detect(blank_board1))==len(area_detect(blank_board))-1:
+            if len(area_detect(blank_board1))==len(blank_areas)-1:
                 if random.randint(0,1)==1:
                     doors.append(i)
 
                     new_board.wall.remove(i)
                     blank_board.assign(i,0)
                     new_board.assign(i,0)
-            if len(area_detect(blank_board))==1:
+                    blank_areas = area_detect(blank_board)
+            if len(blank_areas)==1:
                 break
-    new_board.error=['step1']
-
-    if len(area_detect(blank_board))!=1:
+    
+    if len(blank_areas)!=1:
         new_board.error=['step2']
         for i in walls:
             if i not in new_board.special_wall:
                 blank_board1=Board(blank_board.size)
                 for row_index in range(blank_board.size):
-                    for column_index in range(new_board.size):
-                        if blank_board.check_item([row_index,column_index])==2:
+                    for column_index in range(blank_board.size):
+                        if blank_board.content[row_index][column_index]==2:
                             blank_board1.assign([row_index,column_index],2)
                 blank_board1.assign(i,0)
-                if len(area_detect(blank_board1))==len(area_detect(blank_board))-1:
+                if len(area_detect(blank_board1))==len(blank_areas)-1:
                     doors.append(i)
 
                     new_board.wall.remove(i)
                     blank_board.assign(i,0)
                     new_board.assign(i,0)
-                if len(area_detect(blank_board))==1:
+                    blank_areas = area_detect(blank_board)
+                if len(blank_areas)==1:
                     break
-    areas=area_detect(blank_board)
-    if len(areas)!=1:
+    else:
+        new_board.error=['step1']
+    if len(blank_areas)!=1:
         new_board.vault=[]
-        for i in areas:
+        for i in blank_areas:
             if new_board.end_position not in i:
                 for j in i:
                     new_board.vault.append(j)
                     new_board.assign(j,5)
     
 
-    new_board.error.append(area_detect(blank_board))
+    new_board.error.append(blank_areas)
     for i in doors:
         new_board.door.append(i)
         new_board.assign(i,3)
@@ -584,42 +556,38 @@ def pre_generate(size,starting_position,size_area,surround_back=False):
     
     dragon_width=size_area[0]
     dragon_length=size_area[1]
-    if True:
-        version_0=Board(size)
-        while True:
-            dragon_x=random.randint(0,size-dragon_width-1)
-            dragon_y=random.randint(0,size-dragon_length-1)
-            if surround_back:
-                if starting_position[0]<(dragon_x-1) or starting_position[0]>dragon_x+dragon_width or starting_position[1]<(dragon_y-1) or starting_position[1]>(dragon_y+dragon_length+1):
-                    break
-            else:
-                if starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width or starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length:
-                    break
-        dragon=[]
-        for x_cood in range(dragon_x,dragon_x+dragon_width):
-            for y_cood in range(dragon_y,dragon_y+dragon_length):
-                dragon.append([x_cood,y_cood])
+    
+    version_0=Board(size)
+    while True:
+        dragon_x=random.randint(0,size-dragon_width-1)
+        dragon_y=random.randint(0,size-dragon_length-1)
         if surround_back:
-            surround=[]
-            for x_cood in range(max(dragon_x-1,0),dragon_x+dragon_width):
-                for y_cood in range(max(dragon_y-1,0),min(dragon_y+dragon_length+1,size)):
-                    surround.append([x_cood,y_cood])
+            if starting_position[0]<(dragon_x-1) or starting_position[0]>dragon_x+dragon_width or starting_position[1]<(dragon_y-1) or starting_position[1]>(dragon_y+dragon_length+1):
+                break
         else:
-            surround=dragon
-        for i in surround:
-            version_0.assign(i,2)
-        version_0.special=surround
-        version_0.special_actual=dragon
-        version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
-        version_a=main_route_generate(size,starting_position,version_0)
-        return version_a
+            if starting_position[0]<dragon_x or starting_position[0]>dragon_x+dragon_width or starting_position[1]<dragon_y or starting_position[1]>dragon_y+dragon_length:
+                break
+    dragon=[]
+    for x_cood in range(dragon_x,dragon_x+dragon_width):
+        for y_cood in range(dragon_y,dragon_y+dragon_length):
+            dragon.append([x_cood,y_cood])
+    if surround_back:
+        surround=[]
+        for x_cood in range(max(dragon_x-1,0),dragon_x+dragon_width):
+            for y_cood in range(max(dragon_y-1,0),min(dragon_y+dragon_length+1,size)):
+                surround.append([x_cood,y_cood])
+    else:
+        surround=dragon
+    for i in surround:
+        version_0.assign(i,2)
+    version_0.special=surround
+    version_0.special_actual=dragon
+    version_0.special_door=[dragon_x+dragon_width,dragon_y+int((dragon_length-1)/2)]
+    version_a=main_route_generate(size,starting_position,version_0)
+    return version_a
 
 def square_test(area,tile):
-    if (([tile[0],tile[1]+1] in area) and ([tile[0]+1,tile[1]+1] in area) and ([tile[0]+1,tile[1]] in area)) or ([tile[0],tile[1]+1] in area and [tile[0]-1,tile[1]+1] in area and [tile[0]-1,tile[1]] in area) or ([tile[0],tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area and [tile[0]+1,tile[1]] in area) or ([tile[0]-1,tile[1]] in area and [tile[0]-1,tile[1]-1] in area and [tile[0],tile[1]-1] in area):
-        return True
-    else:
-        return False
-    
+    return (([tile[0],tile[1]+1] in area) and ([tile[0]+1,tile[1]+1] in area) and ([tile[0]+1,tile[1]] in area)) or ([tile[0],tile[1]+1] in area and [tile[0]-1,tile[1]+1] in area and [tile[0]-1,tile[1]] in area) or ([tile[0],tile[1]-1] in area and [tile[0]+1,tile[1]-1] in area and [tile[0]+1,tile[1]] in area) or ([tile[0]-1,tile[1]] in area and [tile[0]-1,tile[1]-1] in area and [tile[0],tile[1]-1] in area)
 
 def wall_optimize(new_one):
     new_one.assign(new_one.start_position,0)
@@ -634,9 +602,9 @@ def wall_optimize(new_one):
         if square_test(new_one.wall,i):
             new_one.assign(i,0)
             if len(area_detect(new_one))!=ori_no_area:
-                   new_one.assign(i,2)
+                new_one.assign(i,2)
             else:
-                   new_one.wall.remove(i)
+                new_one.wall.remove(i)
     area_list_1=area_detect(new_one)
 
     for i in new_one.main_route:
@@ -658,15 +626,14 @@ def wall_optimize(new_one):
     
 def map_generate(size,starting_position,special_requirement=None,no_return=False):
     'generate a random map with starting_position and size, special requirement include shop, dragon, no_return,guarded_area'
-    version_0=Board(size)
-    version_a=main_route_generate(size,starting_position,version_0)
     if special_requirement=='dragon':
         version_a=pre_generate(size,starting_position,[4,3])
     elif special_requirement=='guarded_area':
         version_a=pre_generate(size,starting_position,[6,5])
     elif special_requirement=='shop':
         version_a=pre_generate(size,starting_position,[1,3],True)
-
+    else:
+        version_a=main_route_generate(size,starting_position,Board(size))
         
     version_c=door_generate(award_area_generate(version_a))
     if special_requirement=='shop' or special_requirement=='guard_area':
