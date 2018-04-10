@@ -11,8 +11,8 @@ class ShopContentProvider:
         
         money = int(30*(1.0344)**self.purchases)
         health = (section)*( section-1 ) * 100 + 100
-        attack = section * 2
-        defence = section * 2
+        attack = section * 1
+        defence = section * 1
         
         if app.hero.money.value >= money:
             def purchase(item, quantity):
