@@ -119,8 +119,9 @@ def generate_section(callback = None, file = sys.stdout):
             
             if callback:
                 callback(i + 1, index, floor)
-            i += 1
+            
             start_pos = new_section.floors[i].end_position
+            i += 1
         else:
             if DEBUG_LOG:
                 new_section.floors[i].prettyPrint("Failed generation for #%d" % index, file)
