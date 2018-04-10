@@ -218,7 +218,15 @@ def floor_monster_award(section):
                 section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,10)
             elif if_mon<3:
                 section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
-        
+        end_area=find_end_area(section.floors[i])
+        for j in end_area:
+            if section.floors[i].award_listing[i][0]!=-1:
+                net_award=random.randint(-3,3)+int(section.difficulty[i][1])
+                current_difficulty=section.floors[i].difficulty[(section.floors[i].award_listing[j][1][0])][(section.floors[i].award_listing[j][1][1])]
+                # hahahahhahah
+                for k in section.floors[i].award_key:
+                    current_difficulty+=section.floors[i].difficulty[k[0]][k[1]]
+                award=net_award-current_difficulty
                 
             
     return None
