@@ -10,7 +10,7 @@ class ShopContentProvider:
         section = floor2section(cell.floor)
         
         money = int(30*(1.0344)**self.purchases)
-        health = (section)*( section-1 ) * 100 + 100
+        health = (section)*( section-1 ) * 100 + 200
         attack = section * 1
         defence = section * 1
         

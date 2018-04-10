@@ -14,7 +14,7 @@ import generator,random,award_area,generate_section
 
 'for the ease of camparison, all difficulty and award level will be measured with a index from 0 to 10'
 
-def section_design(section):
+def section_design(section_size):
     'return the difficulty of each floor using different designs'
     'pass-difficulty-design includes standard, less_standard, half-half'
     result=list()
@@ -56,11 +56,11 @@ def section_design(section):
     if design_index==0:
         design_2='standard'
         for i in range(section_size):
-            result[i][1]=i/(section_size/10)/2+2.5
+            result[i][1]=i/(section_size/10)/2+3.5
     if design_index==1:
         design_2='less standard'
         for i in range(section_size):
-            result[i][1]=(i/section_size*2)**2*2.5/2+3
+            result[i][1]=(i/section_size*2)**2*2.5/2+4
     if design_index==2:
         design_2='half-half'
         for i in range(int(0.5*section_size)):
@@ -70,15 +70,15 @@ def section_design(section):
     if design_index==3:
         design_2='haha'
         for i in range(section_size):
-            result[i][1]=4
+            result[i][1]=5
     if design_index==4:
         design_2='hell'
         for i in range(section_size):
-            result[i][1]=7.5-i/(section_size/10)/2
+            result[i][1]=8-i/(section_size/10)/2
     if design_index==5:
         design_2='random'
         for i in range(section_size):
-            result[i][1]=random.randint(3,7)
+            result[i][1]=random.randint(3,8)
     
     
     result=fluctuate(result)
@@ -191,8 +191,58 @@ def floor_monster_main(board,difficulty):
             break
     print(board.key_main,board.key_side)
     
-def floor_monster_award(board,difficulty):
+def floor_monster_award(section):
+    for i in range(section.size):
+        for j in section.floors[i].award_listing:
+            door=random.randint(0,100)
+            if door==100:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=20
+            #red door
+            elif door>90:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=5.5
+            #intended as blue door
+            elif door>10:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=1.2
+            #intended as yellow door
+            elif door>3:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
+            elif door>0:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,10)
+            else:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=-2
+                
+                'hidden wall'
+        for j in section.floors[i].award_key:
+            if_mon=random.randint(0,4)
+            if if_mon<1:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,10)
+            elif if_mon<3:
+                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
+        
+                
+            
     return None
+
+def find_end_area(board):
+    non_end_area=set()
+    end_area=set()
+    for i in board.award_listing:
+        non_end_area.add(i[0])
+    for i in range(len(board.award_area)):
+        if i not in non_end_area:
+            end_area.add(i)
+    return end_area
+    
+def section_difficulty(section):
+    'manage the difficulty of the section'
+    section.difficulty=section_design(section.size)
+    for i in len(section.size):
+        floor_monster_main(section.floor[i],section.difficulty[i][0])
+    floor_monster_award(section)
+
+        
+    return section
+    
 
 if __name__=='__main__':
     a=generator.map_generate(11,[1,7])
@@ -200,7 +250,8 @@ if __name__=='__main__':
     award_area.more_door(a)
     award_area.key_position(a)
     floor_monster_main(a,7)
-    
+    print("end _area is",find_end_area(a))
+    a.award_present()
 
     a.present()
     for i in a.difficulty:
