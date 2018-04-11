@@ -7,13 +7,13 @@ class _MonsterCreator:
         
             origin_index=baseSection*(baseSection-1)//2
             origin_attack=origin_index*25+10
-            ratio=standard_attack/origin_attack
+            ratio=section/baseSection
         
             power=(section-baseSection)/5
 
-            actual_health=round(baseHealth*(ratio)*1.05**power)
-            actual_attack=round((standard_attack+(baseAttack-origin_attack)/ratio)*1.05**power)
-            actual_defence=round((standard_attack+(baseDefence-origin_attack)/ratio)*1.05**power)
+            actual_health=round(baseHealth*(ratio)*1.215**power)
+            actual_attack=round((standard_attack+(baseAttack-origin_attack)*ratio)*1.215**power)
+            actual_defence=round((standard_attack+(baseDefence-origin_attack)*ratio)*1.215**power)
             actual_money=round(baseMoney*8**power)
             return cls(actual_health, actual_attack, actual_defence, actual_money)
     

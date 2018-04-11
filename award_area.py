@@ -12,7 +12,7 @@ def key_position(new_board):
             root_max = max(root)
             if root_max >= 0: 
                 award_count=collections.Counter(root)
-                key=[j for j in boundary if award_count[new_board.award[j[0]][j[1]]]==1]
+                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.award[j[0]][j[1]]!= -9 )]
                 new_board.area_key[root_max].extend(key)
 
 def more_door(new_board):
@@ -67,7 +67,8 @@ def find_key(board):
     for i in board.main_route:
         board.assign(i,1)
         if len(generator.area_detect(board))>template:
-            board.key_main.append(i)
+            if i != board.start_position and i!=board.end_position:
+                board.key_main.append(i)
         board.assign(i,0)
     for i in board.main_route:
         board.assign(i,1)
@@ -109,6 +110,7 @@ def award_area_optimize(new_board):
             new_board.award[j[0]][j[1]]=index
         index+=1
     'all walkable square on the board indexed -1 for main nad side route, 0,1,2,3,4 for award areas'
+    new_board.present()
     clean_board(new_board)
     find_key(new_board)
     remain_door=[]
@@ -139,6 +141,8 @@ def award_area_optimize(new_board):
         for i in temp_door:
             remain_door.remove(i)
         index+=0.5
+        new_board.present()
+        new_board.award_present()
         if len(remain_door)==0:
             break
     restore_board(new_board)
