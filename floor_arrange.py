@@ -1,4 +1,4 @@
-import random, generate_section
+import random
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
@@ -321,7 +321,7 @@ def section_difficulty(section):
     
 
 if __name__=='__main__':
-    import generator, award_area
+    import generate_section, generator, award_area
 
     a=generate_section.Section(1)
     a.floors[0]=generator.map_generate(11,[1,2])
