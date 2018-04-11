@@ -55,24 +55,22 @@ def generate_section(callback = None, file = sys.stdout):
     global nextFloor, nextStart
     
     currentSection = nextFloor // SECTION_SIZE + 1
+    new_section=Section()
     monsters = monsters_for(currentSection)
-    
     
     start_pos = nextStart
     i = 0
 
-    new_section=Section()
     while i < SECTION_SIZE:
         index = nextFloor + i
         
         if i == SECTION_SIZE - 1:
-            board = generator.boss_floor_generate(start_pos, DIM)
+            new_section.floors[i] = generator.boss_floor_generate(start_pos, DIM)
         elif i == new_section.shop_index:
-            board = generator.map_generate(DIM, start_pos, "shop")
+            new_section.floors[i] = generator.map_generate(DIM, start_pos, "shop")
         else:
-            board = generator.map_generate(DIM, start_pos)
+            new_section.floors[i] = generator.map_generate(DIM, start_pos)
             
-        new_section.floors[i]=board
         award_area.award_area_optimize(new_section.floors[i])
         award_area.more_door(new_section.floors[i])
         award_area.key_position(new_section.floors[i])
@@ -103,20 +101,22 @@ def generate_section(callback = None, file = sys.stdout):
             floor.append(row)
         
         if i == new_section.shop_index:
-            for loc, item in zip(sorted(board.special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
+            for loc, item in zip(sorted(new_section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 floor[loc[0]][loc[1]] = item
         
         # Testing
         loc = random.choice(empties)
         floor[loc[0]][loc[1]] = monsters[0](currentSection)
         
+        # Finalize floor arrangement before here
+        # The following loop initializes all floor cells
         for ri in range(DIM):
-        	for ci in range(DIM):
-        		floor[ri][ci].placeAt(index, Point(ri, ci))
+            for ci in range(DIM):
+                floor[ri][ci].placeAt(index, Point(ri, ci))
         
-        if board.start_position and board.end_position and board.start_position == start_pos:
+        if new_section.floors[i].start_position and new_section.floors[i].end_position and new_section.floors[i].start_position == start_pos:
             if DEBUG_LOG:
-                board.prettyPrint("Successful generation for #%d" % index, file)
+                new_section.floors[i].prettyPrint("Successful generation for #%d" % index, file)
             
             if callback:
                 callback(i + 1, index, floor)

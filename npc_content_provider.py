@@ -9,8 +9,8 @@ class ShopContentProvider:
     def get(self, app, cell):
         section = floor2section(cell.floor)
         
-        money = int(30*(1.0344)**self.purchases)
-        health = (section)*( section-1 ) * 100 + 200
+        money = round(30*(1.0344)**self.purchases)
+        health = (section)*(section-1) * 100 + 200
         attack = section * 1
         defence = section * 1
         
