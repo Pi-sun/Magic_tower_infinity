@@ -29,15 +29,16 @@ class Section:
         self.yellow_door=0
         self.blue_door=0
         self.red_door=0
-        self.shop_index=random.randint(0,size-3)
-        while True:
-            self.sword_position=random.randint(0,size-2)
-            if self.sword_position!=self.shop_index:
-                break
-        while True:
-            self.shield_position=random.randint(0,size-2)
-            if self.shield_position not in [self.sword_position,self.shop_index]:
-                break
+        if self.size>3:
+            self.shop_index=random.randint(0,size-3)
+            while True:
+                self.sword_position=random.randint(0,size-2)
+                if self.sword_position!=self.shop_index:
+                    break
+            while True:
+                self.shield_position=random.randint(0,size-2)
+                if self.shield_position not in [self.sword_position,self.shop_index]:
+                    break
         
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:

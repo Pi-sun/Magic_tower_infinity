@@ -192,44 +192,99 @@ def floor_monster_main(board,difficulty):
     print(board.key_main,board.key_side)
     
 def floor_monster_award(section):
+    # -1 difficulty refer to small flask, yellow key
+    # -5 difficulty refer to blue key, big flask, and gems
+    # -10 difficulty refer to ability item
     for i in range(section.size):
         for j in section.floors[i].award_listing:
             door=random.randint(0,100)
             if door==100:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=20
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=20
             #red door
             elif door>90:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=5.5
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=5.5
             #intended as blue door
             elif door>10:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=1.2
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=1.2
             #intended as yellow door
             elif door>3:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
             elif door>0:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,10)
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=random.randint(0,10)
             else:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=-2
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=-2
                 
                 'hidden wall'
-        for j in section.floors[i].award_key:
-            if_mon=random.randint(0,4)
-            if if_mon<1:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,10)
-            elif if_mon<3:
-                section.floors[i].difficulty[j[2][0]][j[2][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
+        for k in section.floors[i].area_key:
+            for j in k:
+                if_mon=random.randint(0,4)
+                if if_mon<1:
+                    section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,10)
+                elif if_mon<3:
+                    section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
         end_area=find_end_area(section.floors[i])
-        for j in end_area:
-            if section.floors[i].award_listing[i][0]!=-1:
-                net_award=random.randint(-3,3)+int(section.difficulty[i][1])
+        for k in end_area:
+            j=k
+            difficulty_level=0
+            while True:
+            
+            
+                if section.floors[i].award_listing[i][0]==-1:
+                    # handle the area directly connected to the main/side route
+                    net_award=random.randint(-3,3)+int(section.difficulty[i][1])+difficulty_level
+                    _continue=False
+                else:
+                    #handle the other area
+                    net_award=random.random(-5,5)+int(section.difficulty[i][1])+difficulty_level
+                    _continue=True
                 current_difficulty=section.floors[i].difficulty[(section.floors[i].award_listing[j][1][0])][(section.floors[i].award_listing[j][1][1])]
                 # hahahahhahah
-                for k in section.floors[i].award_key:
-                    current_difficulty+=section.floors[i].difficulty[k[0]][k[1]]
+                for m in section.floors[i].area_key[j]:
+                    current_difficulty+=section.floors[i].difficulty[m[0]][m[1]]
                 award=net_award-current_difficulty
+                difficulty_level=current_difficulty+award_award_area(section.floors[i],j,award)
+                if _continue:
+                    j=section.floors[i].award_listing[j][0]
+                else:
+                    break
+        # then dealing with more doors
+
+        all_door=[]
+        parrelel_door=[]
+        for ii in section.floors[i].award_listing:
+            all_door.append(ii)
+        for iii in section.floors[i].parrelel_door:
+            for ii in iii:
+                if ii not in all_door:
+                    parrelel_door.append(ii)
+        for j in parrelel_door:
+            what=random.randint(0,3)
+            if what==0:
+                section.floors[i].difficulty[j[0]][j[1]]=-2
+            else:
+                section.floors[i].difficulty[j[0]][j[1]]=5.5
+        
+
                 
             
     return None
+
+def award_award_area(board,index,award):
+    empty_position=[]
+    for position in board.award_area[index]:
+        if board.difficulty[position[0]][position[1]]==0:
+            empty_position.append(position)
+    net_difficulty=0
+    for i in empty_position:
+        board.difficulty[i[0]][i[1]]=-1
+        net_difficulty-=1
+    for i in range(2):
+        for i in empty_position:
+            if net_difficulty>award:
+                board.difficulty[i[0]][i[1]]=-5
+            if net_difficulty<award:
+                board.difficulty[i[0]][i[1]]=0
+    return net_difficulty
 
 def find_end_area(board):
     non_end_area=set()
@@ -253,14 +308,14 @@ def section_difficulty(section):
     
 
 if __name__=='__main__':
-    a=generator.map_generate(11,[1,7])
-    award_area.award_area_optimize(a)
-    award_area.more_door(a)
-    award_area.key_position(a)
-    floor_monster_main(a,7)
-    print("end _area is",find_end_area(a))
-    a.award_present()
-
-    a.present()
-    for i in a.difficulty:
+    a=generate_section.Section(1)
+    a.floors[0]=generator.map_generate(11,[1,2])
+    award_area.award_area_optimize(a.floors[0])
+    award_area.more_door(a.floors[0])
+    award_area.key_position(a.floors[0])
+    a.difficulty=[[2,5]]
+    floor_monster_main(a.floors[0],2)
+    floor_monster_award(a)
+    a.floors[0].present()
+    for i in a.floors[0].difficulty:
     	print(i)
