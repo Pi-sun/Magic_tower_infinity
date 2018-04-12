@@ -57,7 +57,6 @@ def generate_section(callback = None, file = sys.stdout):
     
     currentSection = nextFloor // SECTION_SIZE + 1
     new_section=Section()
-    monsters = monsters_for(currentSection)
     
     start_pos = nextStart
     i = 0
@@ -107,7 +106,7 @@ def generate_section(callback = None, file = sys.stdout):
         
         # Testing
         loc = random.choice(empties)
-        floor[loc[0]][loc[1]] = monsters[0](currentSection)
+        floor[loc[0]][loc[1]] = monsters_for(currentSection)[0](currentSection)
         
         # Finalize floor arrangement before here
         # The following loop initializes all floor cells
