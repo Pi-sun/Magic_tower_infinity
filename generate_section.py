@@ -16,6 +16,8 @@ import npc_content_provider as provider
 
 class Section:
     def __init__(self,size=10):
+        self.small_award=0
+        self.big_award=0
         self.size=size
         self.floors=[None]*size
         self.gem_number=10

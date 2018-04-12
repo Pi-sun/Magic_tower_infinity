@@ -622,10 +622,13 @@ def wall_optimize(new_one):
 def map_generate(size,starting_position,special_requirement=None,no_return=False):
     'generate a random map with starting_position and size, special requirement include shop, dragon, no_return,guarded_area'
     if special_requirement=='dragon':
+        version_a.special_requirement=='dragon'
         version_a=pre_generate(size,starting_position,[4,3])
     elif special_requirement=='guarded_area':
+        version_a.special_requirement=='guarded_area'
         version_a=pre_generate(size,starting_position,[6,5])
     elif special_requirement=='shop':
+        version_a.special_requirement=='shop'
         version_a=pre_generate(size,starting_position,[1,3],True)
     else:
         version_a=main_route_generate(size,starting_position,Board(size))
