@@ -4,7 +4,7 @@ from . import Cell, Empty
 from mt_core.textures import *
 
 class Monster(Cell):
-	def __init__(self, name, health, attack, defence, money, texture):
+	def __init__(self, name, health, attack, defence, money, texture, menu_texture = None):
 		super().__init__(texture)
 
 		self.name = name
@@ -12,8 +12,15 @@ class Monster(Cell):
 		self.attack = attack
 		self.defence = defence
 		self.money = money
+		if menu_texture:
+			self.menu_texture = menu_texture
+		else:
+			self.menu_texture = texture
 		
 	def interact(self, app):
+		self.attack(app, self.location)
+	
+	def attack(self, app, attack_location):
 		print("Attacking %s <%d, %d, %d, %d>" % (self.name, self.health, self.attack, self.defence, self.money))
 		
 		heroDamage = max(app.hero.attack.value - self.defence, 0)
@@ -23,7 +30,7 @@ class Monster(Cell):
 		monsterStrikes = -1 if monsterDamage == 0 else app.hero.health.value // monsterDamage + (app.hero.health.value % monsterDamage > 0)
 		
 		if heroStrikes != -1 and (monsterStrikes == -1 or monsterStrikes >= heroStrikes):
-			app.hero.moveBy(self.location - app.hero.location)
+			app.hero.moveBy(attack_location - app.hero.location)
 			
 			app.blockActions()
 			app.showMonster(self)
@@ -46,13 +53,50 @@ class Monster(Cell):
 			def clearBlock(dt):
 				# To be implemented: app.hero.experience.update(1)
 				app.hero.money.update(self.money)
-				app.setCell(Empty(), self.location, self.floor)
 				app.showMonster(None)
 				app.unblockActions()
+				self.finish(app)
 			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
+			
+	def finish(self, app):
+		app.setCell(Empty(), self.location, self.floor)
+			
+class LargeMonster(Monster):
+	def __init__(self, name, health, attack, defence, money, texture, menu_texture, parts):
+			super().__init__(name, health, attack, defence, money, texture, menu_texture)
+			self.parts = parts
+			
+	def finish(self, app):
+		for part in self.parts:
+			app.setCell(self.parts[part], self.location + part, self.floor)
+			
+class LargeMonsterPart(Cell):
+	def __init__(self, texture, offset):
+		super().__init__(texture)
+		
+		self.offset = offset
+
+	def interact(self, app):
+		app.getCell(self.location + self.offset, self.floor).attack(app, self.location)
 			
 def _monsterTypeCreator(name, textureCoordinate):
 	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate))
+			
+def _monster3x3TypeCreator(name, textureCoordinate, menuTextureCoordinate = None):
+	def create(health, attack, defence, money, gifts = {}):
+		parts = {Point(i, j): gifts[(i, j)] if (i, j) in gifts else Empty() for i in range(-1, 2) for j in range(-1, 2)}
+		results = []
+		for i in range(-1, 2):
+			row = []
+			for j in range(-1, 2):
+				texture = FourTexture(textureCoordinate[0] + i, textureCoordinate[1] + j, 3)
+				if i == 0 and j == 0:
+					row.append(LargeMonster(name, health, attack, defence, money, texture, FourTexture(*menuTextureCoordinate), parts))
+				else:
+					row.append(LargeMonsterPart(texture, Point(-i, -j)))
+			results.append(row)
+		return results
+	return create
 			
 GreenSlimeB = _monsterTypeCreator("Green Slime B", (7, 4))
 GreenSlimeA = _monsterTypeCreator("Green Slime A", (8, 4))
@@ -108,3 +152,6 @@ MagicSergeantB = _monsterTypeCreator("Magic Sergeant B", (21, 12))
 MagicSergeantA = _monsterTypeCreator("Magic Sergeant A", (22, 12))
 Devil = _monsterTypeCreator("Devil", (23, 12))
 MagicMaster = _monsterTypeCreator("Magic Master", (24, 12))
+
+Dragon = _monster3x3TypeCreator("Dragon", (0, 4), (0, 16))
+GiantOctopus = _monster3x3TypeCreator("Giant Octopus", (3, 4), (1, 16))

@@ -307,7 +307,7 @@ class MagicTowerApp(App):
 		
 	def showMonster(self, monster):
 		if monster:
-			self.monsterTexture = monster.texture.copy()
+			self.monsterTexture = monster.menu_texture.copy()
 			self.monsterNameLabel.text = monster.name
 			self.monsterHealthLabel.text = str(monster.health)
 			self.monsterAttackLabel.text = str(monster.attack)
@@ -326,6 +326,12 @@ class MagicTowerApp(App):
 	def moveByFloors(self, change):
 		if self.currentFloor + change > 0:
 			self.showFloor(self.currentFloor + change)
+			
+	def getCell(self, location, floor = None):
+		if floor == None:
+			return floors.floors[self.currentFloor][location.row][location.col]
+		else:
+			return floors.floors[floor][location.row][location.col]
 			
 	def setCell(self, cell, location, floor = None):
 		if floor == None or floor == self.currentFloor:
