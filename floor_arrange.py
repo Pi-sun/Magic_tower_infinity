@@ -245,7 +245,7 @@ def floor_monster_award(section):
                 for m in section.floors[i].area_key[j]:
                     current_difficulty+=section.floors[i].difficulty[m[0]][m[1]]
 
-                    # avoid tooo few monster
+                # avoid tooo few monster
                 if current_difficulty<3:
                     for m in section.floors[i].award_area[j]:
                         small_mon=random.randint(1,10)
@@ -329,21 +329,19 @@ def section_difficulty(section):
 if __name__=='__main__':
     import generate_section, generator, award_area
 
-    a=generate_section.Section(1)
-    a.floors[0]=generator.map_generate(11,[1,2])
-    award_area.award_area_optimize(a.floors[0])
-    award_area.more_door(a.floors[0])
-    award_area.key_position(a.floors[0])
-    a.difficulty=[[2,5]]
-
-    print('check', a.floors[0].award_listing)
-    floor_monster_main(a.floors[0],2)
-    floor_monster_award(a)
-    a.floors[0].award_present()
-    a.floors[0].present()
-    for i in a.floors[0].difficulty:
-    	print(i)
-
-
+    a=generate_section.Section(10)
+    a.difficulty=section_design(a.size)
     
+    prev_end=[1,2]
+    for i in range(10):
+        a.floors[i]=generator.map_generate(11,prev_end)
+        award_area.award_area_optimize(a.floors[i])
+        award_area.more_door(a.floors[i])
+        award_area.key_position(a.floors[i])
+        floor_monster_main(a.floors[i],a.difficulty[i][0])
+        
+        prev_end=a.floors[i].end_position
 
+    floor_monster_award(a)
+    for floor in a.floors:
+        floor.prettyPrint()
