@@ -2,6 +2,8 @@ from monsters import *
 import generator
 
 def to_real_map(section,section_index):
+    monsters=monster_for(section_index)
+
     for i in range(len(section.size)):
         section.floors[i].map=list()
         for j in range(section.floors[i].size):
@@ -34,7 +36,6 @@ def to_real_map(section,section_index):
                 if 
                 # begin to generate monsters
 
-                monsters=monster_for(section_index)
 
                     
                     
