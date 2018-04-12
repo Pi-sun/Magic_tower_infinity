@@ -12,7 +12,7 @@ def key_position(new_board):
             root_max = max(root)
             if root_max >= 0: 
                 award_count=collections.Counter(root)
-                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.award[j[0]][j[1]]!= -9 )]
+                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.award[j[0]][j[1]]!= -9 and new_board.content[j[0]][j[1]]!=1)]
                 new_board.area_key[root_max].extend(key)
 
 def more_door(new_board):
