@@ -1,4 +1,4 @@
-import os, pickle
+import gzip, os, pickle
 
 # Set these as early as possible,
 # otherwise Kivy may not register these settings
@@ -271,12 +271,12 @@ class MagicTowerApp(App):
 			"floors": floors.getState(),
 			"currentFloor": self.currentFloor
 		}
-		with open("data.dat", "wb") as f:
+		with gzip.open("data.dat", "wb") as f:
 			pickle.dump(data, f)
 	
 	def loadGame(self):
 		if os.path.isfile("data.dat"):
-			with open("data.dat", "rb") as f:
+			with gzip.open("data.dat", "rb") as f:
 				data = pickle.load(f)
 		
 			self.hero.setState(data["hero"])
