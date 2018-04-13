@@ -11,35 +11,47 @@ DIM = generator.DIM
 class EndGeneration(Exception):
 	pass
 
-def generateFloors(iters, callback):
-	for i in range(iters):
+def generateSection(i, callback, completion):
+	if DEBUG_LOG:
+		if not os.path.exists("logs"):
+			os.makedirs("logs")
+		file = open("logs/generator_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_%d-to-%d.log" % (generator.nextFloor, generator.nextFloor + SECTION_SIZE - 1), "w")
+	else:
+		file = None
+	
+	def operate(sectionIndex, finalize = None):
+		def work(dt):
+			global floors
+			if finalize:
+				fs = finalize()
+				floors.update(fs)
+			callback(i * SECTION_SIZE + sectionIndex)
+			if finalize:
+				completion()
+		Clock.schedule_once(work, 0)
+	
+	try:
+		generator.generate_section(operate, file)
+	except EndGeneration:
 		if DEBUG_LOG:
-			if not os.path.exists("logs"):
-				os.makedirs("logs")
-			file = open("logs/generator_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_%d-to-%d.log" % (generator.nextFloor, generator.nextFloor + SECTION_SIZE - 1), "w")
-		else:
-			file = None
-		
-		def operate(sectionIndex, globalIndex, floor):
-			def createWork(i):
-				def work(dt):
-					global floors
-					floors[globalIndex] = floor
-					callback(i * SECTION_SIZE + sectionIndex)
-				return work
-			Clock.schedule_once(createWork(i), 0)
-		
-		try:
-			generator.generate_section(operate, file)
-		except EndGeneration:
-			if DEBUG_LOG:
-				traceback.print_exc(file = file)
-			return
-		finally:
-			if DEBUG_LOG:
-				file.close()
+			print("Program stopped, force generation to end...", file = file)
+			traceback.print_exc(file = file)
+		return
+	finally:
+		if DEBUG_LOG:
+			file.close()
 
 generationThread = None
+
+def generateFloors(iters, callback):
+	i = -1
+	def completion():
+		nonlocal i
+		i += 1
+		if i < iters:
+			generationThread = threading.Thread(target = lambda: generateSection(i, callback, completion))
+			generationThread.start()
+	completion()
 
 def prepareFloor(target, callback):
 	global generationThread
@@ -49,8 +61,7 @@ def prepareFloor(target, callback):
 	elif target > 0:
 		sectionStart = (target - 1) // SECTION_SIZE * SECTION_SIZE + 1
 		iters = (sectionStart - generator.nextFloor) // SECTION_SIZE + 1
-		generationThread = threading.Thread(target = lambda: generateFloors(iters, callback))
-		generationThread.start()
+		generateFloors(iters, callback)
 		
 		return SECTION_SIZE * iters
 	else:

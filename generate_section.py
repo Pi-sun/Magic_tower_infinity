@@ -54,11 +54,11 @@ def generate_section(callback = None, file = sys.stdout):
     # `floor` is the current floor, represented as an array of Cells (from package mt_cells)
     # `callback` parameter of this function shall be called after every round of
     #    generation to update graphics
-
-    global nextFloor, nextStart
     
     currentSection = nextFloor // SECTION_SIZE + 1
+    
     new_section=Section()
+    new_section.maps = {}
     
     start_pos = nextStart
     i = 0
@@ -79,7 +79,7 @@ def generate_section(callback = None, file = sys.stdout):
         
         empties = [] # Testing
         
-        floor = []
+        new_section.maps[index] = []
         for ri in range(DIM):
             row = []
             for ci in range(DIM):
@@ -100,37 +100,44 @@ def generate_section(callback = None, file = sys.stdout):
                     row.append(KeyedDoor(KEY_YELLOW))
                 elif item == 5:
                     row.append(Empty()) # TODO: Other special entities
-            floor.append(row)
+            new_section.maps[index].append(row)
         
         if i == new_section.shop_index:
             for loc, item in zip(sorted(new_section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
-                floor[loc[0]][loc[1]] = item
+                new_section.maps[index][loc[0]][loc[1]] = item
         
         # Testing
         loc = random.choice(empties)
-        floor[loc[0]][loc[1]] = monsters_for(currentSection)[0](currentSection)
+        new_section.maps[index][loc[0]][loc[1]] = monsters_for(currentSection)[0](currentSection)
         
         # Finalize floor arrangement before here
         # The following loop initializes all floor cells
         for ri in range(DIM):
             for ci in range(DIM):
-                floor[ri][ci].placeAt(index, Point(ri, ci))
+                new_section.maps[index][ri][ci].placeAt(index, Point(ri, ci))
         
         if new_section.floors[i].start_position and new_section.floors[i].end_position and new_section.floors[i].start_position == start_pos:
             if DEBUG_LOG:
                 new_section.floors[i].prettyPrint("Successful generation for #%d" % index, file)
             
-            if callback:
-                callback(i + 1, index, floor)
+            if callback and i != SECTION_SIZE - 1:
+                callback(i + 1)
             
             start_pos = new_section.floors[i].end_position
             i += 1
         else:
             if DEBUG_LOG:
                 new_section.floors[i].prettyPrint("Failed generation for #%d" % index, file)
-                
-    nextFloor += SECTION_SIZE
-    nextStart = start_pos
+         
+    def finialize():
+        global nextFloor, nextStart
+        nextFloor += SECTION_SIZE
+        nextStart = start_pos
+        return new_section.maps
+    if callback:
+        callback(SECTION_SIZE, finialize)
+    else:
+        finialize()
 
 def getState():
     return {

@@ -25,7 +25,7 @@ class _MonsterCreator:
         return self.__create(section)
 
     def difficulty(self,level):
-        return [self.early_difficulty*(1-0.3*level)+self.end_difficulty*0.3*level,self.early_difficulty*(1-0.6*level)+self.end_difficulty*0.6*level]
+        return (self.early_difficulty*(1-0.3*level)+self.end_difficulty*0.3*level,self.early_difficulty*(1-0.6*level)+self.end_difficulty*0.6*level)
 
 # difficulty in main/side route on xth floor in a section is calculated as such:
 # early_difficulty*(1-0.3*x)+end_difficulty*(0.3*x)
