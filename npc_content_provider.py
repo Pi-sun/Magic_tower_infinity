@@ -21,8 +21,10 @@ class ShopContentProvider:
                 item.update(quantity)
                 return True
             return ("Give me %d gold coins\nto increase one of your abilities" % money +
-                LARGE_TEXT_GAP + "<1> Health +%d" % health + SMALL_TEXT_GAP + "<2> Attack +%d" % attack + 
-                SMALL_TEXT_GAP + "<3> Defence +%d" % defence + SMALL_TEXT_GAP + "<Any> No, thanks", {
+                LARGE_TEXT_GAP + "[ref=1]<1> Health +%d[/ref]" % health +
+                SMALL_TEXT_GAP + "[ref=2]<2> Attack +%d[/ref]" % attack + 
+                SMALL_TEXT_GAP + "[ref=3]<3> Defence +%d[/ref]" % defence +
+                SMALL_TEXT_GAP + "[ref=" + REF_KEY_ANY + "]<Any> No, thanks[/ref]", {
                 "1": lambda: purchase(app.hero.health, health),
                 "2": lambda: purchase(app.hero.attack, attack),
                 "3": lambda: purchase(app.hero.defence, defence),
