@@ -54,6 +54,8 @@ def generate_section(callback = None, file = sys.stdout):
     # `floor` is the current floor, represented as an array of Cells (from package mt_cells)
     # `callback` parameter of this function shall be called after every round of
     #    generation to update graphics
+    #   (the last call to `callback` should pass a function that finalizes the generator state
+    #    as a second parameter, which returns maps for a complete section represented by dict)
     
     currentSection = nextFloor // SECTION_SIZE + 1
     

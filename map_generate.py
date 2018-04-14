@@ -1,4 +1,4 @@
-from monsters import *
+from monsters import monster_for
 import generator
 
 def to_real_map(section,section_index):
