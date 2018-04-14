@@ -257,6 +257,8 @@ class MagicTowerApp(App):
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
 					floors.floors[self.currentFloor][row][col].initialize(self.cellDisplays[row][col])
+			
+			self.interactAround()
 					
 	def update(self, dt):
 		if not self.floorsLoading and self.currentFloor != None:
@@ -347,6 +349,12 @@ class MagicTowerApp(App):
 		target = self.hero.location + offset
 		if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
 			floors.floors[self.currentFloor][target.row][target.col].interact(self)
+
+	def interactAround(self):
+		for offset in (Point(r, c) for r, c in ((0, 1), (1, 0), (0, -1), (-1, 0))):
+			target = self.hero.location + offset
+			if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
+				floors.floors[self.currentFloor][target.row][target.col].interactAround(self)
 
 	def showDialog(self, text, hotkeys):
 		self.dialog.text = text

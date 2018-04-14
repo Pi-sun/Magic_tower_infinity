@@ -115,6 +115,7 @@ class Hero(TextureDisplay):
 			self.nextStep(textureRow)
 			if app:
 				app.unblockActions()
+				app.interactAround()
 		Clock.schedule_once(work, 0.1)
 				
 	def nextStep(self, textureRow):

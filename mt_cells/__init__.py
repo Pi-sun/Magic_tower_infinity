@@ -62,6 +62,9 @@ class Cell:
 	def interact(self, app):
 		raise NotImplementedError()
 		
+	def interactAround(self, app):
+		pass
+		
 class Empty(Cell):
 	def __init__(self):
 		super().__init__(SingleTexture(*EMPTY_TEXTURE))

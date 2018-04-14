@@ -18,9 +18,13 @@ class Monster(Cell):
 			self.menu_texture = texture
 		
 	def interact(self, app):
-		self.attack(app, self.location)
+		self.combat(app, self.location)
 	
-	def attack(self, app, attack_location):
+	# testing
+	def interactAround(self, app):
+		print("Around %s" % self.name)
+	
+	def combat(self, app, attack_location):
 		print("Attacking %s <%d, %d, %d, %d>" % (self.name, self.health, self.attack, self.defence, self.money))
 		
 		heroDamage = max(app.hero.attack.value - self.defence, 0)
@@ -77,7 +81,7 @@ class LargeMonsterPart(Cell):
 		self.offset = offset
 
 	def interact(self, app):
-		app.getCell(self.location + self.offset, self.floor).attack(app, self.location)
+		app.getCell(self.location + self.offset, self.floor).combat(app, self.location)
 			
 def _monsterTypeCreator(name, textureCoordinate):
 	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate))
