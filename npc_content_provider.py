@@ -31,7 +31,8 @@ class ShopContentProvider:
                 REF_KEY_ANY: lambda: True
             })
         else:
-            return ("You need %d gold coins\nto make a purchase!" % money + LARGE_TEXT_GAP + "Press any key to continue", {
+            return ("You need %d gold coins\nto make a purchase!" % money + 
+                LARGE_TEXT_GAP + "Press any key to continue", {
                 REF_KEY_ANY: lambda: True
             })
 

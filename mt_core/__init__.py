@@ -23,7 +23,7 @@ REF_KEY_ANY = "__any__"
 LARGE_TEXT_GAP = "[size=%d]\n\n[/size]" % round(CELL_SIZE * 0.7)
 SMALL_TEXT_GAP = "[size=%d]\n\n[/size]" % round(CELL_SIZE * 0.3)
 
-from . import floors
+from . import floors, saveload
 from .hero import Hero
 
 GRID_DIM = floors.DIM
@@ -182,17 +182,13 @@ class MagicTowerApp(App):
 		self.floorsLoading = 0
 		self.currentFloor = None
 		
+		self.saved = True
+		self.filepath = None
+		
 		self.keyboard = Window.request_keyboard(lambda: None, self.root)
 		self.keyboard.bind(on_key_down = self.onKeyDown)
 		
-		dialogText = "Magic Tower!" + LARGE_TEXT_GAP + "[ref=n][u]N[/u]ew Game[/ref]" + SMALL_TEXT_GAP
-		dialogHotkeys = {"n": lambda: self.newGame() or True}
-		if os.path.isfile("data.dat"):
-			dialogText += "[ref=l][u]L[/u]oad Game[/ref]"
-			dialogHotkeys["l"] = lambda: self.loadGame() or True
-		else:
-			dialogText += "[color=#999]Load Game[/color]"
-		self.showDialog(dialogText, dialogHotkeys)
+		self.showStartDialog()
 		
 		self.updateEvent = Clock.schedule_interval(self.update, 0.3)
 
@@ -203,27 +199,24 @@ class MagicTowerApp(App):
 		print("Pressed", keycode[1], ("with " + ", ".join(modifiers)) if modifiers else "")
 	
 		if self.dialogHotkeys != None:
-			self.handleDialog(keycode[1])
+			self.handleDialog(keycode[1])	
 		elif self.isFree():
-			if keycode[1] == "l":
+			if keycode[1] == "down":
+				self.interactBy(Point(1, 0))
+			elif keycode[1] == "up":
+				self.interactBy(Point(-1, 0))
+			elif keycode[1] == "right":
+				self.interactBy(Point(0, 1))
+			elif keycode[1] == "left":
+				self.interactBy(Point(0, -1))
+			elif keycode[1] == "a":
+				self.moveByFloors(1)
+			elif keycode[1] == "z":
+				self.moveByFloors(-1)
+			elif keycode[1] == "l":
 				self.loadGame()
-			elif keycode[1] == "n":
-				self.newGame()
-			elif self.currentFloor != None:
-				if keycode[1] == "down":
-					self.interactBy(Point(1, 0))
-				elif keycode[1] == "up":
-					self.interactBy(Point(-1, 0))
-				elif keycode[1] == "right":
-					self.interactBy(Point(0, 1))
-				elif keycode[1] == "left":
-					self.interactBy(Point(0, -1))
-				elif keycode[1] == "a":
-					self.moveByFloors(1)
-				elif keycode[1] == "z":
-					self.moveByFloors(-1)
-				elif keycode[1] == "s":
-					self.saveGame()
+			elif keycode[1] == "s":
+				self.saveGame()
 		
 	def onDialogPress(self, instance, value):
 		print("Pressed ref", value)
@@ -232,15 +225,23 @@ class MagicTowerApp(App):
 			self.handleDialog(value)
 		
 	def isFree(self):
-		return not self.floorsLoading and not self.blockedActions
+		return self.currentFloor != None and (not self.floorsLoading) and (not self.blockedActions)
 		
-	def showFloor(self, floor):
+	def showStartDialog(self):
+		text = "Magic Tower!" + LARGE_TEXT_GAP + "[ref=n][u]N[/u]ew Game[/ref]" + \
+					 SMALL_TEXT_GAP + "[ref=l][u]L[/u]oad Game[/ref]"
+		actions = {"n": lambda: self.newGame() or True,
+							 "l": lambda: self.loadFile() or True}
+		self.showDialog(text, actions)
+		
+	def showFloor(self, floor, completion = None):
 		self.root.remove_widget(self.grid)
 		self.root.add_widget(self.loading)
 		
 		self.floorLabel.text = "Floor %d" % floor
 		
 		self.floorsLoading = floors.prepareFloor(floor, self.handleFloorPrepared)
+		self.floorsLoadingCompletion = completion
 		self.targetFloorLoading = floor
 		self.handleFloorPrepared(0)
 		
@@ -258,7 +259,9 @@ class MagicTowerApp(App):
 				for col in range(GRID_DIM):
 					floors.floors[self.currentFloor][row][col].initialize(self.cellDisplays[row][col])
 			
-			self.interactAround()
+			if self.floorsLoadingCompletion:
+				self.floorsLoadingCompletion()
+				self.floorsLoadingCompletion = None
 					
 	def update(self, dt):
 		if not self.floorsLoading and self.currentFloor != None:
@@ -268,22 +271,59 @@ class MagicTowerApp(App):
 		self.monsterTexture.update()
 	
 	def saveGame(self):
-		data = {
-			"hero": self.hero.getState(),
-			"floors": floors.getState(),
-			"currentFloor": self.currentFloor
-		}
-		with gzip.open("data.dat", "wb") as f:
-			pickle.dump(data, f)
+		def save(path):
+			data = {
+				"hero": self.hero.getState(),
+				"floors": floors.getState(),
+				"currentFloor": self.currentFloor
+			}
+			with gzip.open(path, "wb") as f:
+				pickle.dump(data, f)
+		
+			self.filepath = path
+			self.saved = True
+		
+		if self.filepath:
+			save(self.filepath)
+		else:
+			self.blockActions()
+			def saveAfterGetPath(path):
+				save(path)
+				self.unblockActions()
+			saveload.showSave(saveAfterGetPath, self.unblockActions)
 	
 	def loadGame(self):
-		if os.path.isfile("data.dat"):
-			with gzip.open("data.dat", "rb") as f:
-				data = pickle.load(f)
+		if self.filepath:
+			def work():
+				with gzip.open(self.filepath, "rb") as f:
+					data = pickle.load(f)
+
+				self.hero.setState(data["hero"])
+				floors.setState(data["floors"])
+				self.showFloor(data["currentFloor"])
 		
-			self.hero.setState(data["hero"])
-			floors.setState(data["floors"])
-			self.showFloor(data["currentFloor"])
+				self.saved = True
+				return True
+			
+			if self.saved:
+				work()
+			else:
+				text = "Your current progress will be lost!\nStill loading previous save?" + LARGE_TEXT_GAP + \
+							 "[ref=y]<  Y  > Yes" + " " * 21 + "[/ref]" + SMALL_TEXT_GAP + "[ref=" + REF_KEY_ANY + "]<Any> Return to game[/ref]"
+				actions = {"y": work,
+									 REF_KEY_ANY: lambda: True}
+				self.showDialog(text, actions)
+	
+	def loadFile(self):
+		self.blockActions()
+		def loadAfterGetPath(path):
+			self.filepath = path
+			self.loadGame()
+			self.unblockActions()
+		def loadCancel():
+			self.showStartDialog()
+			self.unblockActions()
+		saveload.showLoad(loadAfterGetPath, loadCancel)
 		
 	def newGame(self):
 		floors.newState()
@@ -292,6 +332,8 @@ class MagicTowerApp(App):
 		self.showFloor(START_FLOOR)
 		self.hero.newState()
 		self.hero.setLocation(Point(START_ROW, START_COL))
+		
+		self.saved = False
 		
 	def blockActions(self):
 		self.blockedActions += 1
@@ -327,7 +369,7 @@ class MagicTowerApp(App):
 				
 	def moveByFloors(self, change):
 		if self.currentFloor + change > 0:
-			self.showFloor(self.currentFloor + change)
+			self.showFloor(self.currentFloor + change, lambda: self.interactAround())
 			
 	def getCell(self, location, floor = None):
 		if floor == None:
@@ -349,6 +391,8 @@ class MagicTowerApp(App):
 		target = self.hero.location + offset
 		if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
 			floors.floors[self.currentFloor][target.row][target.col].interact(self)
+		
+		self.saved = False
 
 	def interactAround(self):
 		for offset in (Point(r, c) for r, c in ((0, 1), (1, 0), (0, -1), (-1, 0))):
