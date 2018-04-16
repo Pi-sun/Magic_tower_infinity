@@ -3,17 +3,14 @@ from mt_cells import *
 class _MonsterCreator:
     def __init__(self, cls, baseHealth, baseAttack, baseDefence, baseMoney, baseSection, earlyDifficulty, endDifficulty):
         def create(section):
-            standard_attack=10+section*25*(section-1)//2
-        
-            origin_index=baseSection*(baseSection-1)//2
-            origin_attack=origin_index*25+10
+            standard_attack='read from file'
+            origin_attack='read from file'
             ratio=section/baseSection
         
-            power=(section-baseSection)/5
 
-            actual_health=round(baseHealth*(ratio)*1.215**power)
-            actual_attack=round((standard_attack+(baseAttack-origin_attack)*ratio)*1.215**power)
-            actual_defence=round((standard_attack+(baseDefence-origin_attack)*ratio)*1.215**power)
+            actual_health=round(baseHealth*(ratio))
+            actual_attack=round((standard_attack+(baseAttack-origin_attack)*ratio))
+            actual_defence=round((standard_attack+(baseDefence-origin_attack)*ratio))
             actual_money=round(baseMoney*8**power)
             return cls(actual_health, actual_attack, actual_defence, actual_money)
     

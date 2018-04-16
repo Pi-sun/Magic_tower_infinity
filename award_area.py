@@ -12,7 +12,7 @@ def key_position(new_board):
             root_max = max(root)
             if root_max >= 0: 
                 award_count=collections.Counter(root)
-                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.award[j[0]][j[1]]!= -9 and new_board.content[j[0]][j[1]]!=1)]
+                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.award[j[0]][j[1]]!= -1 and new_board.award[j[0]][j[1]]!= -1 and new_board.content[j[0]][j[1]]!=1)]
                 new_board.area_key[root_max].extend(key)
 
 def more_door(new_board):
@@ -90,15 +90,17 @@ def award_area_optimize(new_board):
     new_board.key_side=[]
     index=0
     for i in range(new_board.size):
+        new_board.award.append([-9]*new_board.size)
+    for i in range(new_board.size):
         new_board.award_index.append([None]*new_board.size)
     for i in new_board.side_area:
-        new_board.award_index[i[0]][i[1]]=-1    
+        new_board.award_index[i[0]][i[1]]=-1
+        new_board.award[i[0]][i[1]]=-1
     for i in new_board.main_route:
         new_board.award_index[i[0]][i[1]]=-1
     for i in new_board.side_route:
         new_board.award_index[i[0]][i[1]]=-1
-    for i in range(new_board.size):
-        new_board.award.append([-9]*new_board.size)
+
     for i in new_board.vault:
         new_board.award_index[i[0]][i[1]]=99        
     for i in new_board.main_route:
@@ -138,6 +140,7 @@ def award_area_optimize(new_board):
                     for k in new_board.award_area[j]:
                         new_board.award_index[k[0]][k[1]]=int(index)
                 new_board.award_index[i[0]][i[1]]=int(index)
+                new_board.award[i[0]][i[1]]=int(root)               
         for i in temp_door:
             remain_door.remove(i)
         index+=0.5

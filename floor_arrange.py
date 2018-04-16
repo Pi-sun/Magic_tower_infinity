@@ -1,4 +1,5 @@
 import random
+modifier=1
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
@@ -189,6 +190,12 @@ def floor_monster_main(board,difficulty):
                 key.append(i)
         if trial==60:
             break
+
+    for i in board.main_route:
+        if board.difficulty[i[0]][i[1]]!=0:
+            heh=random.randint(0,5)
+            if heh==1:
+                board.difficulty[i[0]][i[1]]=-1
     print(board.key_main,board.key_side)
     
 def floor_monster_award(section):
@@ -196,10 +203,14 @@ def floor_monster_award(section):
     # -5 difficulty refer to blue key, big flask, and gems
     # -10 difficulty refer to ability item
     for i in range(section.size):
+        section.floors[i].present()
+        section.floors[i].award_present()
+        print(section.floors[i].award_listing)
         for j in section.floors[i].award_listing:
             door=random.randint(0,100)
             if door==100:
                 section.floors[i].difficulty[j[1][0]][j[1][1]]=20
+
             #red door
             elif door>90:
                 section.floors[i].difficulty[j[1][0]][j[1][1]]=5.5
@@ -223,7 +234,7 @@ def floor_monster_award(section):
                 elif if_mon<4:
                     section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
         end_area=find_end_area(section.floors[i])
-        print(end_area)
+
         for k in end_area:
             j=k
             difficulty_level=0
@@ -232,12 +243,12 @@ def floor_monster_award(section):
             
                 if section.floors[i].award_listing[j][0]==-1:
                     # handle the area directly connected to the main/side route
-                    net_award=random.randint(-3,3)+int(section.difficulty[i][1])-difficulty_level-5
+                    net_award=random.randint(-3,3)+int(section.difficulty[i][1])-difficulty_level-5+modifier
 
                     _continue=False
                 else:
                     #handle the other area
-                    net_award=random.randint(-5,3)+int(section.difficulty[i][1])-difficulty_level-5
+                    net_award=random.randint(-5,3)+int(section.difficulty[i][1])-difficulty_level-5+modifier
                     print('mdzz',net_award)
                     _continue=True
                 current_difficulty=section.floors[i].difficulty[(section.floors[i].award_listing[j][1][0])][(section.floors[i].award_listing[j][1][1])]
@@ -257,10 +268,10 @@ def floor_monster_award(section):
                     
                 award=net_award-current_difficulty
                 difficulty_level=current_difficulty+award_award_area(section.floors[i],j,award)
-                print('asdas',difficulty_level)
+
                 if _continue:
                     j=section.floors[i].award_listing[j][0]
-                    print('yey')
+
                 else:
                     break
         # then dealing with more doors
@@ -279,7 +290,19 @@ def floor_monster_award(section):
                 section.floors[i].difficulty[j[0]][j[1]]=-2
             else:
                 section.floors[i].difficulty[j[0]][j[1]]=5.5
-        
+
+        for ri in section.floors[i].difficulty:
+            for ci in ri:
+                if ci==-1:
+                    section.small_award+=1
+                if ci==-5:
+                    section.big_award+=1
+                if ci>0 and ci!=1.2 and ci!= 5.5:
+                    section.monster_count+=1
+                if ci==5.5:
+                    section.blue_door+=1
+                if ci==1.2:
+                    section.yellow_door+=1
 
                 
             
@@ -300,8 +323,10 @@ def award_award_area(board,index,award):
                 board.difficulty[i[0]][i[1]]=-5
                 net_difficulty-=4
             if net_difficulty<award:
-                board.difficulty[i[0]][i[1]]=0
-                net_difficulty+=1
+                heh=random.randint(1,10)
+                if heh>2:
+                    board.difficulty[i[0]][i[1]]=0
+                    net_difficulty+=1
     return net_difficulty
 
 def find_end_area(board):
@@ -329,11 +354,11 @@ def section_difficulty(section):
 if __name__=='__main__':
     import generate_section, generator, award_area
 
-    a=generate_section.Section(10)
-    a.difficulty=section_design(a.size)
+    a=generate_section.Section(50)
+    a.difficulty=section_design(50)
     
     prev_end=[1,2]
-    for i in range(10):
+    for i in range(50):
         a.floors[i]=generator.map_generate(11,prev_end)
         award_area.award_area_optimize(a.floors[i])
         award_area.more_door(a.floors[i])
@@ -345,3 +370,9 @@ if __name__=='__main__':
     floor_monster_award(a)
     for floor in a.floors:
         floor.prettyPrint()
+
+print('small',a.small_award)
+print('large',a.big_award)
+print('monster',a.monster_count)
+print('yellow',a.yellow_door)
+print('blue',a.blue_door)
