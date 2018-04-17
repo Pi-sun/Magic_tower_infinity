@@ -40,7 +40,10 @@ def to_real_map(section,section_index):
                         new_map[ci][ri]='portal'
                         _portal=True
                         section.floors[i].portal=Board(section.floors[i].size)
+                # special generation
 
+                if section.floors[i].content[ci][ri]==5:
+                    new_map[ci][ri]=section.floors.special_requirement
                 # vault generation
 
                 if [ci,ri] in section.floors[i].vault:
