@@ -119,8 +119,9 @@ def to_real_map(section,section_index):
 
                             if monsters[j].difficulty(i+1)[1]<section.floors[i].difficulty[ci][ri]+1 and monsters[j].difficulty(i+1)[1]>section.floors[i].difficulty[ci][ri]-1:
                                 choices.append(j)
+                    interval=2
                     while len(choices)==0:
-                        interval=2
+                 
                         if section.floors[i].content[ci][ri]==1:
                             for j in range(len(monsters)):
 
