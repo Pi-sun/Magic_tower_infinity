@@ -12,7 +12,7 @@ def key_position(new_board):
             root_max = max(root)
             if root_max >= 0: 
                 award_count=collections.Counter(root)
-                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.award[j[0]][j[1]]!= -1 and new_board.award[j[0]][j[1]]!= -1 and new_board.content[j[0]][j[1]]!=1)]
+                key=[j for j in boundary if (award_count[new_board.award[j[0]][j[1]]]==1 and new_board.content[j[0]][j[1]]!= 2 and new_board.award[j[0]][j[1]]!= -1 and new_board.content[j[0]][j[1]]!=1)]
                 new_board.area_key[root_max].extend(key)
 
 def more_door(new_board):
@@ -176,10 +176,10 @@ def check_award_index(board,position):
 def clean_board(board):
     for i in board.door:
         board.assign(i,0)
-    for i in board.main_route:
-        board.assign(i,0)
-    for i in board.side_route:
-        board.assign(i,0)
+    for j in board.main_route:
+        board.assign(j,0)
+    for k in board.side_route:
+        board.assign(k,0)
     if board.start_position!=None:
         board.assign(board.start_position,0)
     board.assign(board.end_position,0)

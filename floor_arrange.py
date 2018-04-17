@@ -354,11 +354,11 @@ def section_difficulty(section):
 if __name__=='__main__':
     import generate_section, generator, award_area
 
-    a=generate_section.Section(50)
-    a.difficulty=section_design(50)
+    a=generate_section.Section(5)
+    a.difficulty=section_design(5)
     
     prev_end=[1,2]
-    for i in range(50):
+    for i in range(5):
         a.floors[i]=generator.map_generate(11,prev_end)
         award_area.award_area_optimize(a.floors[i])
         award_area.more_door(a.floors[i])

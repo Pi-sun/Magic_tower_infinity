@@ -1,5 +1,5 @@
 # as main program it needs to force init its package core
-import generate_section, generator, award_area, floor_arrange,random
+import generator, award_area, floor_arrange,random
 
 from monsters import monsters_for
 
@@ -110,6 +110,7 @@ def to_real_map(section,section_index):
                     if section.floors[i].content[ci][ri]==1:
                         for j in range(len(monsters)):
 
+
                             if monsters[j].difficulty(i+1)[0]<section.floors[i].difficulty[ci][ri]+1 and monsters[j].difficulty(i+1)[0]>section.floors[i].difficulty[ci][ri]-1:
                                 choices.append(j)
                                 
@@ -118,8 +119,23 @@ def to_real_map(section,section_index):
 
                             if monsters[j].difficulty(i+1)[1]<section.floors[i].difficulty[ci][ri]+1 and monsters[j].difficulty(i+1)[1]>section.floors[i].difficulty[ci][ri]-1:
                                 choices.append(j)
+                    if len(choices)==0:
+                        
+                        if section.floors[i].content[ci][ri]==1:
+                            for j in range(len(monsters)):
 
-                    monster_chosen=random.randint(0,len(choices))
+
+                                if monsters[j].difficulty(i+1)[0]<section.floors[i].difficulty[ci][ri]+2 and monsters[j].difficulty(i+1)[0]>section.floors[i].difficulty[ci][ri]-2:
+                                    choices.append(j)
+                                
+                        else:
+                            for j in range(len(monsters)):
+
+                                if monsters[j].difficulty(i+1)[1]<section.floors[i].difficulty[ci][ri]+2 and monsters[j].difficulty(i+1)[1]>section.floors[i].difficulty[ci][ri]-2:
+                                    choices.append(j)
+                        
+
+                    monster_chosen=random.choice(choices)
 
                     new_map[ci][ri]='level'+str(section_index)+ 'monster'+ str(monster_chosen)
 
@@ -154,34 +170,5 @@ def to_real_map(section,section_index):
                 section.yellow_key+=1
 
 
-def create_section(section_size,map_size,section_index):
-    section=generate_section.Section(section_size)
-    starting_position=[1,1]
-    for i in range(section_size):
-        if i == section.shop_index:
-            section.floors[i]=generator.map_generate(map_size,starting_position,'shop')
-        elif i in section.size-2:
-            section.floors[i]=boss_floor_generate(starting_position,map_size)          
-        else:
-            section.floors[i]=generator.map_generate(map_size,starting_position)
-        starting_position=section.floors[i].end_position
-
-        award_area.award_area_optimize(section.floors[i])
-        award_area.more_door(section.floors[i])
-        award_area.key_position(section.floors[i])
-    print('step1')
-
-    section.difficulty=floor_arrange.section_design(section_size)
-    print('step2')
-    for i in range(section_size):
-        floor_arrange.floor_monster_main(section.floors[i],section.difficulty[i][0])
-    print('step3')
-    floor_arrange.floor_monster_award(section)
-    print('step4')
-    to_real_map(section,section_index)
-    print('step5')
-
-    return section
 
 
-create_section(4,11,1).present()

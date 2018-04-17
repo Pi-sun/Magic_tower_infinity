@@ -1,4 +1,4 @@
-import random, sys, map_generate
+import random, sys, map_generate, floor_arrange
 
 DIM = 11
 SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
@@ -69,15 +69,15 @@ def generate_section(callback = None, file = sys.stdout):
     #    as a second parameter, which returns maps for a complete section represented by dict)
     
     currentSection = nextFloor // SECTION_SIZE + 1
-    
-    new_section=create_section(10,11,currentSection)
+    start_pos = nextStart    
+    new_section=create_section(10,11,currentSection,start_pos)
     new_section.maps = {}
     
-    start_pos = nextStart
+
     i = 0
 
     while i < SECTION_SIZE:
-        #nextFloor + i
+        index=nextFloor + i
         
         #if i == SECTION_SIZE - 1:
          #   new_section.floors[i] = generator.boss_floor_generate(start_pos, DIM)
@@ -92,7 +92,7 @@ def generate_section(callback = None, file = sys.stdout):
         
         #empties = [] # Testing
         
-        #new_section.maps[index] = []
+        new_section.maps[index] = []
         for ri in range(DIM):
             row = []
             for ci in range(DIM):
@@ -106,25 +106,25 @@ def generate_section(callback = None, file = sys.stdout):
                     row.append(Upstair())
                 elif item == None or item == 'portal':
                     row.append(Empty())
-                    empties.append((ri, ci)) # Testing
+                    #empties.append((ri, ci)) # Testing
                 elif item == 'wall':
                     row.append(Wall())
                 elif item == 'yellow door':
                     row.append(KeyedDoor(KEY_YELLOW))
                 elif item == 'blue door':
-                    row.append(KeyedDoor(KEY_YELLOW))
+                    row.append(KeyedDoor(KEY_BLUE))
                 elif item == 'special':
                     row.append(Empty()) # TODO: Other special entities
                 elif len(item)==14:
-                    row.append(monsters_for(currentSection)[int(item[14])](int(item[6])))
+                    row.append(monsters_for(currentSection)[int(item[13])](int(item[5])))
                 else:
                     row.append(Empty())
             new_section.maps[index].append(row)
-        
+        print('step6')
         if i == new_section.shop_index:
             for loc, item in zip(sorted(new_section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 new_section.maps[index][loc[0]][loc[1]] = item
-        
+        print('step7')
         # Testing
         #loc = random.choice(empties)
         #new_section.maps[index][loc[0]][loc[1]] = monsters_for(currentSection)[0](currentSection)
@@ -137,6 +137,7 @@ def generate_section(callback = None, file = sys.stdout):
         
         if new_section.floors[i].start_position and new_section.floors[i].end_position and new_section.floors[i].start_position == start_pos:
             if DEBUG_LOG:
+                print('hahaha')
                 new_section.floors[i].prettyPrint("Successful generation for #%d" % index, file)
             
             if callback and i != SECTION_SIZE - 1:
@@ -147,7 +148,7 @@ def generate_section(callback = None, file = sys.stdout):
         else:
             if DEBUG_LOG:
                 new_section.floors[i].prettyPrint("Failed generation for #%d" % index, file)
-         
+    print('step8')
     def finialize():
         global nextFloor, nextStart
         nextFloor += SECTION_SIZE
@@ -176,3 +177,32 @@ def newState():
     nextStart = [random.randint(0, DIM - 1), random.randint(0, DIM - 1)]
     nextFloor = 1
     provider.newState()
+
+def create_section(section_size,map_size,section_index,start):
+    section=Section(section_size)
+    starting_position=start
+    for i in range(section_size):
+        if i == section.shop_index:
+            section.floors[i]=generator.map_generate(map_size,starting_position,'shop')
+        elif i == section.size-1:
+            section.floors[i]=generator.boss_floor_generate(starting_position,map_size)          
+        else:
+            section.floors[i]=generator.map_generate(map_size,starting_position)
+        starting_position=section.floors[i].end_position
+
+        award_area.award_area_optimize(section.floors[i])
+        award_area.more_door(section.floors[i])
+        award_area.key_position(section.floors[i])
+    print('step1')
+
+    section.difficulty=floor_arrange.section_design(section_size)
+    print('step2')
+    for i in range(section_size):
+        floor_arrange.floor_monster_main(section.floors[i],section.difficulty[i][0])
+    print('step3')
+    floor_arrange.floor_monster_award(section)
+    print('step4')
+    map_generate.to_real_map(section,section_index)
+    print('step5')
+
+    return section
