@@ -119,20 +119,21 @@ def to_real_map(section,section_index):
 
                             if monsters[j].difficulty(i+1)[1]<section.floors[i].difficulty[ci][ri]+1 and monsters[j].difficulty(i+1)[1]>section.floors[i].difficulty[ci][ri]-1:
                                 choices.append(j)
-                    if len(choices)==0:
-                        
+                    while len(choices)==0:
+                        interval=2
                         if section.floors[i].content[ci][ri]==1:
                             for j in range(len(monsters)):
 
 
-                                if monsters[j].difficulty(i+1)[0]<section.floors[i].difficulty[ci][ri]+2 and monsters[j].difficulty(i+1)[0]>section.floors[i].difficulty[ci][ri]-2:
+                                if monsters[j].difficulty(i+1)[0]<section.floors[i].difficulty[ci][ri]+interval and monsters[j].difficulty(i+1)[0]>section.floors[i].difficulty[ci][ri]-interval:
                                     choices.append(j)
                                 
                         else:
                             for j in range(len(monsters)):
 
-                                if monsters[j].difficulty(i+1)[1]<section.floors[i].difficulty[ci][ri]+2 and monsters[j].difficulty(i+1)[1]>section.floors[i].difficulty[ci][ri]-2:
+                                if monsters[j].difficulty(i+1)[1]<section.floors[i].difficulty[ci][ri]+interval and monsters[j].difficulty(i+1)[1]>section.floors[i].difficulty[ci][ri]-interval:
                                     choices.append(j)
+                        interval+=1
                         
 
                     monster_chosen=random.choice(choices)
