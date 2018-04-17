@@ -1,8 +1,8 @@
-from monsters import monster_for
+import monsters
 import generator
 
 def to_real_map(section,section_index):
-    monsters=monster_for(section_index)
+    monsters=monsters.monsters_for(section_index)
     big_location=[]
     small_location=[]
     for i in range(len(section.size)):
@@ -10,6 +10,7 @@ def to_real_map(section,section_index):
         for j in range(section.floors[i].size):
             section.floors[i].map.append([None]*section.floors[i].size)
         new_map=section.floors[i].map
+        _portal=False
         for ci in range(section.floors[i].size):
             for ri in range(section.floors[i].size):
                 if section.floors[i].content[ci][ri]==-1:
@@ -22,6 +23,40 @@ def to_real_map(section,section_index):
                     new_map[ci][ri]='special'
 
                 # basic contend generated
+
+                # portal generation
+    
+                if section.floors[i].content[ci][ri]==0 and len(section.floors[i].vault)!=0 and _portal==False:
+                    if_portal=random.randint(0,10)
+                    if if_portal==0:
+                        new_map[ci][ri]='portal'
+                        _portal=True
+                        random_position=random.randint(0,len(secion.floors[i].vault)-1)
+                        section.floors[i].portal=section.floors[i].vault[random_position]
+                    
+                elif section.floors[i].content[ci][ri]==1 or section.floors[i].content[ci][ri]==0 and _portal==False:
+                    if_portal=random.randint(0,1000)
+                    if if_portal==0:
+                        new_map[ci][ri]='portal'
+                        _portal=True
+                        section.floors[i].portal=Board(section.floors[i].size)
+
+                # vault generation
+
+                if [ci,ri] in section.floors[i].vault:
+                    luck=random.randint(1,10)
+                    if luck>8:
+                        new_map[ci][ri]='red gem'
+                        section.red_gem+=0.5
+                    elif luck>6:
+                        new_map[ci][ri]='blue gem'
+                        section.blue_gem+=0.5
+                    elif luck>4:
+                        new_map[ci][ri]='blue key'
+                        section.blue_key+=1
+                    elif luck>2:
+                        new_map[ci][ri]='yellow key'
+                        section.yellow_key+=1
                 # begin to generate doors
 
                 if section.floors[i].difficulty[ci][ri]==1.2:
