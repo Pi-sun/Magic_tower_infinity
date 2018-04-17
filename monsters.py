@@ -4,7 +4,7 @@ class _MonsterCreator:
     def __init__(self, cls, baseHealth, baseAttack, baseDefence, baseMoney, baseSection, earlyDifficulty, endDifficulty):
         def create(section):
 
-            origin_attack=10+section*(section-1)/2*25
+            origin_attack=10+baseSection*(baseSection-1)/2*25
             ratio=section/baseSection
             power=int((section-baseSection)/5)
             standard_attack=(10+section*(section-1)/2*25)*1.02**power
