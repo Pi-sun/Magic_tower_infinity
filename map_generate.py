@@ -1,8 +1,10 @@
-import monsters
-import generator
+# as main program it needs to force init its package core
+import generate_section
+
+from monsters import monsters_for
 
 def to_real_map(section,section_index):
-    monsters=monsters.monsters_for(section_index)
+    monsters=monsters_for(section_index)
     big_location=[]
     small_location=[]
     for i in range(len(section.size)):
