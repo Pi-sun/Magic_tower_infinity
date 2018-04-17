@@ -89,7 +89,14 @@ def to_real_map(section,section_index):
                     else:
                         new_map[ci][ri]='big flask'
                         
-                    
+                # to be done
+                # generation for special award
+
+
+
+
+
+                
                 # begin to generate monsters
 
 
@@ -114,6 +121,9 @@ def to_real_map(section,section_index):
                     new_map[ci][ri]='level'+str(section_index)+ 'monster'+ str(monster_chosen)
 
             # award adjustment
+        if section.floors[i].special_requirement='boss':
+            new_map[section.floors[i].special_door[0]][section.floors[i].special_door[0]]='red door'
+            
     while section.blue_gem<11:
         for i in big_location:
             luck=random.randint(1,section.big_award)

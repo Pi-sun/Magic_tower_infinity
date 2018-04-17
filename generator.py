@@ -38,6 +38,7 @@ def boss_floor_generate(start_position,size):
             new_one.main_route.append(position)
         new_one.assign([half_size,half_size],3)
         new_one.door.append([half_size,half_size])
+        new_one.special_door.append([half_size,half_size])
     else:
         for i in range(half_size,start_position[0]+1):
             position=[i,half_size]
@@ -45,6 +46,7 @@ def boss_floor_generate(start_position,size):
             new_one.main_route.append(position)
         new_one.assign([half_size-1,half_size],3)
         new_one.door.append([half_size-1,half_size])
+        new_one.special_door.append([half_size-1,half_size])
     for i in return_boundary_s(new_one.main_route):
         if new_one.valid_position(i) and new_one.content[i[0]][i[1]]!=3:
             new_one.assign(i,2)
@@ -61,6 +63,7 @@ def boss_floor_generate(start_position,size):
 
     new_one_v3.assign(new_one_v3.end_position,-2)
     new_one_v3.assign(new_one_v3.start_position,-1)
+    new_one.special_requirement='boss'
     return new_one_v3
         
 def return_boundary_s(positions):
