@@ -1,4 +1,4 @@
-import random, sys
+import random, sys, map_generate
 
 DIM = 11
 SECTION_SIZE = 10 # Section size must be at least 2, to have 1 shop per section
@@ -41,6 +41,17 @@ class Section:
                 self.shield_position=random.randint(0,size-2)
                 if self.shield_position not in [self.sword_position,self.shop_index]:
                     break
+    def present(self):
+        print('presented')
+        for j in self.floors:
+            print('\n')
+            for i in j.map:
+                    print(i)
+    def difficulty_present(self):
+        for i in self.floors:
+            print('\n')
+            for j in i.difficulty:
+                print(j)
         
 def generate_section(callback = None, file = sys.stdout):
     # Meanings of variables, with examples:
@@ -59,49 +70,55 @@ def generate_section(callback = None, file = sys.stdout):
     
     currentSection = nextFloor // SECTION_SIZE + 1
     
-    new_section=Section()
+    new_section=create_section(10,11,currentSection)
     new_section.maps = {}
     
     start_pos = nextStart
     i = 0
 
     while i < SECTION_SIZE:
-        index = nextFloor + i
+        #nextFloor + i
         
-        if i == SECTION_SIZE - 1:
-            new_section.floors[i] = generator.boss_floor_generate(start_pos, DIM)
-        elif i == new_section.shop_index:
-            new_section.floors[i] = generator.map_generate(DIM, start_pos, "shop")
-        else:
-            new_section.floors[i] = generator.map_generate(DIM, start_pos)
+        #if i == SECTION_SIZE - 1:
+         #   new_section.floors[i] = generator.boss_floor_generate(start_pos, DIM)
+        #elif i == new_section.shop_index:
+        #    new_section.floors[i] = generator.map_generate(DIM, start_pos, "shop")
+        #else:
+        #    new_section.floors[i] = generator.map_generate(DIM, start_pos)
             
-        award_area.award_area_optimize(new_section.floors[i])
-        award_area.more_door(new_section.floors[i])
-        award_area.key_position(new_section.floors[i])
+        #award_area.award_area_optimize(new_section.floors[i])
+        #award_area.more_door(new_section.floors[i])
+        #award_area.key_position(new_section.floors[i])
         
-        empties = [] # Testing
+        #empties = [] # Testing
         
-        new_section.maps[index] = []
+        #new_section.maps[index] = []
         for ri in range(DIM):
             row = []
             for ci in range(DIM):
-                item = new_section.floors[i].content[ri][ci]
-                if item == -1:
+                item = new_section.floors[i].map[ri][ci]
+                if item == 'start':
                     if index == 1:
                         row.append(Empty())
                     else:
                         row.append(Downstair())
-                elif item == -2:
+                elif item == 'end':
                     row.append(Upstair())
-                elif item == 0 or item == 1:
+                elif item == None or item == 'portal':
                     row.append(Empty())
                     empties.append((ri, ci)) # Testing
-                elif item == 2:
+                elif item == 'wall':
                     row.append(Wall())
-                elif item == 3:
+                elif item == 'yellow door':
                     row.append(KeyedDoor(KEY_YELLOW))
-                elif item == 5:
+                elif item == 'blue door':
+                    row.append(KeyedDoor(KEY_YELLOW))
+                elif item == 'special':
                     row.append(Empty()) # TODO: Other special entities
+                elif len(item)==14:
+                    row.append(monsters_for(currentSection)[int(item[14])](int(item[6])))
+                else:
+                    row.append(Empty())
             new_section.maps[index].append(row)
         
         if i == new_section.shop_index:
@@ -109,8 +126,8 @@ def generate_section(callback = None, file = sys.stdout):
                 new_section.maps[index][loc[0]][loc[1]] = item
         
         # Testing
-        loc = random.choice(empties)
-        new_section.maps[index][loc[0]][loc[1]] = monsters_for(currentSection)[0](currentSection)
+        #loc = random.choice(empties)
+        #new_section.maps[index][loc[0]][loc[1]] = monsters_for(currentSection)[0](currentSection)
         
         # Finalize floor arrangement before here
         # The following loop initializes all floor cells

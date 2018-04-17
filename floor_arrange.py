@@ -371,8 +371,8 @@ if __name__=='__main__':
     for floor in a.floors:
         floor.prettyPrint()
 
-print('small',a.small_award)
-print('large',a.big_award)
-print('monster',a.monster_count)
-print('yellow',a.yellow_door)
-print('blue',a.blue_door)
+    print('small',a.small_award)
+    print('large',a.big_award)
+    print('monster',a.monster_count)
+    print('yellow',a.yellow_door)
+    print('blue',a.blue_door)
