@@ -75,7 +75,10 @@ def generate_section(callback = None, file = sys.stdout):
     currentSection = nextFloor // SECTION_SIZE + 1
     
     section=Section(SECTION_SIZE)
-    section.difficulty=floor_arrange.section_design(SECTION_SIZE)
+    if currentSection==1:
+        section.difficulty=floor_arrange.section_design(SECTION_SIZE,True)
+    else:
+        section.difficulty=floor_arrange.section_design(SECTION_SIZE)
     
     start_pos = nextStart    
     i = 0

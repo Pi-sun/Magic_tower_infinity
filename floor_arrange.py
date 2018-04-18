@@ -16,14 +16,14 @@ modifier=0
 
 'for the ease of camparison, all difficulty and award level will be measured with a index from 0 to 10'
 
-def section_design(section_size):
+def section_design(section_size,if_first=False):
     'return the difficulty of each floor using different designs'
     'pass-difficulty-design includes standard, less_standard, half-half'
     result=list()
     for i in range(section_size):
         result.append([0,0])
     design_index=random.randint(0,6)
-    if design_index==0 or design_index==6:
+    if design_index==0 or design_index==6 or if_first:
         design='standard'
         for i in range(section_size):
             result[i][0]=i/(section_size/10)
