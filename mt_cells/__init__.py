@@ -33,6 +33,9 @@ DOOR_TEXTURE_ROWS = {
 	KEY_RED: 6
 }
 
+SWORD_TEXTURES = [(22, 0), (23, 0), (24, 0), (22, 2), (23, 2)]
+SHIELD_TEXTURES = [(22, 1), (23, 1), (24, 1), (22, 3), (23, 3)]
+
 from mt_core.textures import *
 
 def _animate(texture, keyframes, completion = None):
@@ -202,6 +205,20 @@ class DefenceGem(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(19, 3), quantity)
 	
+	def property(self, hero):
+		return hero.defence
+
+class Sword(PropertyImprover):
+	def __init__(self, textureCoord, quantity):
+		super().__init__(SingleTexture(*textureCoord), quantity)
+		
+	def property(self, hero):
+		return hero.attack
+		
+class Shield(PropertyImprover):
+	def __init__(self, textureCoord, quantity):
+		super().__init__(SingleTexture(*textureCoord), quantity)
+		
 	def property(self, hero):
 		return hero.defence
 

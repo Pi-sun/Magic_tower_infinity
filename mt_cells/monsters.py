@@ -39,28 +39,29 @@ class Monster(Cell):
 			app.blockActions()
 			app.showMonster(self)
 			
-			for i in range(heroStrikes):
-				def strike(i):
-					app.showSpark()
-					self.health = max(self.health - heroDamage, 0)
-					app.updateMonsterHealth(self.health)
-					
-					def hide(dt):
-						app.hideSpark()
-						if i != heroStrikes - 1:
-							app.hero.health.update(-monsterDamage)
-					Clock.schedule_once(hide, 0.15)
-				def createStrike(i):
-					return lambda dt: strike(i)
-				Clock.schedule_once(createStrike(i), 0.3 * i + 0.15)
+			i = 0
+			def strike(dt):
+				app.showSpark()
+				self.health = max(self.health - heroDamage, 0)
+				app.updateMonsterHealth(self.health)
 				
-			def clearBlock(dt):
-				# To be implemented: app.hero.experience.update(1)
-				app.hero.money.update(self.money)
-				app.showMonster(None)
-				app.unblockActions()
-				self.finish(app)
-			Clock.schedule_once(clearBlock, 0.3 * heroStrikes)
+				def hide(dt):
+					nonlocal i
+					
+					app.hideSpark()
+					if i == heroStrikes - 1:
+						def clearBlock(dt):
+							app.hero.money.update(self.money)
+							app.showMonster(None)
+							app.unblockActions()
+							self.finish(app)
+						Clock.schedule_once(clearBlock, 0.15)
+					else:
+						app.hero.health.update(-monsterDamage)
+						i += 1
+						Clock.schedule_once(strike, 0.15)
+				Clock.schedule_once(hide, 0.15)
+			Clock.schedule_once(strike, 0.15)
 			
 	def finish(self, app):
 		app.setCell(Empty(), self.location, self.floor)

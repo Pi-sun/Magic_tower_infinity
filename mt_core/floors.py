@@ -37,6 +37,9 @@ def generateSection(i, callback, completion):
 			print("Program stopped, force generation to end...", file = file)
 			traceback.print_exc(file = file)
 		return
+	except:
+		traceback.print_exc()
+		Clock.schedule_once(lambda dt: exit(), 0)
 	finally:
 		if DEBUG_LOG:
 			file.close()
