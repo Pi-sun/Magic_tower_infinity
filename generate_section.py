@@ -38,7 +38,7 @@ class Section:
                     break
             while True:
                 self.shield_position=random.randint(0,size-2)
-                if self.shield_position not in [self.sword_position,self.shop_index]:
+                if self.shield_position != self.sword_position and self.shield_position != self.shop_index:
                     break
         print('shop',self.shop_index)
         print('sword',self.sword_position)
@@ -49,7 +49,7 @@ class Section:
         for j in self.floors:
             print('\n')
             for i in j.map:
-                    print(i)
+                print(i)
     
     def difficulty_present(self):
         for i in self.floors:
@@ -86,7 +86,7 @@ def generate_section(callback = None, file = sys.stdout):
         if i == section.shop_index:
             print('shop_generation')
             section.floors[i]=generator.map_generate(DIM,start_pos,'shop')
-        if i== section.sword_position or i == section.shield_position:
+        elif i == section.sword_position or i == section.shield_position:
             section.floors[i]=generator.map_generate(DIM,start_pos,'guarded_area')
         elif i == SECTION_SIZE - 1:
             section.floors[i]=generator.boss_floor_generate(start_pos,DIM)          
