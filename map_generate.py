@@ -143,16 +143,18 @@ def to_real_map(section,section_index):
             special_map = [[Void() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
             #special_map[random.randint(1, 3)][random.randint(1, 3)] = Lava() # TODO: use award item
             
-            for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
-                section.floors[i].map[loc[0]][loc[1]] = item
+
 
             this=[section.floors[i].special_door[0]-1,section.floors[i].special_door[1]]
             if i==section.sword_position:
-                section.floors[i].map[this[0]][this[1]]=KeyedDoor(KEY_BLUE)
+
                 special_map[random.randint(1, 3)][random.randint(1, 3)] = AttackGem(standard_gem_value*5)
             if i==section.shield_position:
-                section.floors[i].map[this[0]][this[1]]=KeyedDoor(KEY_BLUE)
+
                 special_map[random.randint(1, 3)][random.randint(1, 3)] = DefenceGem(standard_gem_value*5)
+            for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
+                section.floors[i].map[loc[0]][loc[1]] = item
+            section.floors[i].map[this[0]][this[1]]=KeyedDoor(KEY_BLUE)
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=KeyedDoor(KEY_RED)
     

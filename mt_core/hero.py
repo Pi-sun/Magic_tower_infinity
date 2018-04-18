@@ -77,7 +77,7 @@ class Hero(TextureDisplay):
 		self.setLocation(state["location"])
 		
 	def newState(self):
-		self.health.set(100)
+		self.health.set(200)
 		self.attack.set(10)
 		self.defence.set(10)
 		self.money.set(0)
