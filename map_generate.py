@@ -25,7 +25,7 @@ def to_real_map(section,section_index):
                 if section.floors[i].content[ci][ri]==5:
                     new_map[ci][ri]='special'
 
-                # basic contend generated
+                # basic content generated
 
                 # portal generation
     
