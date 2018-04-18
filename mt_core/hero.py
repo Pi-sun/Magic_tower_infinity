@@ -2,7 +2,7 @@ import weakref
 
 from kivy.clock import Clock
 
-from mt_cells import Point, KEYS
+from mt_cells import Point, KEYS, KEY_YELLOW, KEY_BLUE, KEY_RED
 from .floors import DIM
 from .textures import *
 
@@ -82,8 +82,9 @@ class Hero(TextureDisplay):
 		self.defence.set(10)
 		self.money.set(0)
 		
-		for key in KEYS:
-			self.keys[key].set(0)
+		self.keys[KEY_YELLOW].set(3)
+		self.keys[KEY_BLUE].set(1)
+		self.keys[KEY_RED].set(0)
 			
 	def setLocation(self, location):
 		self.location = location
