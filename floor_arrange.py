@@ -170,7 +170,7 @@ def floor_monster_main(board,difficulty):
                 board.difficulty[i[0]][i[1]]=1.2
                 real_difficulty-=0.5
             if if_mon==0 or if_mon==1:
-                mon_diff=random.randint(0,real_difficulty)
+                mon_diff=random.randint(0,int(real_difficulty))
                 if mon_diff>=1.2*difficulty:
                     if_ultra=random.randint(0,10)
                     if if_ultra==0:
