@@ -146,10 +146,10 @@ def to_real_map(section,section_index):
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=KeyedDoor(KEY_RED)
     
-    section.difficulty_present()
-    section.present()
-    print(big_location)
-    print(small_location)
+    #section.difficulty_present()
+    #section.present()
+    #print(big_location)
+    #print(small_location)
     
     while section.blue_gem<section.size+1:
         for i in big_location:
