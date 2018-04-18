@@ -167,7 +167,7 @@ class Key(PropertyImprover):
 		self.key = key
 		
 	def property(self, hero):
-		return hero.keys[key]
+		return hero.keys[self.key]
 		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):

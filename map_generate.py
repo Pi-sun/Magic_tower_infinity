@@ -134,7 +134,14 @@ def to_real_map(section,section_index):
                     section.floors[i].map[ci][ri]=random.choice(choices)(section_index)
 
          # special generation
-                
+        if section.floors[i].special_requirement=='guarded_area':
+            guard_area=section.floors[i].special_actual.copy()
+            for k in section.floors[i].special_actual:
+                if section.floors[i].nearby_check(k,5)!=4:
+                    section.floors[i].map[k[0]][k[1]]='wall'
+                    guard_area.remove(k)
+            special_position=random.choice(guard_area)
+            section.floors[i].map[special_position[0]][special_position[1]]='wall'
         if section.floors[i].special_requirement=='shop':
             for loc, item in zip(sorted(section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 section.floors[i].map[loc[0]][loc[1]] = item        

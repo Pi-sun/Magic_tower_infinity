@@ -578,10 +578,11 @@ def pre_generate(size,starting_position,size_area,surround_back=False):
         surround=dragon
     for i in surround:
         version_0.assign(i,2)
-    version_0.special=surround
-    version_0.special_actual=dragon
+    version_0.special=surround.copy()
+    version_0.special_actual=dragon.copy()
     version_0.special_door=[dragon_x+dragon_width,dragon_y+(dragon_length-1)//2]
     version_a=main_route_generate(size,starting_position,version_0)
+    print('special data',dragon_x,dragon_y)
     return version_a
 
 def square_test(area,tile):
@@ -627,7 +628,7 @@ def map_generate(size,starting_position,special_requirement=None,no_return=False
     if special_requirement=='dragon':
         version_a=pre_generate(size,starting_position,[4,3])
     elif special_requirement=='guarded_area':
-        version_a=pre_generate(size,starting_position,[6,5])
+        version_a=pre_generate(size,starting_position,[5,5])
     elif special_requirement=='shop':
         version_a=pre_generate(size,starting_position,[1,3],True)
     else:
@@ -635,8 +636,9 @@ def map_generate(size,starting_position,special_requirement=None,no_return=False
     version_a.special_requirement = special_requirement
     
     version_c=door_generate(award_area_generate(version_a))
-    if special_requirement=='shop' or special_requirement=='guard_area':
+    if special_requirement=='shop' or special_requirement=='guarded_area':
         door = version_c.special_door
+        print()
         if version_c.check_item(door)==2:
             version_c.assign(door,0)
             version_c.wall.remove(door)

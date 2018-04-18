@@ -195,16 +195,16 @@ def floor_monster_main(board,difficulty):
     for i in board.side_route:
         if board.difficulty[i[0]][i[1]]!=0:
             heh=random.randint(0,15)
-            if heh<2:
+            if heh<4:
                 board.difficulty[i[0]][i[1]]=-1
-            if heh==2:
+            if heh==4 or heh==5:
                 board.difficulty[i[0]][i[1]]=random.randint(1,5)
     for i in board.main_route:
         if board.difficulty[i[0]][i[1]]!=0:
             heh=random.randint(0,15)
-            if heh<2:
+            if heh<4:
                 board.difficulty[i[0]][i[1]]=-1
-            if heh==2:
+            if heh==5 or heh==6:
                 board.difficulty[i[0]][i[1]]=random.randint(1,5)
     print(board.key_main,board.key_side)
     
