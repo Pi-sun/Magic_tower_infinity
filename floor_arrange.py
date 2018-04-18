@@ -90,7 +90,7 @@ def fluctuate(section):
     'input a series of difficulty(dipole) which do no need to be integers and return the final_difficulty'
     for i in range(len(section)):
         change_1=random.randint(0,20)
-        change=change_1**2/200
+        change=change_1**2/200/1.5
         direction=random.randint(0,1)
         if direction==1:
             section[i][0]=int(section[i][0]+change-1)
