@@ -34,11 +34,11 @@ monsters = [
     [ # section 1
         _MonsterCreator(GreenSlimeB,35,18,1,8,1,1,0),
         _MonsterCreator(RedSlimeB,45,20,2,9,1,2,1),
-        _MonsterCreator(Bat,35,38,3,13,1,2,2),
-        _MonsterCreator(Priest,60,32,8,22,1,5,3),
-        _MonsterCreator(SnowmanC,60,35,15,27,1,6,5),
-        _MonsterCreator(SkeletonC,50,42,6,24,1,4,4),
-        _MonsterCreator(SkeletonB,55,52,12,32,1,6,7),
+        _MonsterCreator(Bat,35,38,3,13,1,3,3),
+        _MonsterCreator(Priest,60,32,8,22,1,6,4),
+        _MonsterCreator(SnowmanC,60,35,15,27,1,7,6),
+        _MonsterCreator(SkeletonC,50,42,6,24,1,5,5),
+        _MonsterCreator(SkeletonB,55,52,12,32,1,7,8),
         _MonsterCreator(GateKeeperC,50,48,22,42,1,10,8),
     ],
     [ # section 2
