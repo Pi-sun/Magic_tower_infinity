@@ -78,7 +78,8 @@ def find_key(board):
     for i in board.side_route:
         board.assign(i,1)
         if len(generator.area_detect(board))>template:
-            board.key_side.append(i)
+            if i != board.start_position and i!=board.end_position:
+                board.key_side.append(i)
         board.assign(i,0)
     clean_board(board)
     return None
