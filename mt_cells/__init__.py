@@ -83,6 +83,14 @@ class Wall(Impassable):
 	def __init__(self):
 		super().__init__(SingleTexture(8, 0))
 
+class Lava(Impassable):
+	def __init__(self):
+		super().__init__(FourTexture(10, 0))
+
+class Void(Impassable):
+	def __init__(self):
+		super().__init__(FourTexture(11, 0))
+		
 class HiddenWall(Impassable):
 	def __init__(self):
 		super().__init__(SingleTexture(*EMPTY_TEXTURE))

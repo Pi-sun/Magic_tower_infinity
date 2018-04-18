@@ -1,4 +1,4 @@
-import random
+import itertools, random
 
 from mt_cells import *
 
@@ -70,7 +70,7 @@ def to_real_map(section,section_index):
                     section.blue_door+=1
                 if section.floors[i].difficulty[ci][ri]==-2:
                     pass
-                    #section.floors[i].map[ci][ri]= hidden door
+                    section.floors[i].map[ci][ri]=FakeWall()
                 
                 # begin to generate award
 
@@ -134,17 +134,15 @@ def to_real_map(section,section_index):
                     section.floors[i].map[ci][ri]=random.choice(choices)(section_index)
 
          # special generation
-        if section.floors[i].special_requirement=='guarded_area':
-            guard_area=section.floors[i].special_actual.copy()
-            for k in section.floors[i].special_actual:
-                if section.floors[i].nearby_check(k,5)!=4:
-                    section.floors[i].map[k[0]][k[1]]='wall'
-                    guard_area.remove(k)
-            special_position=random.choice(guard_area)
-            section.floors[i].map[special_position[0]][special_position[1]]='wall'
         if section.floors[i].special_requirement=='shop':
             for loc, item in zip(sorted(section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 section.floors[i].map[loc[0]][loc[1]] = item        
+        elif section.floors[i].special_requirement=='guarded_area':
+            special_map = [[Void() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
+            special_map[random.randint(1, 3)][random.randint(1, 3)] = Lava() # TODO: use award item
+            
+            for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
+                section.floors[i].map[loc[0]][loc[1]] = item
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[0]]=KeyedDoor(KEY_RED)
     
