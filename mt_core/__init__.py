@@ -4,7 +4,8 @@ import gzip, os, pickle
 # otherwise Kivy may not register these settings
 from kivy.config import Config
 Config.set("graphics", "resizable", 0)
-Config.set("kivy", "exit_on_escape", "0")
+Config.set("kivy", "exit_on_escape", 0)
+Config.set("input", "mouse", "mouse,disable_on_activity,disable_multitouch")
 
 from kivy.app import App
 from kivy.clock import Clock

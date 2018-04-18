@@ -84,7 +84,6 @@ def generate_section(callback = None, file = sys.stdout):
         index=nextFloor + i
         
         if i == section.shop_index:
-            print('shop_generation')
             section.floors[i]=generator.map_generate(DIM,start_pos,'shop')
         elif i == section.sword_position or i == section.shield_position:
             section.floors[i]=generator.map_generate(DIM,start_pos,'guarded_area')
