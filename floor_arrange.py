@@ -45,11 +45,11 @@ def section_design(section_size):
     if design_index==4:
         design='bad'
         for i in range(section_size):
-            result[i][0]=(i/section_size*100)**0.5
+            result[i][0]=(i/section_size*100)**0.5-1
     if design_index==5:
         design='restart'
         for i in range(int(0.5*section_size)):
-            result[i][0]=i/section_size*16
+            result[i][0]=i/section_size*16-0.9
         for i in range(int(0.5*section_size),section_size):
             result[i][0]=(i+1-0.5*section_size)/section_size*16
     print(design)
@@ -72,7 +72,7 @@ def section_design(section_size):
     if design_index==3:
         design_2='haha'
         for i in range(section_size):
-            result[i][1]=5
+            result[i][1]=4
     if design_index==4:
         design_2='hell'
         for i in range(section_size):
@@ -80,7 +80,7 @@ def section_design(section_size):
     if design_index==5:
         design_2='random'
         for i in range(section_size):
-            result[i][1]=random.randint(3,8)
+            result[i][1]=random.randint(3,7)
     
     
     result=fluctuate(result)
