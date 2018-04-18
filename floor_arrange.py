@@ -93,9 +93,9 @@ def fluctuate(section):
         change=change_1**2/200
         direction=random.randint(0,1)
         if direction==1:
-            section[i][0]=int(section[i][0]+change)
+            section[i][0]=int(section[i][0]+change-1)
         else:
-            section[i][0]=int(section[i][0]-change)
+            section[i][0]=int(section[i][0]-change-1)
         if section[i][0]>10:
             section[i][0]=10
         if section[i][0]<0:
@@ -105,9 +105,9 @@ def fluctuate(section):
         change=change_1**2/200
         direction=random.randint(0,1)
         if direction==1:
-            section[i][1]=int(section[i][1]+change)
+            section[i][1]=int(section[i][1]+change-1)
         else:
-            section[i][1]=int(section[i][1]-change)
+            section[i][1]=int(section[i][1]-change-1)
         if section[i][1]>10:
             section[i][1]=10
         if section[i][1]<0:
@@ -220,9 +220,9 @@ def floor_monster_main(board,difficulty):
             heh=random.randint(0,12)
         if heh<4:
             board.difficulty[i[0]][i[1]]=-1
-        if heh==5 or heh==6:
+        if heh==5:
             board.difficulty[i[0]][i[1]]=random.randint(1,5)
-        if heh==7:
+        if heh==7 or heh==6:
             board.difficulty[i[0]][i[1]]=-5
     print(board.key_main,board.key_side)
     
