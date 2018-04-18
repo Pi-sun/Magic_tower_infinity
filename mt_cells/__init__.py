@@ -191,14 +191,14 @@ class LargeHealthPotion(PropertyImprover):
 	def property(self, hero):
 		return hero.health
 		
-class AttackCrystal(PropertyImprover):
+class AttackGem(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(18, 3), quantity)
 	
 	def property(self, hero):
 		return hero.attack
 		
-class DefenceCrystal(PropertyImprover):
+class DefenceGem(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(19, 3), quantity)
 	
