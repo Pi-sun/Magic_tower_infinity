@@ -93,9 +93,9 @@ def fluctuate(section):
         change=change_1**2/200/1.5
         direction=random.randint(0,1)
         if direction==1:
-            section[i][0]=int(section[i][0]+change-1)
+            section[i][0]=int(section[i][0]+change-2)
         else:
-            section[i][0]=int(section[i][0]-change-1)
+            section[i][0]=int(section[i][0]-change-2)
         if section[i][0]>10:
             section[i][0]=10
         if section[i][0]<0:
