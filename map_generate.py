@@ -161,6 +161,8 @@ def to_real_map(section,section_index):
                 section.floors[i[0]].map[i[1]][i[2]]=DefenceGem(standard_gem_value)
                 section.blue_gem+=1
                 big_location.remove(i)
+            if section.blue_gem>section.size:
+                break
                 
     while section.red_gem<section.size+1:
         for i in big_location:
@@ -169,6 +171,8 @@ def to_real_map(section,section_index):
                 section.floors[i[0]].map[i[1]][i[2]]=AttackGem(standard_gem_value)
                 section.red_gem+=1
                 big_location.remove(i)
+            if section.red_gem>section.size:
+                break
 
     while section.yellow_key<0.7*section.yellow_door:
         for i in small_location:
