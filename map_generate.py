@@ -8,6 +8,11 @@ import npc_content_provider as provider
 
 def to_real_map(section,section_index):
     monsters=monsters_for(section_index)
+    
+    standard_gem_value = section_index
+    standard_small_flask_value = section_index * 100
+    standard_large_flask_value = section_index * 400
+    
     big_location=[]
     small_location=[]
     for i in range(section.size):
@@ -48,10 +53,10 @@ def to_real_map(section,section_index):
                 if [ci,ri] in section.floors[i].vault:
                     luck=random.randint(1,10)
                     if luck>8:
-                        #section.floors[i].map[ci][ri]= red gem
+                        section.floors[i].map[ci][ri]=AttackGem(standard_gem_value)
                         section.red_gem+=0.5
                     elif luck>6:
-                        #section.floors[i].map[ci][ri]= blue gem
+                        section.floors[i].map[ci][ri]=DefenceGem(standard_gem_value)
                         section.blue_gem+=0.5
                     elif luck>4:
                         section.floors[i].map[ci][ri]=Key(KEY_BLUE)
@@ -69,7 +74,6 @@ def to_real_map(section,section_index):
                     section.floors[i].map[ci][ri]=KeyedDoor(KEY_BLUE)
                     section.blue_door+=1
                 if section.floors[i].difficulty[ci][ri]==-2:
-                    pass
                     section.floors[i].map[ci][ri]=FakeWall()
                 
                 # begin to generate award
@@ -81,8 +85,7 @@ def to_real_map(section,section_index):
                         section.floors[i].map[ci][ri]=Key(KEY_YELLOW)
                         section.yellow_key+=1
                     else:
-                        pass
-                        #section.floors[i].map[ci][ri]= small flask
+                        section.floors[i].map[ci][ri]=SmallHealthPotion(standard_small_flask_value)
                         
                 if section.floors[i].difficulty[ci][ri]==-5:
                     luck=random.randint(1,section.big_award)
@@ -91,8 +94,7 @@ def to_real_map(section,section_index):
                         section.floors[i].map[ci][ri]=Key(KEY_BLUE)
                         section.blue_key+=1
                     else:
-                        pass
-                        #section.floors[i].map[ci][ri]= big flask
+                        section.floors[i].map[ci][ri]=LargeHealthPotion(standard_large_flask_value)
                         
                 # to be done
                 # generation for special award
@@ -135,7 +137,6 @@ def to_real_map(section,section_index):
 
          # special generation
         if section.floors[i].special_requirement=='shop':
-            #print("adventure hihi", i, section.floors[i].special_actual)
             for loc, item in zip(sorted(section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 section.floors[i].map[loc[0]][loc[1]] = item        
         elif section.floors[i].special_requirement=='guarded_area':
@@ -147,16 +148,11 @@ def to_real_map(section,section_index):
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=KeyedDoor(KEY_RED)
     
-    #section.difficulty_present()
-    #section.present()
-    #print(big_location)
-    #print(small_location)
-    
     while section.blue_gem<section.size+1:
         for i in big_location:
             luck=random.randint(1,section.big_award)
             if luck<5:
-                #section.floors[i[0]].map[i[1]][i[2]]= blue gem
+                section.floors[i[0]].map[i[1]][i[2]]=DefenceGem(standard_gem_value)
                 section.blue_gem+=1
                 big_location.remove(i)
                 
@@ -164,7 +160,7 @@ def to_real_map(section,section_index):
         for i in big_location:
             luck=random.randint(1,section.big_award)
             if luck<5:
-                #section.floors[i[0]].map[i[1]][i[2]]= red gem
+                section.floors[i[0]].map[i[1]][i[2]]=AttackGem(standard_gem_value)
                 section.red_gem+=1
                 big_location.remove(i)
 
