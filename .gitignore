@@ -163,5 +163,5 @@ venv.bak/
 # --- Program data ---
 
 # Data files
-*.dat
+*.mts
 logs/
