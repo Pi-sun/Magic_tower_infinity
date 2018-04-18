@@ -144,7 +144,7 @@ def to_real_map(section,section_index):
             for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
                 section.floors[i].map[loc[0]][loc[1]] = item
         elif section.floors[i].special_requirement=='boss':
-            section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[0]]=KeyedDoor(KEY_RED)
+            section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=KeyedDoor(KEY_RED)
     
     section.difficulty_present()
     section.present()
