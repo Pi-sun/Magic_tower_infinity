@@ -237,14 +237,15 @@ def floor_monster_award(section):
         for j in section.floors[i].award_listing:
             if j != None:
                 
-                door=random.randint(0,200)
+                door=random.randint(0,130)
                 if door>100:
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=0
-                if door==100:
+                    print('wat')
+                elif door==100:
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=20
 
             #red door
-                elif door>90:
+                elif door>80:
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=5.5
             #intended as blue door
                 elif door>10:

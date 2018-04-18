@@ -11,7 +11,7 @@ def to_real_map(section,section_index):
     
     standard_gem_value = section_index
     standard_small_flask_value = section_index * 50
-    standard_large_flask_value = section_index * 200
+    standard_large_flask_value = section_index * 100
     
     big_location=[]
     small_location=[]
@@ -81,7 +81,7 @@ def to_real_map(section,section_index):
                 if section.floors[i].difficulty[ci][ri]==-1:
                     small_location.append([i,ci,ri])
                     luck=random.randint(1,section.small_award)
-                    if luck <= section.yellow_door*0.8:
+                    if luck <= section.yellow_door*0.9:
                         section.floors[i].map[ci][ri]=Key(KEY_YELLOW)
                         section.yellow_key+=1
                     else:
@@ -90,7 +90,7 @@ def to_real_map(section,section_index):
                 if section.floors[i].difficulty[ci][ri]==-5:
                     luck=random.randint(1,section.big_award)
                     big_location.append([i,ci,ri])
-                    if luck <= section.blue_door*0.7:
+                    if luck <= section.blue_door*0.8:
                         section.floors[i].map[ci][ri]=Key(KEY_BLUE)
                         section.blue_key+=1
                     else:
@@ -145,6 +145,12 @@ def to_real_map(section,section_index):
             
             for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
                 section.floors[i].map[loc[0]][loc[1]] = item
+
+            this=[section.floors[i].special_door[0]-1,section.floors[i].special_door[1]]
+            if i==section.sword_position:
+                section.floors[i].map[this[0]][this[1]]=AttackGem(standard_gem_value*10)
+            if i==section.shield_position:
+                section.floors[i].map[this[0]][this[1]]=DefenceGem(standard_gem_value*10)
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=KeyedDoor(KEY_RED)
     
@@ -164,7 +170,7 @@ def to_real_map(section,section_index):
                 section.red_gem+=1
                 big_location.remove(i)
 
-    while section.yellow_key<0.65*section.yellow_door:
+    while section.yellow_key<0.7*section.yellow_door:
         for i in small_location:
             luck=random.randint(1,section.big_award)
             if luck<5:
