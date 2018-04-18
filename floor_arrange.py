@@ -122,6 +122,7 @@ def floor_monster_main(board,difficulty):
     real_difficulty=2*difficulty
     key=[]
     trial=0
+    if_monster=False
     for i in board.key_main:
         key.append(i)
     while True:
@@ -191,12 +192,20 @@ def floor_monster_main(board,difficulty):
                 key.append(i)
         if trial==60:
             break
-
+    for i in board.side_route:
+        if board.difficulty[i[0]][i[1]]!=0:
+            heh=random.randint(0,15)
+            if heh<2:
+                board.difficulty[i[0]][i[1]]=-1
+            if heh==2:
+                board.difficulty[i[0]][i[1]]=random.randint(1,5)
     for i in board.main_route:
         if board.difficulty[i[0]][i[1]]!=0:
-            heh=random.randint(0,5)
-            if heh==1:
+            heh=random.randint(0,15)
+            if heh<2:
                 board.difficulty[i[0]][i[1]]=-1
+            if heh==2:
+                board.difficulty[i[0]][i[1]]=random.randint(1,5)
     print(board.key_main,board.key_side)
     
 def floor_monster_award(section):
@@ -208,7 +217,10 @@ def floor_monster_award(section):
         section.floors[i].award_present()
         print(section.floors[i].award_listing)
         for j in section.floors[i].award_listing:
-            door=random.randint(0,100)
+            
+            door=random.randint(0,110)
+            if door>100:
+                section.floors[i].difficulty[j[1][0]][j[1][1]]=0
             if door==100:
                 section.floors[i].difficulty[j[1][0]][j[1][1]]=20
 
@@ -229,7 +241,7 @@ def floor_monster_award(section):
                 'hidden wall'
         for k in section.floors[i].area_key:
             for j in k:
-                if_mon=random.randint(0,4)
+                if_mon=random.randint(0,5)
                 if if_mon<1:
                     section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,10)
                 elif if_mon<4:
@@ -258,13 +270,20 @@ def floor_monster_award(section):
                     current_difficulty+=section.floors[i].difficulty[m[0]][m[1]]
 
                 # avoid tooo few monster
-                if current_difficulty<3:
-                    for m in section.floors[i].award_area[j]:
-                        small_mon=random.randint(1,10)
-                        if small_mon<3:
-                            section.floors[i].difficulty[m[0]][m[1]]=1
-                        elif small_mon<6:
-                            section.floors[i].difficulty[m[0]][m[1]]=-1
+                
+                for m in section.floors[i].award_area[j]:
+                    if current_difficulty<3:
+                        small_mon=random.randint(0,25)
+                    else:
+                        small_mon=random.randint(0,60)
+                    if small_mon<3:
+                        section.floors[i].difficulty[m[0]][m[1]]=1
+                    elif small_mon<7:
+                        section.floors[i].difficulty[m[0]][m[1]]=-1
+                    elif small_mon<9:
+                        section.floors[i].difficulty[m[0]][m[1]]=random.randint(2,5)
+                    elif small_mon<10:
+                        section.floors[i].difficulty[m[0]][m[1]]=-5
                             
                     
                 award=net_award-current_difficulty
