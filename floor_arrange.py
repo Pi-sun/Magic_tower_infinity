@@ -252,7 +252,7 @@ def floor_monster_award(section):
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=1.2
             #intended as yellow door
                 elif door>3:
-                    section.floors[i].difficulty[j[1][0]][j[1][1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
+                    section.floors[i].difficulty[j[1][0]][j[1][1]]=random.randint(0,int(section.difficulty[i][1]+1.8))
                 elif door>0:
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=random.randint(0,10)
                 else:
@@ -265,7 +265,7 @@ def floor_monster_award(section):
                 if if_mon<1:
                     section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,10)
                 elif if_mon<4:
-                    section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,int(section.difficulty[i][1]+0.8))
+                    section.floors[i].difficulty[j[0]][j[1]]=random.randint(0,int(section.difficulty[i][1]+1.8))
         end_area=find_end_area(section.floors[i])
 
         for k in end_area:
