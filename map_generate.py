@@ -135,6 +135,7 @@ def to_real_map(section,section_index):
 
          # special generation
         if section.floors[i].special_requirement=='shop':
+            #print("adventure hihi", i, section.floors[i].special_actual)
             for loc, item in zip(sorted(section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 section.floors[i].map[loc[0]][loc[1]] = item        
         elif section.floors[i].special_requirement=='guarded_area':
