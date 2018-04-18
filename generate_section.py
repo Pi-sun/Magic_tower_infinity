@@ -91,7 +91,6 @@ def generate_section(callback = None, file = sys.stdout):
             section.floors[i]=generator.boss_floor_generate(start_pos,DIM)          
         else:
             section.floors[i]=generator.map_generate(DIM,start_pos)
-        starting_position=section.floors[i].end_position
         print('step1')
 
         award_area.award_area_optimize(section.floors[i])
@@ -99,14 +98,10 @@ def generate_section(callback = None, file = sys.stdout):
         award_area.key_position(section.floors[i])
         print('step2')
     
-        floor_arrange.floor_monster_main(section.floors[i],section.difficulty[i][0])
-        print('step3')
-        
         if section.floors[i].start_position and section.floors[i].end_position and section.floors[i].start_position == start_pos:
-            if DEBUG_LOG:
-                print('hahaha')
-                section.floors[i].prettyPrint("Successful generation for #%d" % index, file)
-            
+            floor_arrange.floor_monster_main(section.floors[i],section.difficulty[i][0])
+            print('step3')
+        
             if callback and i != SECTION_SIZE - 1:
                 callback(i + 1)
             
@@ -125,6 +120,10 @@ def generate_section(callback = None, file = sys.stdout):
     # The following loop initializes all floor cells
     for i in range(SECTION_SIZE):
         index = nextFloor + i
+        
+        if DEBUG_LOG:
+            section.floors[i].prettyPrint("Successful generation for #%d" % index, file)
+    
         for ri in range(DIM):
             for ci in range(DIM):
                 section.floors[i].map[ri][ci].placeAt(index, Point(ri, ci))
