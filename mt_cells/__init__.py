@@ -149,10 +149,12 @@ class Downstair(Stair):
 		super().__init__(SingleTexture(24, 3), -1)
 		
 class PropertyImprover(Cell):
-	def __init__(self, texture, property, quantity):
+	def __init__(self, texture, quantity):
 		super().__init__(texture)
-		self.property = property
 		self.quantity = quantity
+	
+	def property(self, hero):
+		raise NotImplementedError()
 		
 	def interact(self, app):
 		self.property(app.hero).update(self.quantity)
@@ -161,23 +163,39 @@ class PropertyImprover(Cell):
 		
 class Key(PropertyImprover):
 	def __init__(self, key):
-		super().__init__(SingleTexture(*KEY_TEXTURES[key]), lambda hero: hero.keys[key], 1)
+		super().__init__(SingleTexture(*KEY_TEXTURES[key]), 1)
+		self.key = key
+		
+	def property(self, hero):
+		return hero.keys[key]
 		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(16, 0), lambda hero: hero.health, quantity)
+		super().__init__(SingleTexture(16, 0), quantity)
+	
+	def property(self, hero):
+		return hero.health
 		
 class LargeHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(16, 1), lambda hero: hero.health, quantity)
+		super().__init__(SingleTexture(16, 1), quantity)
+	
+	def property(self, hero):
+		return hero.health
 		
 class AttackCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(18, 3), lambda hero: hero.attack, quantity)
+		super().__init__(SingleTexture(18, 3), quantity)
+	
+	def property(self, hero):
+		return hero.attack
 		
 class DefenceCrystal(PropertyImprover):
 	def __init__(self, quantity):
-		super().__init__(SingleTexture(19, 3), lambda hero: hero.defence, quantity)
+		super().__init__(SingleTexture(19, 3), quantity)
+	
+	def property(self, hero):
+		return hero.defence
 
 class Shop(Cell):
 	def __init__(self, contentProvider):

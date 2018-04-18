@@ -1,4 +1,6 @@
-import collections,generator,random
+import collections,random
+
+import generator
 
 def key_position(new_board):
     'after all doors are set'

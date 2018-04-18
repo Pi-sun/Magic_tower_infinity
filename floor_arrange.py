@@ -1,4 +1,5 @@
 import random
+
 modifier=1
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'

@@ -85,10 +85,6 @@ class Hero(TextureDisplay):
 		for key in KEYS:
 			self.keys[key].set(0)
 			
-		# for testing
-		self.keys["yellow"].set(100000)
-		self.money.set(100000)
-		
 	def setLocation(self, location):
 		self.location = location
 		self.draw(texture(heroTextureRow(), self.step))
