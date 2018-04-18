@@ -1,6 +1,6 @@
 import random
 
-modifier=1
+modifier=0
 
 'difficulty is a two_dimensional vector measuring roughly how much damage the monster can do to hero in the early and later part of the section'
 'for example, a mage with average attack and defense will have a balance difficulty of [10,10]'
@@ -245,7 +245,7 @@ def floor_monster_award(section):
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=20
 
             #red door
-                elif door>80:
+                elif door>75:
                     section.floors[i].difficulty[j[1][0]][j[1][1]]=5.5
             #intended as blue door
                 elif door>10:
