@@ -38,7 +38,7 @@ class Section:
                     break
             while True:
                 self.shield_position=random.randint(0,size-2)
-                if self.shield_position not in {self.sword_position,self.shop_index}:
+                if self.shield_position != self.sword_position and self.shield_position != self.shop_index:
                     break
         print('shop',self.shop_index)
         print('sword',self.sword_position)
