@@ -399,30 +399,3 @@ def section_difficulty(section):
 
         
     return section
-    
-
-if __name__=='__main__':
-    import generate_section, generator, award_area
-
-    a=generate_section.Section(5)
-    a.difficulty=section_design(5)
-    
-    prev_end=[1,2]
-    for i in range(5):
-        a.floors[i]=generator.map_generate(11,prev_end)
-        award_area.award_area_optimize(a.floors[i])
-        award_area.more_door(a.floors[i])
-        award_area.key_position(a.floors[i])
-        floor_monster_main(a.floors[i],a.difficulty[i][0])
-        
-        prev_end=a.floors[i].end_position
-
-    floor_monster_award(a)
-    for floor in a.floors:
-        floor.prettyPrint()
-
-    print('small',a.small_award)
-    print('large',a.big_award)
-    print('monster',a.monster_count)
-    print('yellow',a.yellow_door)
-    print('blue',a.blue_door)

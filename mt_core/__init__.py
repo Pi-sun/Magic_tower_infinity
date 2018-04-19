@@ -24,7 +24,7 @@ REF_KEY_ANY = "__any__"
 LARGE_TEXT_GAP = "[size=%d]\n\n[/size]" % round(CELL_SIZE * 0.7)
 SMALL_TEXT_GAP = "[size=%d]\n\n[/size]" % round(CELL_SIZE * 0.3)
 
-from . import floors, saveload
+from . import floors, handbook, saveload
 from .hero import Hero
 
 GRID_DIM = floors.DIM
@@ -86,7 +86,7 @@ class MagicTowerApp(App):
 		statusLabels = [StatusLabel(
 			font_size = CELL_SIZE * 0.4,
 			halign = "right",
-			pos = (CELL_SIZE * 1.4375, CELL_SIZE * (9.21875 - 0.75 * i)),
+			pos = (CELL_SIZE * 1.4375, CELL_SIZE * (3.71875 + GRID_DIM / 2 - 0.75 * i)),
 			size = (CELL_SIZE * 1.96875, CELL_SIZE * 0.53125)) for i in range(4)]
 		for label in statusLabels:
 			self.root.add_widget(label)
@@ -94,7 +94,7 @@ class MagicTowerApp(App):
 		keyLabels = dict(zip(KEYS, (StatusLabel(
 			font_size = CELL_SIZE * 0.4,
 			halign = "right",
-			pos = (CELL_SIZE * (6.40625 + GRID_DIM), CELL_SIZE * (7.125 - 0.75 * i)),
+			pos = (CELL_SIZE * (6.40625 + GRID_DIM), CELL_SIZE * (1.625 + GRID_DIM / 2 - 0.75 * i)),
 			size = (CELL_SIZE * 2.03125, CELL_SIZE * 0.53125)) for i in range(len(KEYS)))))
 		for key in KEYS:
 			self.root.add_widget(keyLabels[key])
@@ -107,12 +107,12 @@ class MagicTowerApp(App):
 		self.floorLabel = StatusLabel(
 			font_size = CELL_SIZE * 0.5,
 			halign = "center",
-			pos = (CELL_SIZE * 0.59375, CELL_SIZE * 10.125),
+			pos = (CELL_SIZE * 0.59375, CELL_SIZE * (4.625 + GRID_DIM / 2)),
 			size = (CELL_SIZE * 2.8125, CELL_SIZE * 0.65625))
 		self.root.add_widget(self.floorLabel)
 		
 		self.monsterDisplay = TextureDisplay(
-			pos = (CELL_SIZE * (6.5 + GRID_DIM), CELL_SIZE * 3.8125),
+			pos = (CELL_SIZE * (6.5 + GRID_DIM), CELL_SIZE * (GRID_DIM / 2 - 1.6875)),
 			size = (CELL_SIZE, CELL_SIZE))
 		self.root.add_widget(self.monsterDisplay)
 		
@@ -122,14 +122,14 @@ class MagicTowerApp(App):
 		self.monsterNameLabel = StatusLabel(
 			font_size = CELL_SIZE * 0.36,
 			halign = "center",
-			pos = (CELL_SIZE * (5.53125 + GRID_DIM), CELL_SIZE * 3.15625),
+			pos = (CELL_SIZE * (5.53125 + GRID_DIM), CELL_SIZE * (GRID_DIM / 2 - 2.34375)),
 			size = (CELL_SIZE * 2.9375, CELL_SIZE * 0.53125))
 		self.root.add_widget(self.monsterNameLabel)
 		
 		monsterStatusLabels = [StatusLabel(
 			font_size = CELL_SIZE * 0.4,
 			halign = "right",
-			pos = (CELL_SIZE * (6.4375 + GRID_DIM), CELL_SIZE * (2.53125 - 0.625 * i)),
+			pos = (CELL_SIZE * (6.4375 + GRID_DIM), CELL_SIZE * (GRID_DIM / 2 - 2.96875 - 0.625 * i)),
 			size = (CELL_SIZE * 1.9375, CELL_SIZE * 0.53125)) for i in range(3)]
 		for label in monsterStatusLabels:
 			self.root.add_widget(label)
@@ -176,6 +176,8 @@ class MagicTowerApp(App):
 				size = self.dialog.size)
 		self.dialog.bind(on_ref_press = self.onDialogPress)
 		
+		self.handbook = handbook.Handbook(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
+		
 		return self.root
 		
 	def on_start(self):
@@ -210,14 +212,16 @@ class MagicTowerApp(App):
 				self.interactBy(Point(0, 1))
 			elif keycode[1] == "left":
 				self.interactBy(Point(0, -1))
-			elif keycode[1] == "a":
-				self.moveByFloors(1)
-			elif keycode[1] == "z":
-				self.moveByFloors(-1)
 			elif keycode[1] == "l":
 				self.loadGame()
 			elif keycode[1] == "s":
 				self.saveGame()
+			elif keycode[1] == "h":
+				self.handbook.show(self, floors.floors[self.currentFloor])
+			elif keycode[1] == "a":
+				self.moveByFloors(1)
+			elif keycode[1] == "z":
+				self.moveByFloors(-1)
 		
 	def onDialogPress(self, instance, value):
 		print("Pressed ref", value)
@@ -401,10 +405,12 @@ class MagicTowerApp(App):
 			if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
 				floors.floors[self.currentFloor][target.row][target.col].interactAround(self)
 
-	def showDialog(self, text, hotkeys):
-		self.dialog.text = text
+	def showDialog(self, text, hotkeys, custom = False):
 		self.dialogHotkeys = hotkeys
-		self.root.add_widget(self.dialog)
+		self.dialogCustom = custom
+		if not custom:
+			self.dialog.text = text
+			self.root.add_widget(self.dialog)
 		
 	def handleDialog(self, key):
 		if key in self.dialogHotkeys:
@@ -415,5 +421,6 @@ class MagicTowerApp(App):
 			return
 		
 		if action():
-			self.root.remove_widget(self.dialog)
+			if not self.dialogCustom:
+				self.root.remove_widget(self.dialog)
 			self.dialogHotkeys = None

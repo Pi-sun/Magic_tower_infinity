@@ -1,7 +1,16 @@
 from kivy.clock import Clock
 
-from . import Cell, Empty
 from mt_core.textures import *
+
+from . import Cell, Empty
+
+class CombatAnalysis:
+	def __init__(self, monster, hero):
+		self.heroDamage = max(hero.attack.value - monster.defence, 0)
+		self.heroStrikes = -1 if self.heroDamage == 0 else ((monster.health - 1) // self.heroDamage + 1)
+		
+		self.monsterDamage = max(monster.attack - hero.defence.value, 0)
+		self.monsterTotalDamage = -1 if self.heroStrikes == -1 else (self.heroStrikes - 1) * self.monsterDamage
 
 class Monster(Cell):
 	def __init__(self, name, health, attack, defence, money, texture, menu_texture = None):
@@ -27,13 +36,8 @@ class Monster(Cell):
 	def combat(self, app, attack_location):
 		print("Attacking %s <%d, %d, %d, %d>" % (self.name, self.health, self.attack, self.defence, self.money))
 		
-		heroDamage = max(app.hero.attack.value - self.defence, 0)
-		heroStrikes = -1 if heroDamage == 0 else self.health // heroDamage + (self.health % heroDamage > 0)
-		
-		monsterDamage = max(self.attack - app.hero.defence.value, 0)
-		monsterStrikes = -1 if monsterDamage == 0 else app.hero.health.value // monsterDamage + (app.hero.health.value % monsterDamage > 0)
-		
-		if heroStrikes != -1 and (monsterStrikes == -1 or monsterStrikes >= heroStrikes):
+		analysis = CombatAnalysis(self, app.hero)
+		if analysis.monsterTotalDamage != -1 and analysis.monsterTotalDamage < app.hero.health.value:
 			app.hero.moveBy(attack_location - app.hero.location)
 			
 			app.blockActions()
@@ -42,14 +46,14 @@ class Monster(Cell):
 			i = 0
 			def strike(dt):
 				app.showSpark()
-				self.health = max(self.health - heroDamage, 0)
+				self.health = max(self.health - analysis.heroDamage, 0)
 				app.updateMonsterHealth(self.health)
 				
 				def hide(dt):
 					nonlocal i
 					
 					app.hideSpark()
-					if i == heroStrikes - 1:
+					if i == analysis.heroStrikes - 1:
 						def clearBlock(dt):
 							app.hero.money.update(self.money)
 							app.showMonster(None)
@@ -57,7 +61,7 @@ class Monster(Cell):
 							self.finish(app)
 						Clock.schedule_once(clearBlock, 0.15)
 					else:
-						app.hero.health.update(-monsterDamage)
+						app.hero.health.update(-analysis.monsterDamage)
 						i += 1
 						Clock.schedule_once(strike, 0.15)
 				Clock.schedule_once(hide, 0.15)
