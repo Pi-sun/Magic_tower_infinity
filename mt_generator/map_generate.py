@@ -19,7 +19,9 @@ def to_real_map(section,section_index):
         print('step4',i)
         section.floors[i].map=[[Empty() for j in range(section.floors[i].size)] for k in range(section.floors[i].size)]
         
+        vault_loc = random.choice(section.floors[i].vault) if len(section.floors[i].vault)!=0 else None
         _portal=False
+        
         for ci in range(section.floors[i].size):
             for ri in range(section.floors[i].size):
                 if section.floors[i].content[ci][ri]==-1:
@@ -34,13 +36,13 @@ def to_real_map(section,section_index):
 
                 # portal generation
     
-                if section.floors[i].content[ci][ri]==0 and len(section.floors[i].vault)!=0 and _portal==False:
+                if section.floors[i].content[ci][ri]==0 and vault_loc != None and _portal==False:
                     if_portal=random.randint(0,10)
                     if if_portal==0:
-                        #section.floors[i].map[ci][ri]= portal
+                        section.floors[i].map[ci][ri]=Portal(*vault_loc)
+                        section.floors[i].map[vault_loc[0]][vault_loc[1]] = Portal(ci, ri)
                         _portal=True
-                        random_position=random.randint(0,len(section.floors[i].vault)-1)
-                        section.floors[i].portal=section.floors[i].vault[random_position]
+                        section.floors[i].portal=vault_loc
                 elif section.floors[i].content[ci][ri]==1 or section.floors[i].content[ci][ri]==0 and _portal==False:
                     if_portal=random.randint(0,1000)
                     if if_portal==0:
@@ -50,7 +52,7 @@ def to_real_map(section,section_index):
                        
                 # vault generation
 
-                if [ci,ri] in section.floors[i].vault:
+                if [ci,ri] in section.floors[i].vault and [ci,ri] != vault_loc:    
                     luck=random.randint(1,10)
                     if luck>8:
                         section.floors[i].map[ci][ri]=AttackGem(standard_gem_value)
@@ -65,7 +67,7 @@ def to_real_map(section,section_index):
                         section.floors[i].map[ci][ri]=Key(KEY_YELLOW)
                         section.yellow_key+=1
                 
-               # begin to generate doors
+                # begin to generate doors
 
                 if section.floors[i].difficulty[ci][ri]==1.2:
                     section.floors[i].map[ci][ri]=KeyedDoor(KEY_YELLOW)
@@ -134,7 +136,7 @@ def to_real_map(section,section_index):
                         interval+=1
 
                     section.floors[i].map[ci][ri]=random.choice(choices)(section_index)
-
+                    
          # special generation
         if section.floors[i].special_requirement=='shop':
             for loc, item in zip(sorted(section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):

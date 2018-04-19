@@ -136,29 +136,46 @@ class KeyedDoor(Cell):
 				app.unblockActions()
 			_animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 		
-class Stair(Cell):
+class Movement(Cell):
+	def __init__(self, texture):
+		super().__init__(texture)
+		
+	def interact(self, app):
+		app.hero.moveBy(self.location - app.hero.location)
+		app.blockActions()
+		
+		def clearBlock(dt):
+			self.move(app)
+			app.unblockActions()
+		Clock.schedule_once(clearBlock, 0.2)
+		
+	def move(self, app):
+		raise NotImplementedError()
+		
+class Stair(Movement):
 	def __init__(self, texture, direction):
 		super().__init__(texture)
 		self.direction = direction
 		
-	def interact(self, app):
-		app.hero.moveBy(self.location - app.hero.location)
-		
-		app.blockActions()
-		
-		def clearBlock(dt):
-			app.moveByFloors(self.direction)
-			app.unblockActions()
-		Clock.schedule_once(clearBlock, 0.2)
+	def move(self, app):
+		app.moveByFloors(self.direction)
 		
 class Upstair(Stair):
-	def __init__(self):
-		super().__init__(SingleTexture(24, 2), 1)
+	def __init__(self, floors = 1):
+		super().__init__(SingleTexture(24, 2), floors)
 		
 class Downstair(Stair):
-	def __init__(self):
-		super().__init__(SingleTexture(24, 3), -1)
+	def __init__(self, floors = 1):
+		super().__init__(SingleTexture(24, 3), -floors)
 		
+class Portal(Movement):
+	def __init__(self, row, col):
+		super().__init__(SingleTexture(*EMPTY_TEXTURE))
+		self.loc = Point(row, col)
+		
+	def move(self, app):
+		app.hero.setLocation(self.loc)
+
 class PropertyImprover(Cell):
 	def __init__(self, texture, quantity):
 		super().__init__(texture)
