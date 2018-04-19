@@ -1,6 +1,6 @@
 from kivy.uix.widget import Widget
 
-from mt_cells.monsters import Monster, CombatAnalysis
+from mt_cells import *
 
 from .floors import DIM as GRID_DIM
 from .textures import CELL_SIZE

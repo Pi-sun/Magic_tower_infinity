@@ -101,18 +101,14 @@ def generate_section(callback = None, file = sys.stdout):
         award_area.key_position(section.floors[i])
         print('step2')
     
-        if section.floors[i].start_position and section.floors[i].end_position and section.floors[i].start_position == start_pos:
-            floor_arrange.floor_monster_main(section.floors[i],section.difficulty[i][0])
-            print('step3')
+        floor_arrange.floor_monster_main(section.floors[i],section.difficulty[i][0])
+        print('step3')
         
-            if callback and i != SECTION_SIZE - 1:
-                callback(i + 1)
+        if callback and i != SECTION_SIZE - 1:
+            callback(i + 1)
             
-            start_pos = section.floors[i].end_position
-            i += 1
-        else:
-            if DEBUG_LOG:
-                section.floors[i].prettyPrint("Failed generation for #%d" % index, file)
+        start_pos = section.floors[i].end_position
+        i += 1
     
     floor_arrange.floor_monster_award(section)
     print('step4')
@@ -125,7 +121,7 @@ def generate_section(callback = None, file = sys.stdout):
         index = nextFloor + i
         
         if DEBUG_LOG:
-            section.floors[i].prettyPrint("Successful generation for #%d" % index, file)
+            section.floors[i].prettyPrint("Floor #%d" % index, file)
     
         for ri in range(DIM):
             for ci in range(DIM):
