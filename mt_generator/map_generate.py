@@ -2,9 +2,9 @@ import itertools, random
 
 from mt_cells import *
 
-import generator, award_area, floor_arrange
-from monsters import monsters_for
-import npc_content_provider as provider
+from . import generator, award_area, floor_arrange
+from . import npc_content_provider as provider
+from .monsters import monsters_for
 
 def to_real_map(section,section_index):
     monsters=monsters_for(section_index)

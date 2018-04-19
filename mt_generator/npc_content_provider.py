@@ -1,6 +1,6 @@
 from mt_core import REF_KEY_ANY, LARGE_TEXT_GAP, SMALL_TEXT_GAP
 
-from generate_section import floor2section
+from . import floor2section
 
 class ShopContentProvider:
     def __init__(self):

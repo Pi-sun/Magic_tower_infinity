@@ -10,8 +10,8 @@ from mt_cells import Point
 def floor2section(floor):
     return (floor - 1) // SECTION_SIZE + 1
 
-import award_area, floor_arrange, generator, map_generate
-import npc_content_provider as provider
+from . import award_area, floor_arrange, generator, map_generate
+from . import npc_content_provider as provider
 
 class Section:
     def __init__(self,size=10):

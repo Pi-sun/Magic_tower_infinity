@@ -82,5 +82,3 @@ monsters = [
 
 def monsters_for(section):
     return monsters[section % len(monsters) - 1]
-
-

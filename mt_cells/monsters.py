@@ -1,7 +1,8 @@
 from kivy.clock import Clock
 
-from . import Cell, Empty
 from mt_core.textures import *
+
+from . import Cell, Empty
 
 class CombatAnalysis:
 	def __init__(self, monster, hero):

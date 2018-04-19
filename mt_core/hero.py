@@ -3,6 +3,7 @@ import weakref
 from kivy.clock import Clock
 
 from mt_cells import Point, KEYS, KEY_YELLOW, KEY_BLUE, KEY_RED
+
 from .floors import DIM
 from .textures import *
 

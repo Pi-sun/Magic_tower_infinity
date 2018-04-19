@@ -2,7 +2,7 @@ import ctypes, datetime, os, random, threading, traceback
 
 from kivy.clock import Clock
 
-import generate_section as generator
+import mt_generator as generator
 
 SECTION_SIZE = generator.SECTION_SIZE
 DEBUG_LOG = generator.DEBUG_LOG
