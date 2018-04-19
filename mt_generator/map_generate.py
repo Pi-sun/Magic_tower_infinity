@@ -4,7 +4,7 @@ from mt_cells import *
 
 from . import generator, award_area, floor_arrange
 from . import npc_content_provider as provider
-from .monsters import monsters_for
+from .monsters import monsters_for,boss_for
 
 def to_real_map(section,section_index):
     monsters=monsters_for(section_index)
@@ -154,7 +154,7 @@ def to_real_map(section,section_index):
             
             section.floors[i].map[section.floors[i].special_door[0]-1][section.floors[i].special_door[1]]=KeyedDoor(KEY_BLUE)
         elif section.floors[i].special_requirement=='boss':
-            section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=KeyedDoor(KEY_RED)
+            section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=boss_for(section_index)(section_index)
     
     while section.blue_gem<section.size+1:
         for i in big_location:
