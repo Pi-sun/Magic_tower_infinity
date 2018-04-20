@@ -5,7 +5,7 @@ from mt_cells import *
 from .floors import DIM as GRID_DIM
 from .textures import CELL_SIZE
 
-class Handbook(Widget):
+class HandbookDisplay(Widget):
 	def getMonsters(self, map):
 		monsters = {}
 		for row in map:
@@ -15,12 +15,12 @@ class Handbook(Widget):
 						monsters[cell.name] = cell
 		return sorted(monsters.values(), key = lambda m: m.name)
 	
-	def show(self, app, map):
+	def show(self, map):
 		monsters = self.getMonsters(map)
 		print()
 		for monster in monsters:
 		  print("%s: %d/%d/%d/%d" % (monster.name, monster.health, monster.attack, monster.defence, monster.money))
-		  analysis = CombatAnalysis(monster, app.hero)
+		  analysis = CombatAnalysis(monster)
 		  if analysis.monsterTotalDamage == -1:
 		  	print("    Cannot attack")
 		  elif analysis.monsterTotalDamage == 0:

@@ -15,6 +15,10 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
+_app = None
+def app():
+	return _app
+
 from mt_cells import Point, KEYS
 
 from .textures import *
@@ -99,7 +103,14 @@ class MagicTowerApp(App):
 		for key in KEYS:
 			self.root.add_widget(keyLabels[key])
 		
-		self.hero = Hero(self, self.grid, *statusLabels, keyLabels)
+		specialItemDisplays = [[TextureDisplay(
+			pos = (CELL_SIZE * (0.5 + col), CELL_SIZE * (GRID_DIM / 2 - 0.25 - row)),
+			size = (CELL_SIZE, CELL_SIZE)) for col in range(3)] for row in range(5)]
+		for row in specialItemDisplays:
+			for cell in row:
+				self.root.add_widget(cell)
+		
+		self.hero = Hero(self.grid, *statusLabels, keyLabels, specialItemDisplays)
 		self.grid.add_widget(self.hero)
 		
 		self.spark = TextureDisplay(size = (CELL_SIZE, CELL_SIZE))
@@ -176,11 +187,14 @@ class MagicTowerApp(App):
 				size = self.dialog.size)
 		self.dialog.bind(on_ref_press = self.onDialogPress)
 		
-		self.handbook = handbook.Handbook(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
+		self.handbook = handbook.HandbookDisplay(pos = (CELL_SIZE * 4.5, CELL_SIZE * 0.5))
 		
 		return self.root
 		
 	def on_start(self):
+		global _app
+		_app = self
+	
 		self.blockedActions = 0
 		self.floorsLoading = 0
 		self.currentFloor = None
@@ -217,7 +231,7 @@ class MagicTowerApp(App):
 			elif keycode[1] == "s":
 				self.saveGame()
 			elif keycode[1] == "h":
-				self.handbook.show(self, floors.floors[self.currentFloor])
+				self.hero.handbook().tryUse()
 			elif keycode[1] == "a":
 				self.moveByFloors(1)
 			elif keycode[1] == "z":
@@ -273,6 +287,7 @@ class MagicTowerApp(App):
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
 					floors.floors[self.currentFloor][row][col].update()
+		self.hero.updateSpecials()
 		self.monsterTexture.update()
 	
 	def saveGame(self):
@@ -395,7 +410,7 @@ class MagicTowerApp(App):
 	
 		target = self.hero.location + offset
 		if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
-			floors.floors[self.currentFloor][target.row][target.col].interact(self)
+			floors.floors[self.currentFloor][target.row][target.col].interact()
 		
 		self.saved = False
 
@@ -403,7 +418,7 @@ class MagicTowerApp(App):
 		for offset in (Point(r, c) for r, c in ((0, 1), (1, 0), (0, -1), (-1, 0))):
 			target = self.hero.location + offset
 			if 0 <= target.row < GRID_DIM and 0 <= target.col < GRID_DIM:
-				floors.floors[self.currentFloor][target.row][target.col].interactAround(self)
+				floors.floors[self.currentFloor][target.row][target.col].interactAround()
 
 	def showDialog(self, text, hotkeys, custom = False):
 		self.dialogHotkeys = hotkeys
@@ -424,3 +439,6 @@ class MagicTowerApp(App):
 			if not self.dialogCustom:
 				self.root.remove_widget(self.dialog)
 			self.dialogHotkeys = None
+			
+	def showHandbook(self):
+		self.handbook.show(floors.floors[self.currentFloor])

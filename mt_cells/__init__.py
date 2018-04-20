@@ -5,6 +5,9 @@ class Point:
 	def __init__(self, row, col):
 		self.row = row
 		self.col = col
+	
+	def __hash__(self):
+		return hash((self.row, self.col))
 		
 	def __eq__(self, other):
 		return self.row == other.row and self.col == other.col
@@ -36,6 +39,7 @@ DOOR_TEXTURE_ROWS = {
 SWORD_TEXTURES = [(22, 0), (23, 0), (24, 0), (22, 2), (23, 2)]
 SHIELD_TEXTURES = [(22, 1), (23, 1), (24, 1), (22, 3), (23, 3)]
 
+from mt_core import app
 from mt_core.textures import *
 
 def _animate(texture, keyframes, completion = None):
@@ -62,21 +66,21 @@ class Cell:
 	def update(self):
 		self.texture.update()
 		
-	def interact(self, app):
+	def interact(self):
 		raise NotImplementedError()
 		
-	def interactAround(self, app):
+	def interactAround(self):
 		pass
 		
 class Empty(Cell):
 	def __init__(self):
 		super().__init__(SingleTexture(*EMPTY_TEXTURE))
 	
-	def interact(self, app):
-		app.hero.moveBy(self.location - app.hero.location)
+	def interact(self):
+		app().hero.moveBy(self.location - app().hero.location)
 		
 class Impassable(Cell):
-	def interact(self, app):
+	def interact(self):
 		pass
 		
 class Wall(Impassable):
@@ -96,25 +100,25 @@ class HiddenWall(Impassable):
 		super().__init__(SingleTexture(*EMPTY_TEXTURE))
 		self.hidden = True
 		
-	def interact(self, app):
+	def interact(self):
 		if self.hidden:
-			app.blockActions()
+			app().blockActions()
 		
 			def clearBlock():
 				self.hidden = False
-				app.unblockActions()
+				app().unblockActions()
 			_animate(self.texture, [EMPTY_TEXTURE] + [(8, 3 - i) for i in range(4)], clearBlock)
 
 class FakeWall(Cell):
 	def __init__(self):
 		super().__init__(SingleTexture(8, 0))
 		
-	def interact(self, app):
-		app.blockActions()
+	def interact(self):
+		app().blockActions()
 		
 		def clearBlock():
-			app.setCell(Empty(), self.location, self.floor)
-			app.unblockActions()
+			app().setCell(Empty(), self.location, self.floor)
+			app().unblockActions()
 		_animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 
 class Door(Cell):
@@ -122,11 +126,11 @@ class Door(Cell):
 		super().__init__(SingleTexture(textureRow, 0))
 		self.textureRow = textureRow
 	
-	def open(self, app):
-		app.blockActions()
+	def open(self):
+		app().blockActions()
 		def clearBlock():
-			app.setCell(Empty(), self.location, self.floor)
-			app.unblockActions()
+			app().setCell(Empty(), self.location, self.floor)
+			app().unblockActions()
 		_animate(self.texture, [(self.textureRow, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 
 class KeyedDoor(Door):
@@ -134,10 +138,10 @@ class KeyedDoor(Door):
 		super().__init__(DOOR_TEXTURE_ROWS[key])
 		self.key = key
 		
-	def interact(self, app):
-		if app.hero.keys[self.key].value > 0:
-			app.hero.keys[self.key].update(-1)
-			self.open(app)
+	def interact(self):
+		if app().hero.keys[self.key].value > 0:
+			app().hero.keys[self.key].update(-1)
+			self.open()
 		
 class GuardedDoor(Door, Impassable):
 	def __init__(self):
@@ -150,19 +154,19 @@ class GuardedDoor(Door, Impassable):
 	def unguard(self):
 		self.guards -= 1
 		if self.guards <= 0:
-			self.open(app)
+			self.open()
 		
 class Movement(Cell):
-	def interact(self, app):
-		app.hero.moveBy(self.location - app.hero.location)
-		app.blockActions()
+	def interact(self):
+		app().hero.moveBy(self.location - app().hero.location)
+		app().blockActions()
 		
 		def clearBlock(dt):
-			self.move(app)
-			app.unblockActions()
+			self.move()
+			app().unblockActions()
 		Clock.schedule_once(clearBlock, 0.2)
 		
-	def move(self, app):
+	def move(self):
 		raise NotImplementedError()
 		
 class Stair(Movement):
@@ -170,8 +174,8 @@ class Stair(Movement):
 		super().__init__(texture)
 		self.direction = direction
 		
-	def move(self, app):
-		app.moveByFloors(self.direction)
+	def move(self):
+		app().moveByFloors(self.direction)
 		
 class Upstair(Stair):
 	def __init__(self, floors = 1):
@@ -186,81 +190,111 @@ class Portal(Movement):
 		super().__init__(SingleTexture(*EMPTY_TEXTURE))
 		self.loc = Point(row, col)
 		
-	def move(self, app):
-		app.hero.setLocation(self.loc)
+	def move(self):
+		app().hero.setLocation(self.loc)
 
 class PropertyImprover(Cell):
 	def __init__(self, texture, quantity):
 		super().__init__(texture)
 		self.quantity = quantity
 	
-	def property(self, hero):
+	@property
+	def property(self):
 		raise NotImplementedError()
 		
-	def interact(self, app):
-		self.property(app.hero).update(self.quantity)
-		app.hero.moveBy(self.location - app.hero.location)
-		app.setCell(Empty(), self.location, self.floor)
+	def interact(self):
+		self.property.update(self.quantity)
+		app().hero.moveBy(self.location - app().hero.location)
+		app().setCell(Empty(), self.location, self.floor)
 		
 class Key(PropertyImprover):
 	def __init__(self, key):
 		super().__init__(SingleTexture(*KEY_TEXTURES[key]), 1)
 		self.key = key
 		
-	def property(self, hero):
-		return hero.keys[self.key]
+	@property
+	def property(self):
+		return app().hero.keys[self.key]
 		
 class SmallHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(16, 0), quantity)
 	
-	def property(self, hero):
-		return hero.health
+	@property
+	def property(self):
+		return app().hero.health
 		
 class LargeHealthPotion(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(16, 1), quantity)
 	
-	def property(self, hero):
-		return hero.health
+	@property
+	def property(self):
+		return app().hero.health
 		
 class AttackGem(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(18, 3), quantity)
 	
-	def property(self, hero):
-		return hero.attack
+	@property
+	def property(self):
+		return app().hero.attack
 		
 class DefenceGem(PropertyImprover):
 	def __init__(self, quantity):
 		super().__init__(SingleTexture(19, 3), quantity)
 	
-	def property(self, hero):
-		return hero.defence
+	@property
+	def property(self):
+		return app().hero.defence
 
 class Sword(PropertyImprover):
 	def __init__(self, textureCoord, quantity):
 		super().__init__(SingleTexture(*textureCoord), quantity)
 		
-	def property(self, hero):
-		return hero.attack
+	@property
+	def property(self):
+		return app().hero.attack
 		
 class Shield(PropertyImprover):
 	def __init__(self, textureCoord, quantity):
 		super().__init__(SingleTexture(*textureCoord), quantity)
 		
-	def property(self, hero):
-		return hero.defence
+	@property
+	def property(self):
+		return app().hero.defence
+		
+class SpecialItem(Cell):
+	def __init__(self, texture, quantity):
+		super().__init__(texture)
+		self.quantity = quantity
+	
+	@property
+	def property(self):
+		raise NotImplementedError()
+		
+	def interact(self):
+		self.property.collect(self.quantity)
+		app().hero.moveBy(self.location - app().hero.location)
+		app().setCell(Empty(), self.location, self.floor)
+		
+class MonsterHandbook(SpecialItem):
+	def __init__(self):
+		super().__init__(SingleTexture(12, 0), 1)
+		
+	@property
+	def property(self):
+		return app().hero.handbook()
 
 class Shop(Cell):
 	def __init__(self, contentProvider):
 		super().__init__(FourTexture(6, 5, 3))
 		self.contentProvider = contentProvider
 	
-	def interact(self, app):
-		if app.hero.location - self.location == Point(1, 0):
-			text, hotkeys = self.contentProvider.get(app, self)
-			app.showDialog(text, hotkeys)
+	def interact(self):
+		if app().hero.location - self.location == Point(1, 0):
+			text, hotkeys = self.contentProvider.get(self)
+			app().showDialog(text, hotkeys)
 		
 class ShopLeft(Impassable):
 	def __init__(self):

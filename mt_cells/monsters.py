@@ -1,11 +1,14 @@
 from kivy.clock import Clock
 
+from mt_core import app
 from mt_core.textures import *
 
 from . import Cell, Empty
 
 class CombatAnalysis:
-	def __init__(self, monster, hero):
+	def __init__(self, monster):
+		hero = app().hero
+	
 		self.heroDamage = max(hero.attack.value - monster.defence, 0)
 		self.heroStrikes = -1 if self.heroDamage == 0 else ((monster.health - 1) // self.heroDamage + 1)
 		
@@ -34,62 +37,62 @@ class Monster(Cell):
 		self.guarded_doors.append(door)
 		door.guard()
 		
-	def interact(self, app):
-		self.combat(app, self.location)
+	def interact(self):
+		self.combat(self.location)
 	
 	# testing
-	def interactAround(self, app):
+	def interactAround(self):
 		print("Around %s" % self.name)
 	
-	def combat(self, app, attack_location):
+	def combat(self, attack_location):
 		print("Attacking %s <%d, %d, %d, %d>" % (self.name, self.health, self.attack, self.defence, self.money))
 		
-		analysis = CombatAnalysis(self, app.hero)
-		if analysis.monsterTotalDamage != -1 and analysis.monsterTotalDamage < app.hero.health.value:
-			app.hero.moveBy(attack_location - app.hero.location)
+		analysis = CombatAnalysis(self)
+		if analysis.monsterTotalDamage != -1 and analysis.monsterTotalDamage < app().hero.health.value:
+			app().hero.moveBy(attack_location - app().hero.location)
 			
-			app.blockActions()
-			app.showMonster(self)
+			app().blockActions()
+			app().showMonster(self)
 			
 			i = 0
 			def strike(dt):
-				app.showSpark()
+				app().showSpark()
 				self.health = max(self.health - analysis.heroDamage, 0)
-				app.updateMonsterHealth(self.health)
+				app().updateMonsterHealth(self.health)
 				
 				def hide(dt):
 					nonlocal i
 					
-					app.hideSpark()
+					app().hideSpark()
 					if i == analysis.heroStrikes - 1:
 						def clearBlock(dt):
-							app.hero.money.update(self.money)
-							app.showMonster(None)
+							app().hero.money.update(self.money)
+							app().showMonster(None)
 							for door in self.guarded_doors:
 								door.unguard()
-							app.unblockActions()
-							self.finish(app)
+							app().unblockActions()
+							self.finish()
 							for gift in self.gifts:
-								app.setCell(self.gifts[gift], self.location + gift, self.floor)
+								app().setCell(self.gifts[gift], self.location + gift, self.floor)
 						Clock.schedule_once(clearBlock, 0.15)
 					else:
-						app.hero.health.update(-analysis.monsterDamage)
+						app().hero.health.update(-analysis.monsterDamage)
 						i += 1
 						Clock.schedule_once(strike, 0.15)
 				Clock.schedule_once(hide, 0.15)
 			Clock.schedule_once(strike, 0.15)
 			
-	def finish(self, app):
-		app.setCell(Empty(), self.location, self.floor)
+	def finish(self):
+		app().setCell(Empty(), self.location, self.floor)
 			
 class LargeMonster(Monster):
 	def __init__(self, name, health, attack, defence, money, texture, menu_texture, parts):
 			super().__init__(name, health, attack, defence, money, texture, menu_texture)
 			self.parts = parts
 			
-	def finish(self, app):
+	def finish(self):
 		for part in self.parts:
-			app.setCell(Empty(), self.location + part, self.floor)
+			app().setCell(Empty(), self.location + part, self.floor)
 			
 class LargeMonsterPart(Cell):
 	def __init__(self, texture, offset):
@@ -97,8 +100,8 @@ class LargeMonsterPart(Cell):
 		
 		self.offset = offset
 
-	def interact(self, app):
-		app.getCell(self.location + self.offset, self.floor).combat(app, self.location)
+	def interact(self):
+		app().getCell(self.location + self.offset, self.floor).combat(self.location)
 			
 def _monsterTypeCreator(name, textureCoordinate):
 	return lambda health, attack, defence, money, gifts = {}: Monster(name, health, attack, defence, money, gifts, FourTexture(*textureCoordinate))

@@ -1,4 +1,4 @@
-from mt_core import REF_KEY_ANY, LARGE_TEXT_GAP, SMALL_TEXT_GAP
+from mt_core import app, REF_KEY_ANY, LARGE_TEXT_GAP, SMALL_TEXT_GAP
 
 from . import floor2section
 
@@ -6,7 +6,7 @@ class ShopContentProvider:
     def __init__(self):
         self.purchases = 0
 
-    def get(self, app, cell):
+    def get(self, cell):
         section = floor2section(cell.floor)
         
         money = round(120*(1.0344)**self.purchases)
@@ -14,10 +14,10 @@ class ShopContentProvider:
         attack = section * 2
         defence = section * 2
         
-        if app.hero.money.value >= money:
+        if app().hero.money.value >= money:
             def purchase(item, quantity):
                 self.purchases += 1
-                app.hero.money.update(-money)
+                app().hero.money.update(-money)
                 item.update(quantity)
                 return True
             return ("Give me %d gold coins\nto increase one of your abilities" % money +
@@ -25,9 +25,9 @@ class ShopContentProvider:
                 SMALL_TEXT_GAP + "[ref=2]<2> Attack +%d[/ref]" % attack + 
                 SMALL_TEXT_GAP + "[ref=3]<3> Defence +%d[/ref]" % defence +
                 SMALL_TEXT_GAP + "[ref=" + REF_KEY_ANY + "]<Any> No, thanks[/ref]", {
-                "1": lambda: purchase(app.hero.health, health),
-                "2": lambda: purchase(app.hero.attack, attack),
-                "3": lambda: purchase(app.hero.defence, defence),
+                "1": lambda: purchase(app().hero.health, health),
+                "2": lambda: purchase(app().hero.attack, attack),
+                "3": lambda: purchase(app().hero.defence, defence),
                 REF_KEY_ANY: lambda: True
             })
         else:

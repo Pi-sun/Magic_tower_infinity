@@ -2,7 +2,7 @@ from mt_cells import *
 
 class _MonsterCreator:
     def __init__(self, cls, baseHealth, baseAttack, baseDefence, baseMoney, baseSection, earlyDifficulty = None, endDifficulty = None):
-        def create(section):
+        def create(section, gifts):
             origin_attack=10+baseSection*(baseSection-1)/2*25
             ratio=section/baseSection
             power=(section-baseSection)//5
@@ -11,14 +11,14 @@ class _MonsterCreator:
             actual_attack=round(standard_attack+(baseAttack-origin_attack)*ratio)
             actual_defence=round(standard_attack+(baseDefence-origin_attack)*ratio)
             actual_money=round(baseMoney*8**power)
-            return cls(actual_health, actual_attack, actual_defence, actual_money)
+            return cls(actual_health, actual_attack, actual_defence, actual_money, gifts)
     
         self.__create = create
         self.early_difficulty = earlyDifficulty
         self.end_difficulty = endDifficulty
     
-    def __call__(self, section):
-        return self.__create(section)
+    def __call__(self, section, gifts = {}):
+        return self.__create(section, gifts)
 
     def difficulty(self,level):
         return (self.early_difficulty*(1-0.03*level)+self.end_difficulty*0.03*level,self.early_difficulty*(1-0.06*level)+self.end_difficulty*0.06*level)

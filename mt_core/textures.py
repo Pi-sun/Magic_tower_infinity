@@ -38,11 +38,16 @@ class Texture:
 		self.__dict__.update(state)
 		self.display = None
 
-	def initialize(self, display):
+	def initialize(self, display, draw = True):
 		self.display = display
+		if draw:
+			self.draw(display)
 		
 	def update(self):
 		pass
+		
+	def draw(self, display):
+		raise NotImplementedError()
 		
 	def copy(self):
 		return Texture()
@@ -54,21 +59,17 @@ class SingleTexture(Texture):
 		self.textureRow = textureRow
 		self.textureCol = textureCol
 		
-	def initialize(self, display):
-		super().initialize(display)
-		self.draw()
-		
 	def reload(self, textureRow, textureCol):
 		self.textureRow = textureRow
 		self.textureCol = textureCol
-		self.draw()
+		self.draw(self.display)
 		
-	def draw(self):
-		if self.display:
+	def draw(self, display):
+		if display:
 			if (self.textureRow, self.textureCol) == EMPTY_TEXTURE:
-				self.display.draw(None)
+				display.draw(None)
 			else:
-				self.display.draw(texture(self.textureRow, self.textureCol))
+				display.draw(texture(self.textureRow, self.textureCol))
 		
 	def copy(self):
 		return SingleTexture(self.textureRow, self.textureCol)
@@ -81,16 +82,15 @@ class FourTexture(Texture):
 		self.textureCol = textureCol
 		self.step = step
 		self.currentTexture = 0
-		
-	def initialize(self, display):
-		super().initialize(display)
-		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture * self.step))
 
 	def update(self):
 		super().update()
 		self.currentTexture += 1
 		self.currentTexture %= 4
-		self.display.draw(texture(self.textureRow, self.textureCol + self.currentTexture * self.step))
+		self.draw(self.display)
+	
+	def draw(self, display):
+		display.draw(texture(self.textureRow, self.textureCol + self.currentTexture * self.step))
 
 	def copy(self):
 		texture = FourTexture(self.textureRow, self.textureCol, self.step)
