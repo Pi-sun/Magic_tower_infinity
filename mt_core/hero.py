@@ -16,6 +16,9 @@ def heroTextureRow(offset = Point(1, 0)):
 		return 2
 	elif offset == Point(0, -1):
 		return 1
+		
+heroDirections = [Point(1, 0), Point(0, -1), Point(0, 1), Point(-1, 0)]
+heroFacings = {item: index for index, item in enumerate(heroDirections)}
 
 class HeroProperty:
 	def __init__(self, label, value = None):
@@ -42,6 +45,8 @@ class Hero(TextureDisplay):
 		self.stepTimer = None
 		self.location = Point(0, 0)
 		
+		self.facing = 0
+		
 		self.health = HeroProperty(healthLabel)
 		self.attack = HeroProperty(attackLabel)
 		self.defence = HeroProperty(defenceLabel)
@@ -52,11 +57,12 @@ class Hero(TextureDisplay):
 		self.specialDisplays = specialDisplays
 		self.specials = {}
 		
-		self.draw(texture(heroTextureRow(), self.step))
+		self.draw(texture(self.facing, self.step))
 		
 	def getState(self):
 		return {
 			"location": self.location,
+			"facing": self.facing,
 			"health": self.health.value,
 			"attack": self.attack.value,
 			"defence": self.defence.value,
@@ -82,6 +88,7 @@ class Hero(TextureDisplay):
 			self.stepTimer = None
 		
 		self.step = 0
+		self.facing = state["facing"]
 		self.setLocation(state["location"])
 		
 	def newState(self):
@@ -96,7 +103,8 @@ class Hero(TextureDisplay):
 		
 		self.specials = {
 			(0, 0): MonsterHandbook(),
-			(0, 2): FlyingWand()}
+			(0, 2): FlyingWand(),
+			(2, 0): Mattock()}
 		for r, c in self.specials:
 			self.specials[(r, c)].initialize(self, self.specialDisplays[r][c])
 			
@@ -106,7 +114,7 @@ class Hero(TextureDisplay):
 			
 	def setLocation(self, location):
 		self.location = location
-		self.draw(texture(heroTextureRow(), self.step))
+		self.draw(texture(self.facing, self.step))
 	
 	def updateSpecials(self):
 		for loc in self.specials:
@@ -120,24 +128,25 @@ class Hero(TextureDisplay):
 		if self.stepTimer:
 			self.stepTimer.cancel()
 			self.stepTimer = None
-
-		textureRow = heroTextureRow(offset)
-
+			
+		self.turnTo(offset)
+		
 		self.location += offset		
-		self.nextStep(textureRow)
+		self.nextStep()
 	
 		app().blockActions()
 		
 		def work(dt):
-			self.nextStep(textureRow)
+			self.nextStep()
 			app().unblockActions()
 			app().interactAround()
 		Clock.schedule_once(work, 0.1)
 				
-	def nextStep(self, textureRow):
+	def nextStep(self):
 		self.step += 1
 		self.step %= 4
-		self.draw(texture(textureRow, self.step))
-		
+		self.draw(texture(self.facing, self.step))
+
 	def turnTo(self, offset):
-		self.draw(texture(heroTextureRow(offset), self.step))
+		self.facing = heroFacings[offset]
+		self.draw(texture(self.facing, self.step))

@@ -6,7 +6,7 @@ from kivy.uix.label import Label
 
 from mt_cells import *
 
-from . import app
+from . import app, hero
 from .floors import DIM as GRID_DIM
 from .textures import *
 
@@ -222,3 +222,20 @@ class OneUseSpecialItem(SpecialItem):
 		self.count -= 1
 		if self.count == 0:
 			self.refresh()
+
+class Mattock(OneUseSpecialItem):
+	def __init__(self):
+		super().__init__(SingleTexture(15, 0))
+	
+	def initialize(self, hero, display):
+		super().initialize(display, "M")
+		hero.mattock = self
+
+	def use(self):
+		dir = hero.heroDirections[app().hero.facing]
+		next = app().hero.location + dir
+		if next.row >= 0 and next.row < GRID_DIM and next.col >= 0 and next.col < GRID_DIM:
+			cell = app().getCell(next)
+			if isinstance(cell, Wall) or isinstance(cell, FakeWall) or (isinstance(cell, HiddenWall) and cell.hidden == False):
+				super().use()
+				removeWall(cell)

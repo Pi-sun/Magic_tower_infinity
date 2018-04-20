@@ -52,6 +52,16 @@ def _animate(texture, keyframes, completion = None):
 			return lambda dt: work(i)
 		Clock.schedule_once(createWork(i), 0.08 * i)
 
+def removeWall(cell, completion = None):
+	app().blockActions()
+		
+	def clearBlock():
+		app().setCell(Empty(), cell.location, cell.floor)
+		app().unblockActions()
+		if completion:
+			completion()
+	_animate(cell.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
+
 class Cell:
 	def __init__(self, texture):
 		self.texture = texture
@@ -114,12 +124,7 @@ class FakeWall(Cell):
 		super().__init__(SingleTexture(8, 0))
 		
 	def interact(self):
-		app().blockActions()
-		
-		def clearBlock():
-			app().setCell(Empty(), self.location, self.floor)
-			app().unblockActions()
-		_animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
+		removeWall(self)
 
 class Door(Cell):
 	def __init__(self, textureRow):
@@ -284,7 +289,15 @@ class MonsterHandbook(SpecialItem):
 		
 	@property
 	def property(self):
-		return app().hero.handbook()
+		return app().hero.handbook
+
+class FlyingWand(SpecialItem):
+	def __init__(self):
+		super().__init__(SingleTexture(13, 0), 1)
+		
+	@property
+	def property(self):
+		return app().hero.flyingWand
 
 class Shop(Cell):
 	def __init__(self, contentProvider):

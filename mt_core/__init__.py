@@ -237,6 +237,8 @@ class MagicTowerApp(App):
 				self.hero.flyingWand.tryUp()
 			elif keycode[1] == "pagedown":
 				self.hero.flyingWand.tryDown()
+			elif keycode[1] == "m":
+				self.hero.mattock.tryUse()
 			# cheats
 			elif keycode[1] == "a" and "alt" in modifiers:
 				self.moveByFloors(1)
