@@ -383,7 +383,7 @@ def find_end_area(board):
     end_area=set()
 
     for i in board.award_listing:
-        if len(board.award_listing)!=0:
+        if i != None:
             non_end_area.add(i[0])
     for i in range(len(board.award_area)):
         if i not in non_end_area:
