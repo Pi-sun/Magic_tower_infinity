@@ -198,6 +198,7 @@ class MagicTowerApp(App):
 		self.blockedActions = 0
 		self.floorsLoading = 0
 		self.currentFloor = None
+		self.highestFloor = None
 		
 		self.saved = True
 		self.filepath = None
@@ -231,10 +232,15 @@ class MagicTowerApp(App):
 			elif keycode[1] == "s":
 				self.saveGame()
 			elif keycode[1] == "h":
-				self.hero.handbook().tryUse()
-			elif keycode[1] == "a":
+				self.hero.handbook.tryUse()
+			elif keycode[1] == "pageup":
+				self.hero.flyingWand.tryUp()
+			elif keycode[1] == "pagedown":
+				self.hero.flyingWand.tryDown()
+			# cheats
+			elif keycode[1] == "a" and "alt" in modifiers:
 				self.moveByFloors(1)
-			elif keycode[1] == "z":
+			elif keycode[1] == "z" and "alt" in modifiers:
 				self.moveByFloors(-1)
 		
 	def onDialogPress(self, instance, value):
@@ -274,6 +280,8 @@ class MagicTowerApp(App):
 			
 			self.floorsLoading = 0
 			self.currentFloor = self.targetFloorLoading
+			if self.currentFloor > self.highestFloor:
+				self.highestFloor = self.currentFloor
 			for row in range(GRID_DIM):
 				for col in range(GRID_DIM):
 					floors.floors[self.currentFloor][row][col].initialize(self.cellDisplays[row][col])
@@ -295,7 +303,8 @@ class MagicTowerApp(App):
 			data = {
 				"hero": self.hero.getState(),
 				"floors": floors.getState(),
-				"currentFloor": self.currentFloor
+				"currentFloor": self.currentFloor,
+				"highestFloor": self.highestFloor
 			}
 			with gzip.open(path, "wb") as f:
 				pickle.dump(data, f)
@@ -318,9 +327,10 @@ class MagicTowerApp(App):
 				with gzip.open(self.filepath, "rb") as f:
 					data = pickle.load(f)
 
-				self.hero.setState(data["hero"])
 				floors.setState(data["floors"])
+				self.highestFloor = data["highestFloor"]
 				self.showFloor(data["currentFloor"])
+				self.hero.setState(data["hero"])
 		
 				self.saved = True
 				return True
@@ -349,6 +359,7 @@ class MagicTowerApp(App):
 		floors.newState()
 		
 		START_FLOOR, START_ROW, START_COL = floors.START
+		self.highestFloor = START_FLOOR
 		self.showFloor(START_FLOOR)
 		self.hero.newState()
 		self.hero.setLocation(Point(START_ROW, START_COL))

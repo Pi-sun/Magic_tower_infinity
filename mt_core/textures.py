@@ -19,9 +19,9 @@ def texture(row, col):
 
 class TextureDisplay(Widget):
 	def draw(self, texture):
-		self.canvas.clear()
+		self.canvas.before.clear()
 		if texture:
-			with self.canvas:
+			with self.canvas.before:
 				Rectangle(
 					texture = texture,
 					pos = self.pos,

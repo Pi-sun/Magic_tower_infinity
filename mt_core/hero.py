@@ -94,12 +94,15 @@ class Hero(TextureDisplay):
 		self.keys[KEY_BLUE].set(1)
 		self.keys[KEY_RED].set(0)
 		
-		self.specials = {(0, 0): MonsterHandbook()}
+		self.specials = {
+			(0, 0): MonsterHandbook(),
+			(0, 2): FlyingWand()}
 		for r, c in self.specials:
 			self.specials[(r, c)].initialize(self, self.specialDisplays[r][c])
 			
 		# Testing
-		self.handbook().collect(1)
+		self.handbook.collect(1)
+		self.flyingWand.collect(1)
 			
 	def setLocation(self, location):
 		self.location = location
