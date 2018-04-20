@@ -13,7 +13,7 @@ class CombatAnalysis:
 		self.monsterTotalDamage = -1 if self.heroStrikes == -1 else (self.heroStrikes - 1) * self.monsterDamage
 
 class Monster(Cell):
-	def __init__(self, name, health, attack, defence, money, texture, menu_texture = None):
+	def __init__(self, name, health, attack, defence, money, gifts, texture, menu_texture = None):
 		super().__init__(texture)
 
 		self.name = name
@@ -21,10 +21,18 @@ class Monster(Cell):
 		self.attack = attack
 		self.defence = defence
 		self.money = money
+		
 		if menu_texture:
 			self.menu_texture = menu_texture
 		else:
 			self.menu_texture = texture
+			
+		self.gifts = gifts
+		self.guarded_doors = []
+		
+	def guard(self, door):
+		self.guarded_doors.append(door)
+		door.guard()
 		
 	def interact(self, app):
 		self.combat(app, self.location)
@@ -57,8 +65,12 @@ class Monster(Cell):
 						def clearBlock(dt):
 							app.hero.money.update(self.money)
 							app.showMonster(None)
+							for door in self.guarded_doors:
+								door.unguard()
 							app.unblockActions()
 							self.finish(app)
+							for gift in self.gifts:
+								app.setCell(self.gifts[gift], self.location + gift, self.floor)
 						Clock.schedule_once(clearBlock, 0.15)
 					else:
 						app.hero.health.update(-analysis.monsterDamage)
@@ -77,7 +89,7 @@ class LargeMonster(Monster):
 			
 	def finish(self, app):
 		for part in self.parts:
-			app.setCell(self.parts[part], self.location + part, self.floor)
+			app.setCell(Empty(), self.location + part, self.floor)
 			
 class LargeMonsterPart(Cell):
 	def __init__(self, texture, offset):
@@ -89,18 +101,18 @@ class LargeMonsterPart(Cell):
 		app.getCell(self.location + self.offset, self.floor).combat(app, self.location)
 			
 def _monsterTypeCreator(name, textureCoordinate):
-	return lambda health, attack, defence, money: Monster(name, health, attack, defence, money, FourTexture(*textureCoordinate))
+	return lambda health, attack, defence, money, gifts = {}: Monster(name, health, attack, defence, money, gifts, FourTexture(*textureCoordinate))
 			
 def _monster3x3TypeCreator(name, textureCoordinate, menuTextureCoordinate = None):
 	def create(health, attack, defence, money, gifts = {}):
-		parts = {Point(i, j): gifts[(i, j)] if (i, j) in gifts else Empty() for i in range(-1, 2) for j in range(-1, 2)}
+		parts = {Point(i, j) for i in range(-1, 2) for j in range(-1, 2)}
 		results = []
 		for i in range(-1, 2):
 			row = []
 			for j in range(-1, 2):
 				texture = FourTexture(textureCoordinate[0] + i, textureCoordinate[1] + j, 3)
 				if i == 0 and j == 0:
-					row.append(LargeMonster(name, health, attack, defence, money, texture, FourTexture(*menuTextureCoordinate), parts))
+					row.append(LargeMonster(name, health, attack, defence, money, texture, gifts, FourTexture(*menuTextureCoordinate), parts))
 				else:
 					row.append(LargeMonsterPart(texture, Point(-i, -j)))
 			results.append(row)

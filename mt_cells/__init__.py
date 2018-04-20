@@ -76,9 +76,6 @@ class Empty(Cell):
 		app.hero.moveBy(self.location - app.hero.location)
 		
 class Impassable(Cell):
-	def __init__(self, texture):
-		super().__init__(texture)
-	
 	def interact(self, app):
 		pass
 		
@@ -120,26 +117,42 @@ class FakeWall(Cell):
 			app.unblockActions()
 		_animate(self.texture, [(8, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
 
-class KeyedDoor(Cell):
+class Door(Cell):
+	def __init__(self, textureRow):
+		super().__init__(SingleTexture(textureRow, 0))
+		self.textureRow = textureRow
+	
+	def open(self, app):
+		app.blockActions()
+		def clearBlock():
+			app.setCell(Empty(), self.location, self.floor)
+			app.unblockActions()
+		_animate(self.texture, [(self.textureRow, i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
+
+class KeyedDoor(Door):
 	def __init__(self, key):
-		super().__init__(SingleTexture(DOOR_TEXTURE_ROWS[key], 0))
+		super().__init__(DOOR_TEXTURE_ROWS[key])
 		self.key = key
 		
 	def interact(self, app):
 		if app.hero.keys[self.key].value > 0:
 			app.hero.keys[self.key].update(-1)
-			
-			app.blockActions()
+			self.open(app)
 		
-			def clearBlock():
-				app.setCell(Empty(), self.location, self.floor)
-				app.unblockActions()
-			_animate(self.texture, [(DOOR_TEXTURE_ROWS[self.key], i) for i in range(4)] + [EMPTY_TEXTURE], clearBlock)
+class GuardedDoor(Door, Impassable):
+	def __init__(self):
+		super().__init__(7)
+		self.guards = 0
+	
+	def guard(self):
+		self.guards += 1
+	
+	def unguard(self):
+		self.guards -= 1
+		if self.guards <= 0:
+			self.open(app)
 		
 class Movement(Cell):
-	def __init__(self, texture):
-		super().__init__(texture)
-		
 	def interact(self, app):
 		app.hero.moveBy(self.location - app.hero.location)
 		app.blockActions()
