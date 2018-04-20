@@ -143,34 +143,27 @@ def to_real_map(section,section_index):
                 section.floors[i].map[loc[0]][loc[1]] = item        
         elif section.floors[i].special_requirement=='guarded_area':
             luck=random.randint(0,1)
+            if i==section.sword_position:
+                item = Sword(SWORD_TEXTURES[(section_index - 1) % len(SWORD_TEXTURES)], standard_gem_value*5)
+            elif i==section.shield_position:
+                item = Shield(SHIELD_TEXTURES[(section_index - 1) % len(SHIELD_TEXTURES)], standard_gem_value*5)
+            
             if luck==0:
                 special_map = [[Void() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
-            
-                if i==section.sword_position:
-                    special_map[random.randint(1, 3)][random.randint(1, 3)] = Sword(SWORD_TEXTURES[(section_index - 1) % len(SWORD_TEXTURES)], standard_gem_value*5)
-                if i==section.shield_position:
-                    special_map[random.randint(1, 3)][random.randint(1, 3)] = Shield(SHIELD_TEXTURES[(section_index - 1) % len(SHIELD_TEXTURES)], standard_gem_value*5)
-            
-                for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
-                    section.floors[i].map[loc[0]][loc[1]] = item
-                section.floors[i].map[section.floors[i].special_door[0]-1][section.floors[i].special_door[1]]=KeyedDoor(KEY_BLUE)
-
-            if luck == 1:
+                special_map[random.randint(1, 3)][random.randint(1, 3)] = item
+                special_map[4][2]=KeyedDoor(KEY_BLUE)
+            else:
                 special_map = [[Void() if i in {0, 4} or j in {0, 3} else Empty() for i in range(5)] for j in range(5)]
-                if i==section.sword_position:
-                    special_map[random.randint(1, 2)][random.randint(1, 3)] = Sword(SWORD_TEXTURES[(section_index - 1) % len(SWORD_TEXTURES)], standard_gem_value*5)
-                if i==section.shield_position:
-                    special_map[random.randint(1, 2)][random.randint(1, 3)] = Shield(SHIELD_TEXTURES[(section_index - 1) % len(SHIELD_TEXTURES)], standard_gem_value*5)
+                special_map[random.randint(1, 2)][random.randint(1, 3)] = item 
                 special_map[3][2]=GuardedDoor()
-                guard_monster=random.choice(monsters)(section_index)
-                special_map[4][1]=guard_monster
-                special_map[4][3]=guard_monster
+                guard_monster_generator = random.choice(monsters)
+                special_map[4][1]=guard_monster_generator(section_index)
+                special_map[4][3]=guard_monster_generator(section_index)
                 special_map[4][3].guard(special_map[3][2])
                 special_map[4][1].guard(special_map[3][2])
-                for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
-                    section.floors[i].map[loc[0]][loc[1]] = item
-
-                
+            
+            for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
+                section.floors[i].map[loc[0]][loc[1]] = item
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=boss_for(section_index)(section_index)
     
