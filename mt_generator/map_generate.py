@@ -143,6 +143,7 @@ def to_real_map(section,section_index):
                 section.floors[i].map[loc[0]][loc[1]] = item        
         elif section.floors[i].special_requirement=='guarded_area':
             luck=random.randint(0,5)
+            fake_choose=None
             if i==section.sword_position:
                 item = Sword(SWORD_TEXTURES[(section_index - 1) % len(SWORD_TEXTURES)], standard_gem_value*5)
             elif i==section.shield_position:
@@ -191,26 +192,29 @@ def to_real_map(section,section_index):
                 special_map = [[Wall() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
                 area_walls=[]
                 fake_choice=[]
+                special_map[random.randint(1, 3)][random.randint(1, 3)] = item 
                 for qs in range(0,5):
                     for us in range(0,5):
                         if qs in [0,4] or us in [0,4]:
                             if [qs,us] not in [[0,0],[0,4],[4,4],[4,0]]:
                                 area_walls.append([qs+section.floors[i].special_start[0],us+section.floors[i].special_start[1]])
                 for cell in area_walls:
-                    if cell[0]==0:
-                        if section.floors[i].check_item([cell[0]-1][cell[1]])==0 and section.floors[i].valid_position([cell[0]-1][cell[1]])==True:
+                    if cell[0]==0+section.floors[i].special_start[0]:
+                        if section.floors[i].check_item([cell[0]-1,cell[1]])==0 and section.floors[i].valid_position([cell[0]-1,cell[1]])==True:
                             fake_choice.append(cell)
-                    if cell[0]==4:
-                        if section.floors[i].check_item([cell[0]+1][cell[1]])==0 and section.floors[i].valid_position([cell[0]+1][cell[1]])==True:
+                    if cell[0]==4+section.floors[i].special_start[0]:
+                        if section.floors[i].check_item([cell[0]+1,cell[1]])==0 and section.floors[i].valid_position([cell[0]+1,cell[1]])==True:
                             fake_choice.append(cell)
-                    if cell[1]==4:
-                        if section.floors[i].check_item([cell[0]][cell[1]+1])==0 and section.floors[i].valid_position([cell[0]][cell[1]+1])==True:
+                    if cell[1]==4+section.floors[i].special_start[1]:
+                        if section.floors[i].check_item([cell[0],cell[1]+1])==0 and section.floors[i].valid_position([cell[0],cell[1]+1])==True:
                             fake_choice.append(cell)
-                    if cell[1]==0:
-                        if section.floors[i].check_item([cell[0]][cell[1]-1])==0 and section.floors[i].valid_position([cell[0]][cell[1]-1])==True:
+                    else:
+                        if section.floors[i].check_item([cell[0],cell[1]-1])==0 and section.floors[i].valid_position([cell[0],cell[1]-1])==True:
                             fake_choice.append(cell)
+                print('fake',fake_choice)
                 fake_choose=random.choice(fake_choice)
-                section.floors[i].map[fake_choose[0]][fake_choose[1]]=FakeWall
+                print('choose',fake_choose)
+
             
                             
                             
@@ -218,6 +222,8 @@ def to_real_map(section,section_index):
             
             for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
                 section.floors[i].map[loc[0]][loc[1]] = item
+            if fake_choose!= None:
+                section.floors[i].map[fake_choose[0]][fake_choose[1]]=FakeWall()
         elif section.floors[i].special_requirement=='boss':
             section.floors[i].map[section.floors[i].special_door[0]][section.floors[i].special_door[1]]=boss_for(section_index)(section_index)
     
