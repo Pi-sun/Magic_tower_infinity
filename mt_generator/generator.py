@@ -579,6 +579,7 @@ def pre_generate(size,starting_position,size_area,surround_back=False):
     for i in surround:
         version_0.assign(i,2)
     version_0.special=surround.copy()
+    version_0.special_start=[dragon_x,dragon_y]
     version_0.special_actual=dragon.copy()
     version_0.special_door=[dragon_x+dragon_width,dragon_y+(dragon_length-1)//2]
     version_a=main_route_generate(size,starting_position,version_0)

@@ -142,7 +142,7 @@ def to_real_map(section,section_index):
             for loc, item in zip(sorted(section.floors[i].special_actual), (ShopLeft(), Shop(provider.sharedShopContentProvider()), ShopRight())):
                 section.floors[i].map[loc[0]][loc[1]] = item        
         elif section.floors[i].special_requirement=='guarded_area':
-            luck=random.randint(0,1)
+            luck=random.randint(0,5)
             if i==section.sword_position:
                 item = Sword(SWORD_TEXTURES[(section_index - 1) % len(SWORD_TEXTURES)], standard_gem_value*5)
             elif i==section.shield_position:
@@ -152,7 +152,7 @@ def to_real_map(section,section_index):
                 special_map = [[Void() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
                 special_map[random.randint(1, 3)][random.randint(1, 3)] = item
                 special_map[4][2]=KeyedDoor(KEY_BLUE)
-            else:
+            elif luck==1:
                 special_map = [[Void() if i in {0, 4} or j in {0, 3} else Empty() for i in range(5)] for j in range(5)]
                 special_map[random.randint(1, 2)][random.randint(1, 3)] = item 
                 special_map[3][2]=GuardedDoor()
@@ -161,6 +161,60 @@ def to_real_map(section,section_index):
                 special_map[4][3]=guard_monster_generator(section_index)
                 special_map[4][3].guard(special_map[3][2])
                 special_map[4][1].guard(special_map[3][2])
+            elif luck==2:
+                special_map = [[Void() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
+                special_map[random.randint(1, 3)][random.randint(1, 3)] = item
+
+            elif luck==3:
+                special_map = [[Void() if i in {0, 4} or j in {0, 3} else Empty() for i in range(5)] for j in range(5)]
+                special_map[random.randint(1, 2)][random.randint(1, 3)] = item
+                special_map[3][2]=GuardedDoor()
+                guard_monster_generator = monsters[-2]
+                special_map[4][1]=guard_monster_generator(section_index)
+                special_map[4][3]=guard_monster_generator(section_index)
+                special_map[4][3].guard(special_map[3][2])
+                special_map[4][1].guard(special_map[3][2])
+            elif luck==4:
+                special_map = [[Void() if i in {0, 4} or j in {0, 3} else Empty() for i in range(5)] for j in range(5)]
+                special_map[random.randint(1, 2)][random.randint(1, 3)] = item 
+                special_map[3][2]=GuardedDoor()
+                guard_monster_generator = random.choice(monsters)
+                special_map[4][0]=guard_monster_generator(section_index)
+                special_map[4][1]=guard_monster_generator(section_index)
+                special_map[4][3]=guard_monster_generator(section_index)
+                special_map[4][2]=guard_monster_generator(section_index)
+                special_map[4][4]=guard_monster_generator(section_index)
+                special_map[4][3].guard(special_map[3][2])
+                special_map[4][1].guard(special_map[3][2])
+
+            else:
+                special_map = [[Wall() if i in {0, 4} or j in {0, 4} else Empty() for i in range(5)] for j in range(5)]
+                area_walls=[]
+                fake_choice=[]
+                for qs in range(0,5):
+                    for us in range(0,5):
+                        if qs in [0,4] or us in [0,4]:
+                            if [qs,us] not in [[0,0],[0,4],[4,4],[4,0]]:
+                                area_walls.append([qs+section.floors[i].special_start[0],us+section.floors[i].special_start[1]])
+                for cell in area_walls:
+                    if cell[0]==0:
+                        if section.floors[i].check_item([cell[0]-1][cell[1]])==0 and section.floors[i].valid_position([cell[0]-1][cell[1]])==True:
+                            fake_choice.append(cell)
+                    if cell[0]==4:
+                        if section.floors[i].check_item([cell[0]+1][cell[1]])==0 and section.floors[i].valid_position([cell[0]+1][cell[1]])==True:
+                            fake_choice.append(cell)
+                    if cell[1]==4:
+                        if section.floors[i].check_item([cell[0]][cell[1]+1])==0 and section.floors[i].valid_position([cell[0]][cell[1]+1])==True:
+                            fake_choice.append(cell)
+                    if cell[1]==0:
+                        if section.floors[i].check_item([cell[0]][cell[1]-1])==0 and section.floors[i].valid_position([cell[0]][cell[1]-1])==True:
+                            fake_choice.append(cell)
+                fake_choose=random.choice(fake_choice)
+                section.floors[i].map[fake_choose[0]][fake_choose[1]]=FakeWall
+            
+                            
+                            
+                
             
             for loc, item in zip(sorted(section.floors[i].special_actual), itertools.chain(*special_map)):
                 section.floors[i].map[loc[0]][loc[1]] = item
